@@ -1,4 +1,4 @@
-package com.devram.rojnama;
+package com.devram.dailyexpenses;
 
 import org.junit.Test;
 
