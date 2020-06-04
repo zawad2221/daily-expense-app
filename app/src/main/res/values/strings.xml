@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">Daily Expenses</string>
+    <string name="date_fragment">Today</string>
+    <string name="exp_fragment">Expenses</string>
+    <string name="inc_fragment">Income</string>
     <string name="action_settings">Settings</string>
+    <string name="title_txt_string">Enter Expense</string>
+    <string name="amount_hint">Enter Amount</string>
+    <string name="expense_btn_save">SAVE</string>
+    <string name="date_hint">Enter Date</string>
+    <string name="date_tab">Today</string>
+    <string name="exp_tab">Expenses</string>
+    <string name="inc_tab">income</string>
     <string-array name="expense_type">
+        <item>Select Type</item>
         <item>Clothing</item>
         <item>Entertainment</item>
         <item>Food</item>

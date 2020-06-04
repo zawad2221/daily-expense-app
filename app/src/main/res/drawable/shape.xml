@@ -8,8 +8,10 @@
         android:left="12dp"
         android:top="12dp"
         android:right="12dp" />
+    <solid
+        android:color="@color/alterPrimary" />
 
     <stroke
-        android:color="@android:color/darker_gray"
+        android:color="@color/alterPrimary"
         android:width="1.5dp" />
 </shape>
