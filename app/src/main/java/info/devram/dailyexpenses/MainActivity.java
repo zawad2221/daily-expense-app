@@ -8,6 +8,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 
 
 import info.devram.dailyexpenses.Adapters.ViewPagerAdapter;
+import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 import info.devram.dailyexpenses.ui.IncomePageFragment;
 import info.devram.dailyexpenses.ui.SaveDataDialog;
 import info.devram.dailyexpenses.ui.TodayPageFragment;
@@ -35,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+//        MainActivityViewModel mainActivityViewModel;
+//        mainActivityViewModel = new ViewModelProvider
+//                .AndroidViewModelFactory(getApplication()).create(MainActivityViewModel.class);
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);

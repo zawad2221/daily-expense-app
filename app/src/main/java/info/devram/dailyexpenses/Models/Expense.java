@@ -7,15 +7,19 @@ import info.devram.dailyexpenses.Config.Util;
 public class Expense {
 
     private int id;
-
     private String expenseType;
     private String expenseDate;
+    private String expenseDesc;
     private int expenseAmount;
 
-    public Expense(String expenseType, String expenseDate, int expenseAmount) {
+    public Expense(String expenseType, String expenseDesc,String expenseDate, int expenseAmount) {
         this.expenseType = expenseType;
+        this.expenseDesc = expenseDesc;
         this.expenseDate = expenseDate;
         this.expenseAmount = expenseAmount;
+    }
+
+    public Expense() {
     }
 
     public int getId() {
@@ -48,6 +52,14 @@ public class Expense {
 
     public void setExpenseAmount(int expenseAmount) {
         this.expenseAmount = expenseAmount;
+    }
+
+    public String getExpenseDesc() {
+        return expenseDesc;
+    }
+
+    public void setExpenseDesc(String expenseDesc) {
+        this.expenseDesc = expenseDesc;
     }
 
     public static class Model implements ModelHandler {

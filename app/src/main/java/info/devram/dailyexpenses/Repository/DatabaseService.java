@@ -1,20 +1,18 @@
 package info.devram.dailyexpenses.Repository;
 
-import androidx.lifecycle.MutableLiveData;
-
-import java.lang.reflect.Type;
 import java.util.List;
-import info.devram.dailyexpenses.Controllers.DatabaseHandler;
 
-interface DatabaseService {
+interface DatabaseService<T> {
 
-    public void addData(DatabaseHandler db);
+    public Boolean addData(T obj);
 
-    public MutableLiveData<List<Object>> getAll(DatabaseHandler db);
+    public List<T> getAll();
 
-    public Object getOne(DatabaseHandler db);
+    public T getOne();
 
-    public void update(DatabaseHandler db,Object data);
+    public int onUpdate(T obj);
 
-    public void delete(DatabaseHandler db,Object data);
+    public void onDelete(T obj);
+
+    public int getCount();
 }

@@ -1,28 +1,42 @@
 package info.devram.dailyexpenses.Repository;
 
-import androidx.lifecycle.MutableLiveData;
+import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import info.devram.dailyexpenses.Controllers.DatabaseHandler;
+import info.devram.dailyexpenses.Core.MyApp;
 import info.devram.dailyexpenses.Models.Income;
 
-public class IncomeRepository  {
+public class IncomeRepository implements DatabaseService<Income>  {
 
-    private List<Income> incomeList = new ArrayList<>();
+    private DatabaseHandler db;
+    private static IncomeRepository mInstance = null;
 
-    public IncomeRepository() {
+    private IncomeRepository(Context context) {
+
+        this.db = DatabaseHandler.getInstance(context);
     }
 
-    public void addData(DatabaseHandler db) {
+    public static IncomeRepository getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new IncomeRepository(context);
+        }
+        return mInstance;
+    }
+
+    @Override
+    public Boolean addData(Income obj) {
+        return null;
 
     }
 
+    @Override
+    public List<Income> getAll() {
 
-    public MutableLiveData<List<Income>> getAll(/*DatabaseHandler db*/) {
-
-
+        List<Income> incomeList = new ArrayList<>();
 
         for (int i = 0 ; i < 3 ; i++) {
             Income income = new Income();
@@ -33,25 +47,26 @@ public class IncomeRepository  {
         }
 
 
-        MutableLiveData<List<Income>> mIncomeList = new MutableLiveData<>();
-
-        mIncomeList.setValue(incomeList);
-
-        return mIncomeList;
+        return incomeList;
     }
 
-
-    public Income getOne(DatabaseHandler db) {
+    @Override
+    public Income getOne() {
         return null;
     }
 
+    @Override
+    public int onUpdate(Income obj) {
+        return 0;
+    }
 
-    public void update(DatabaseHandler db, Object data) {
+    @Override
+    public void onDelete(Income obj) {
 
     }
 
-
-    public void delete(DatabaseHandler db, Object data) {
-
+    @Override
+    public int getCount() {
+        return 0;
     }
 }

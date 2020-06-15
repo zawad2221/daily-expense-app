@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,9 +35,6 @@ public class TodayPageFragment extends Fragment {
     private IncomeRepository incomeRepository;
     //private RecyclerView expenseRecyclerView;
 
-    public TodayPageFragment() {
-
-    }
 
     @Nullable
     @Override
@@ -45,13 +43,6 @@ public class TodayPageFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_today_page,container,false);
-
-        /*
-        * testing to see if repository populates adapter
-         */
-
-        incomeRepository = new IncomeRepository();
-
 
 
         /*
@@ -66,12 +57,14 @@ public class TodayPageFragment extends Fragment {
          * i.e MainActivityViewModel
          */
 
-        mainActivityViewModel = new ViewModelProvider(this)
-                .get(MainActivityViewModel.class);
+        mainActivityViewModel = new ViewModelProvider
+                .AndroidViewModelFactory(requireActivity().getApplication())
+                .create(MainActivityViewModel.class);
 
         mainActivityViewModel.init();
 
-        incomeRecyclerAdapter = new IncomeRecyclerAdapter(view.getContext(),mainActivityViewModel.getIncomes().getValue());
+        incomeRecyclerAdapter = new IncomeRecyclerAdapter(view.getContext(),
+                mainActivityViewModel.getIncomes().getValue());
 
         incomeRecyclerView = view.findViewById(R.id.inc_recycler_view);
         incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
@@ -84,7 +77,8 @@ public class TodayPageFragment extends Fragment {
 
 //        Log.i(TAG, "onCreate: " + mainActivityViewModel.getIncomes().getValue());
 //
-        mainActivityViewModel.getIncomes().observe(getViewLifecycleOwner(), new Observer<List<Income>>() {
+        mainActivityViewModel.getIncomes().observe(getViewLifecycleOwner(),
+                new Observer<List<Income>>() {
             // this method used for observing any changes in ViewModel Data
             // in our case Income class object
 
