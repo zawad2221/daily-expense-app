@@ -30,5 +30,6 @@
     <string name="total_income">Total Income</string>
     <string name="total_inc_amount">Total Amount</string>
     <string name="total_expense">Total Expenses</string>
-    <string name="total_exp_amt">Total Expense Amount</string>
+    <string name="total_exp_amt">Total Amount</string>
+    <string name="rs_symbol">\u20B9</string>
 </resources>

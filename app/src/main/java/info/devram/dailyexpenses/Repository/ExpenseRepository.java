@@ -11,6 +11,7 @@ import java.util.List;
 import info.devram.dailyexpenses.Config.Util;
 import info.devram.dailyexpenses.Controllers.DatabaseHandler;
 import info.devram.dailyexpenses.Models.Expense;
+import info.devram.dailyexpenses.Models.Income;
 
 public class ExpenseRepository implements DatabaseService<Expense> {
 
@@ -51,31 +52,40 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     @Override
     public List<Expense> getAll() {
+
         List<Expense> expenseList = new ArrayList<>();
 
-        String query = "SELECT * FROM " + Util.EXPENSE_TABLE_NAME;
-
-        Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
-
-        if(cursor.moveToFirst()) {
-            do {
-
-                Expense expense = new Expense();
-                expense.setId(cursor
-                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
-                expense.setExpenseType(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
-                expense.setExpenseDesc(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
-                expense.setExpenseAmount(cursor
-                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
-                expense.setExpenseDate(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
-                expenseList.add(expense);
-            }while (cursor.moveToNext());
+        for (int i = 0 ; i < 5 ; i++) {
+            Expense expense = new Expense();
+            expense.setId(1);
+            expense.setExpenseType("clothing");
+            expense.setExpenseAmount(10000);
+            expenseList.add(expense);
         }
 
-        cursor.close();
+//        String query = "SELECT * FROM " + Util.EXPENSE_TABLE_NAME;
+//
+//        Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
+//
+//        if(cursor.moveToFirst()) {
+//            do {
+//
+//                Expense expense = new Expense();
+//                expense.setId(cursor
+//                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+//                expense.setExpenseType(cursor
+//                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+//                expense.setExpenseDesc(cursor
+//                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
+//                expense.setExpenseAmount(cursor
+//                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+//                expense.setExpenseDate(cursor
+//                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+//                expenseList.add(expense);
+//            }while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
 
         return expenseList;
     }

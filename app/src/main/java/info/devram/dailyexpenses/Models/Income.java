@@ -54,6 +54,12 @@ public class Income {
         this.incomeAmount = incomeAmount;
     }
 
+    @Override
+    public String toString() {
+        String person = this.getIncomeType() + " " + this.getIncomeAmount();
+        return person;
+    }
+
     public static class Model implements ModelHandler {
 
         @Override

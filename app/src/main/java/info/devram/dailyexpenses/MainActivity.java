@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
+
+import android.util.Log;
 import android.view.View;
 
 import android.view.Menu;
@@ -27,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
 
-    private DialogFragment dialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,37 +38,25 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        MainActivityViewModel mainActivityViewModel;
-//        mainActivityViewModel = new ViewModelProvider
-//                .AndroidViewModelFactory(getApplication()).create(MainActivityViewModel.class);
+        MainActivityViewModel mainActivityViewModel;
+        mainActivityViewModel = new ViewModelProvider
+                .AndroidViewModelFactory(getApplication()).create(MainActivityViewModel.class);
+
+        mainActivityViewModel.init();
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        viewPagerAdapter.addFragment(new TodayPageFragment(),"Today");
-        viewPagerAdapter.addFragment(new ExpensePageFragment(),"Expenses");
-        viewPagerAdapter.addFragment(new IncomePageFragment(),"Income");
+        viewPagerAdapter.addFragment(new TodayPageFragment(mainActivityViewModel),"Today");
+        viewPagerAdapter.addFragment(new ExpensePageFragment(mainActivityViewModel),"Expenses");
+        viewPagerAdapter.addFragment(new IncomePageFragment(mainActivityViewModel),"Income");
 
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                dialog = new SaveDataDialog();
-
-                //dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
-                dialog.show(getSupportFragmentManager(),null);
-
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            }
-        });
     }
 
 

@@ -38,9 +38,9 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
         List<Income> incomeList = new ArrayList<>();
 
-        for (int i = 0 ; i < 3 ; i++) {
+        for (int i = 0 ; i < 5 ; i++) {
             Income income = new Income();
-            income.setId(1);
+            income.setId(i);
             income.setIncomeType("cash");
             income.setIncomeAmount(10000);
             incomeList.add(income);
