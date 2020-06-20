@@ -1,5 +1,6 @@
 package info.devram.dailyexpenses.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
@@ -15,6 +16,7 @@ import android.widget.ArrayAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import info.devram.dailyexpenses.Adapters.IncomeRecyclerAdapter;
+import info.devram.dailyexpenses.IncomeActivity;
 import info.devram.dailyexpenses.R;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 
@@ -56,8 +58,12 @@ public class IncomePageFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                dialog = new SaveDataDialog(adapter,"Enter Income");
-                dialog.show(getParentFragmentManager(),null);
+                Intent incomeIntent = new Intent(getActivity(), IncomeActivity.class);
+
+                startActivity(incomeIntent);
+
+//                dialog = new SaveDataDialog(adapter,"Enter Income");
+//                dialog.show(getParentFragmentManager(),null);
 
             }
         });

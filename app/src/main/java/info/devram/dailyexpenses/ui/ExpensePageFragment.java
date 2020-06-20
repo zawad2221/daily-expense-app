@@ -1,6 +1,8 @@
 package info.devram.dailyexpenses.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +12,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 import info.devram.dailyexpenses.Adapters.ExpenseRecyclerAdapter;
+import info.devram.dailyexpenses.ExpenseActivity;
+import info.devram.dailyexpenses.Models.Expense;
 import info.devram.dailyexpenses.R;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 
 public class ExpensePageFragment extends Fragment {
+
+    private static final String TAG = "ExpensePageFragment";
 
     private DialogFragment dialog;
     private MainActivityViewModel mainActivityViewModel;
@@ -46,20 +56,43 @@ public class ExpensePageFragment extends Fragment {
         expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_expense);
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.expense_type, android.R.layout.simple_spinner_item);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                dialog = new SaveDataDialog(adapter,"Enter Expenses");
+                Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
 
-                dialog.show(getParentFragmentManager(),null);
+                startActivity(expenseIntent);
 
+//                dialog = new SaveDataDialog(adapter,"Enter Expenses");
+//
+//                dialog.show(getParentFragmentManager(),null);
+//
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
         });
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(TAG, "onPause started: ");
+        mainActivityViewModel.getExpenses().observe(getActivity(), new Observer<List<Expense>>() {
+            @Override
+            public void onChanged(List<Expense> expenses) {
+                Log.i(TAG, "onChanged: " + expenses);
+            }
+        });
+        super.onPause();
+        Log.i(TAG, "onPause ended: ");
+    }
+
+    @Override
+    public void onStop() {
+        Log.i(TAG, "onStop started: ");
+        super.onStop();
+        Log.i(TAG, "onStop ended: ");
     }
 }
