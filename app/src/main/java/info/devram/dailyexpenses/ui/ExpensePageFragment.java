@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,14 +45,15 @@ public class ExpensePageFragment extends Fragment {
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        FloatingActionButton fab = view.findViewById(R.id.fab_expense);
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+                R.array.expense_type, android.R.layout.simple_spinner_item);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                dialog = new SaveDataDialog();
+                dialog = new SaveDataDialog(adapter,"Enter Expenses");
 
-                //dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
                 dialog.show(getParentFragmentManager(),null);
 
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

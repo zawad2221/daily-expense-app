@@ -11,11 +11,12 @@
         layout="@layout/income_layout"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_income"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="@color/alterPrimary"
+        android:backgroundTint="@color/alterAccent"
+
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right"
         app:layout_constraintBottom_toBottomOf="parent"

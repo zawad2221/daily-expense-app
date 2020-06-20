@@ -1,27 +1,17 @@
 package info.devram.dailyexpenses;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
-
-import android.util.Log;
-import android.view.View;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
 
 import info.devram.dailyexpenses.Adapters.ViewPagerAdapter;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 import info.devram.dailyexpenses.ui.IncomePageFragment;
-import info.devram.dailyexpenses.ui.SaveDataDialog;
 import info.devram.dailyexpenses.ui.TodayPageFragment;
 import info.devram.dailyexpenses.ui.ExpensePageFragment;
 
@@ -49,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        viewPagerAdapter.addFragment(new TodayPageFragment(mainActivityViewModel),"Today");
-        viewPagerAdapter.addFragment(new ExpensePageFragment(mainActivityViewModel),"Expenses");
-        viewPagerAdapter.addFragment(new IncomePageFragment(mainActivityViewModel),"Income");
+        viewPagerAdapter.addFragment(new TodayPageFragment(mainActivityViewModel), "Today");
+        viewPagerAdapter.addFragment(new ExpensePageFragment(mainActivityViewModel), "Expenses");
+        viewPagerAdapter.addFragment(new IncomePageFragment(mainActivityViewModel), "Income");
 
         viewPager.setAdapter(viewPagerAdapter);
 

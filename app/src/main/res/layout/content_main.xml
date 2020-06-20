@@ -4,10 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
-
-<!--    android:background="#4D000000"-->
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
@@ -20,15 +17,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="61dp"
             android:background="@color/alterPrimaryDark"
-            app:tabIndicatorColor="@color/endColor"
+            app:tabIndicatorColor="@color/alterAccent"
             app:tabTextColor="@android:color/white" />
     </androidx.viewpager.widget.ViewPager>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

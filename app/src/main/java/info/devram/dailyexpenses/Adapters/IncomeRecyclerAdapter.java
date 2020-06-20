@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,17 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
 
         holder.incomeAmount
                 .setText(String.valueOf(income.getIncomeAmount()));
+        switch (income.getIncomeType()) {
+            case "cash":
+                holder.incomeImageView.setImageResource(R.drawable.ic_cash_icon);
+                break;
+            case "salary":
+                holder.incomeImageView.setImageResource(R.drawable.ic_salary_icon);
+                break;
+            case "loan":
+                holder.incomeImageView.setImageResource(R.drawable.ic_loan_icon);
+                break;
+        }
     }
 
     @Override
@@ -57,12 +69,14 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
 
         public TextView incomeType;
         public TextView incomeAmount;
+        public ImageView incomeImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             incomeType = itemView.findViewById(R.id.inc_dash_txt_view);
             incomeAmount = itemView.findViewById(R.id.inc_amt_dash_txt_view);
+            incomeImageView = itemView.findViewById(R.id.inc_dash_img_view);
         }
     }
 }

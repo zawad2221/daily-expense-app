@@ -3,13 +3,13 @@ package info.devram.dailyexpenses.ui;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,17 +24,23 @@ import info.devram.dailyexpenses.R;
 
 public class SaveDataDialog extends DialogFragment {
 
-    private Spinner spinner;
+    private static final String TAG = "SaveDataDialog";
+
     private EditText datePicker;
     private Calendar myCalendar;
-    private ArrayAdapter<CharSequence> adapter;
     private DatePickerDialog.OnDateSetListener date;
-    private AlertDialog.Builder builder;
+    private ArrayAdapter<CharSequence> adapter;
+    private String title;
+
+    public SaveDataDialog(ArrayAdapter<CharSequence> adapter,String title) {
+        this.adapter = adapter;
+        this.title = title;
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -43,14 +49,10 @@ public class SaveDataDialog extends DialogFragment {
 
         builder.setView(view);
 
-        spinner = view.findViewById(R.id.spinner);
+        Spinner spinner = view.findViewById(R.id.spinner);
 
-        //Log.d("spinner", "onCreate: " + spinner);
-
-
-
-        adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.expense_type,android.R.layout.simple_spinner_item);
+        TextView titleTextView = view.findViewById(R.id.title_txt_view);
+        titleTextView.setText(title);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -59,6 +61,7 @@ public class SaveDataDialog extends DialogFragment {
         datePicker = view.findViewById(R.id.edit_text_expense);
 
         myCalendar = Calendar.getInstance();
+        updateLabel();
 
         date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -71,14 +74,12 @@ public class SaveDataDialog extends DialogFragment {
         };
 
         datePicker.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Log.i("date", "onClick: " + myCalendar);
                 new DatePickerDialog(v.getContext(), date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
             }
         });
 
@@ -87,7 +88,7 @@ public class SaveDataDialog extends DialogFragment {
     }
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "dd/MM/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
 
         datePicker.setText(sdf.format(myCalendar.getTime()));

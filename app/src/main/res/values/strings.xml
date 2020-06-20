@@ -4,8 +4,8 @@
     <string name="exp_fragment">Expenses</string>
     <string name="inc_fragment">Income</string>
     <string name="action_settings">Settings</string>
-    <string name="title_txt_string">Enter Expense</string>
     <string name="amount_hint">Enter Amount</string>
+    <string name="desc_hint">Enter Description</string>
     <string name="expense_btn_save">SAVE</string>
     <string name="date_hint">Enter Date</string>
     <string name="date_tab">Today</string>
@@ -24,8 +24,12 @@
         <item>Personal</item>
         <item>Fuel</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="income_type">
+        <item>Select Type</item>
+        <item>Cash</item>
+        <item>Salary</item>
+        <item>Loan</item>
+    </string-array>
     <string name="img_view_cd">Icon</string>
     <string name="total_income">Total Income</string>
     <string name="total_inc_amount">Total Amount</string>

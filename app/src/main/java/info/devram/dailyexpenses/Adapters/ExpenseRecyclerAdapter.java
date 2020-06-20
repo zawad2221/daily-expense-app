@@ -41,6 +41,38 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
                 .setText(expense.getExpenseType());
         holder.expenseAmountTextView
                 .setText(String.valueOf(expense.getExpenseAmount()));
+        switch (expense.getExpenseType()) {
+            case "clothing":
+                holder.expenseImageView.setImageResource(R.drawable.ic_cloth_icon);
+                break;
+            case "entertainment":
+                holder.expenseImageView.setImageResource(R.drawable.ic_entertain_icon);
+                break;
+            case "food":
+                holder.expenseImageView.setImageResource(R.drawable.ic_food_icon);
+                break;
+            case "transport":
+                holder.expenseImageView.setImageResource(R.drawable.ic_transport_icon);
+                break;
+            case "medical":
+                holder.expenseImageView.setImageResource(R.drawable.ic_medical_icon);
+                break;
+            case "shopping":
+                holder.expenseImageView.setImageResource(R.drawable.ic_shopping_icon);
+                break;
+            case "education":
+                holder.expenseImageView.setImageResource(R.drawable.ic_education_icon);
+                break;
+            case "grocery":
+                holder.expenseImageView.setImageResource(R.drawable.ic_grocery_icon);
+                break;
+            case "personal":
+                holder.expenseImageView.setImageResource(R.drawable.ic_personal_icon);
+                break;
+            case "fuel":
+                holder.expenseImageView.setImageResource(R.drawable.ic_fuel_icon);
+                break;
+        }
     }
 
     @Override

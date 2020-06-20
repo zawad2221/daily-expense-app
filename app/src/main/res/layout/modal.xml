@@ -19,7 +19,6 @@
 
             <TextView
                 android:id="@+id/title_txt_view"
-                android:text="@string/title_txt_string"
                 android:textStyle="italic"
                 android:textSize="18sp"
                 android:layout_marginTop="12dp"
@@ -45,6 +44,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -52,7 +52,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:clickable="true"
 
                     android:autofillHints="no"
                     android:hint="@string/date_hint"
@@ -73,6 +72,21 @@
                     android:ems="10"
                     android:hint="@string/amount_hint"
                     android:inputType="number"
+                    android:autofillHints="no" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/desc_hint"
                     android:autofillHints="no" />
 
             </com.google.android.material.textfield.TextInputLayout>

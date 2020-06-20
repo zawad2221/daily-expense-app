@@ -41,7 +41,7 @@ public class TodayPageFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_today_page,container,false);
+        View view = inflater.inflate(R.layout.fragment_today_page, container, false);
 
 
         /*
@@ -59,8 +59,6 @@ public class TodayPageFragment extends Fragment {
 //        MainActivityViewModel mainActivityViewModel = new ViewModelProvider
 //                .AndroidViewModelFactory(requireActivity().getApplication())
 //                .create(MainActivityViewModel.class);
-
-
 
 
         List<Income> incomeList = mainActivityViewModel.getIncomes().getValue();
@@ -85,14 +83,14 @@ public class TodayPageFragment extends Fragment {
 //
         mainActivityViewModel.getIncomes().observe(getViewLifecycleOwner(),
                 new Observer<List<Income>>() {
-            // this method used for observing any changes in ViewModel Data
-            // in our case Income class object
+                    // this method used for observing any changes in ViewModel Data
+                    // in our case Income class object
 
-            @Override
-            public void onChanged(List<Income> incomes) {
+                    @Override
+                    public void onChanged(List<Income> incomes) {
 
-            }
-        });
+                    }
+                });
 
         int totalSum = 0;
         for (int i = 0; i < newIncomeList.size(); i++) {

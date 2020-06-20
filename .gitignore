@@ -15,4 +15,10 @@
 .idea/
 app_folder_apk/
 keys/
-gradle.properties
+/gradle.properties
+*.apk
+*.aar
+*.ap_
+*.aab
+*.jks
+*.keystore
