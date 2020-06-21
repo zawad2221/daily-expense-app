@@ -1,5 +1,6 @@
 package info.devram.dailyexpenses.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,15 +21,21 @@ import java.util.List;
 
 import info.devram.dailyexpenses.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dailyexpenses.Adapters.IncomeRecyclerAdapter;
+import info.devram.dailyexpenses.Adapters.RecyclerOnClick;
 import info.devram.dailyexpenses.Models.Expense;
 import info.devram.dailyexpenses.Models.Income;
 import info.devram.dailyexpenses.R;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 
-public class TodayPageFragment extends Fragment {
+public class TodayPageFragment extends Fragment implements RecyclerOnClick{
 
     public static final String TAG = "TodayFragment";
     private MainActivityViewModel mainActivityViewModel;
+
+    private RecyclerView expenseRecyclerView;
+    private RecyclerView incomeRecyclerView;
+    private int expenseTotalSum;
+    private int incomeTotalSum;
 
     public TodayPageFragment(MainActivityViewModel viewModel) {
         this.mainActivityViewModel = viewModel;
@@ -42,7 +48,6 @@ public class TodayPageFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_today_page, container, false);
-
 
         /*
          * instantiate view model data object
@@ -61,73 +66,30 @@ public class TodayPageFragment extends Fragment {
 //                .create(MainActivityViewModel.class);
 
 
-        List<Income> incomeList = mainActivityViewModel.getIncomes().getValue();
+        incomeRecyclerView = view.findViewById(R.id.inc_recycler_view);
+        expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
 
-        List<Income> newIncomeList = getLastThree(incomeList);
-
-        IncomeRecyclerAdapter incomeRecyclerAdapter = new IncomeRecyclerAdapter(view.getContext(),
-                newIncomeList);
-
-        RecyclerView incomeRecyclerView = view.findViewById(R.id.inc_recycler_view);
         TextView incomeTotalAmountTextView = view.findViewById(R.id.inc_total_amt_txt_view);
         TextView expenseTotalAmountTextView = view.findViewById(R.id.total_exp_amt_txt_view);
-        incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
-
 
         /*
          * observer pattern applied to viewModel object so that
          * data can be observed
          */
 
-//        Log.i(TAG, "onCreate: " + mainActivityViewModel.getIncomes().getValue());
-//
-        mainActivityViewModel.getIncomes().observe(getViewLifecycleOwner(),
-                new Observer<List<Income>>() {
-                    // this method used for observing any changes in ViewModel Data
-                    // in our case Income class object
-
-                    @Override
-                    public void onChanged(List<Income> incomes) {
-
-                    }
-                });
-
-        int totalSum = 0;
-        for (int i = 0; i < newIncomeList.size(); i++) {
-            totalSum += newIncomeList.get(i).getIncomeAmount();
-        }
-
+        updateIncomeRecyclerView();
+        updateExpenseRecyclerView();
 
         incomeTotalAmountTextView
                 .setText(MessageFormat.format("{0} {1}",
                         getResources().getString(R.string.rs_symbol),
-                        String.valueOf(totalSum)));
-
-        RecyclerView expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
-
-        List<Expense> expenseList = mainActivityViewModel.getExpenses().getValue();
-
-        List<Expense> newExpenseList = getLastThree(expenseList);
-
-        totalSum = 0;
-        for (int i = 0; i < newExpenseList.size(); i++) {
-            totalSum += newExpenseList.get(i).getExpenseAmount();
-        }
-
-
-        ExpenseRecyclerAdapter expenseRecyclerAdapter = new ExpenseRecyclerAdapter(newExpenseList);
-
-        incomeRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
+                        String.valueOf(incomeTotalSum)));
+        
         expenseTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),
-                String.valueOf(totalSum)));
-
+                String.valueOf(expenseTotalSum)));
 
         //expenseRecyclerView.setHasFixedSize(true);
-        expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
-
         return view;
     }
 
@@ -139,6 +101,64 @@ public class TodayPageFragment extends Fragment {
         }
 
         return newList;
+
+    }
+
+    private void updateExpenseRecyclerView() {
+
+        if (mainActivityViewModel.getExpenses().getValue().size() > 0) {
+            List<Expense> newExpenseList = getLastThree(
+                    mainActivityViewModel.getExpenses().getValue()
+            );
+            expenseTotalSum = getSum(newExpenseList);
+            ExpenseRecyclerAdapter expenseRecyclerAdapter = new
+                    ExpenseRecyclerAdapter(newExpenseList,this);
+            expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
+        }
+
+
+    }
+
+    private void updateIncomeRecyclerView() {
+        if (mainActivityViewModel.getIncomes().getValue().size() > 0) {
+            List<Income> newIncomeList = getLastThree(
+                    mainActivityViewModel.getIncomes().getValue()
+            );
+            incomeTotalSum = getSum(newIncomeList);
+            IncomeRecyclerAdapter incomeRecyclerAdapter = new IncomeRecyclerAdapter(getContext(),
+                    newIncomeList);
+            incomeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
+        }
+    }
+
+    private <T> int getSum(List<T> obj) {
+        int totalSum = 0;
+        for (int i = 0; i < obj.size(); i++) {
+            if (obj.get(i) instanceof Income) {
+                totalSum += ((Income) obj.get(i)).getIncomeAmount();
+            }else {
+                totalSum += ((Expense) obj.get(i)).getExpenseAmount();
+            }
+        }
+        return totalSum;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause: ");
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onResume: ");
+        super.onResume();
+    }
+
+    @Override
+    public void onItemClicked(int position) {
 
     }
 }

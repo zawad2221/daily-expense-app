@@ -23,12 +23,13 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 
 import info.devram.dailyexpenses.Adapters.ExpenseRecyclerAdapter;
+import info.devram.dailyexpenses.Adapters.RecyclerOnClick;
 import info.devram.dailyexpenses.ExpenseActivity;
 import info.devram.dailyexpenses.Models.Expense;
 import info.devram.dailyexpenses.R;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 
-public class ExpensePageFragment extends Fragment {
+public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
 
     private static final String TAG = "ExpensePageFragment";
 
@@ -50,7 +51,7 @@ public class ExpensePageFragment extends Fragment {
         RecyclerView expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
 
         ExpenseRecyclerAdapter expenseRecyclerAdapter = new ExpenseRecyclerAdapter(
-                mainActivityViewModel.getExpenses().getValue());
+                mainActivityViewModel.getExpenses().getValue(),this);
 
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
@@ -79,7 +80,8 @@ public class ExpensePageFragment extends Fragment {
     @Override
     public void onPause() {
         Log.i(TAG, "onPause started: ");
-        mainActivityViewModel.getExpenses().observe(getActivity(), new Observer<List<Expense>>() {
+        mainActivityViewModel.getExpenses().observe(getActivity(),
+                new Observer<List<Expense>>() {
             @Override
             public void onChanged(List<Expense> expenses) {
                 Log.i(TAG, "onChanged: " + expenses);
@@ -94,5 +96,10 @@ public class ExpensePageFragment extends Fragment {
         Log.i(TAG, "onStop started: ");
         super.onStop();
         Log.i(TAG, "onStop ended: ");
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        Log.i(TAG, "onItemClicked: " + position);
     }
 }

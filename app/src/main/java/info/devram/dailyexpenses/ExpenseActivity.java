@@ -31,6 +31,8 @@ public class ExpenseActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Test");
+
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter
                 .createFromResource(this,
                         R.array.expense_type, android.R.layout.simple_spinner_item);

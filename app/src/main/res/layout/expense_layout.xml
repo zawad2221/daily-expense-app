@@ -43,7 +43,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="@string/total_exp_amt"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="0dp"
                 android:textSize="16sp" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
