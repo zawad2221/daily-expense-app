@@ -1,13 +1,16 @@
 package info.devram.dainikhatabook.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +39,8 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
     private TextView netCashinHand;
     private TextView expenseTotalAmountTextView;
     private TextView incomeTotalAmountTextView;
+    private ImageView netCashImageView;
+    private CardView netCashCardView;
 
     public TodayPageFragment(MainActivityViewModel viewModel) {
         this.mainActivityViewModel = viewModel;
@@ -74,6 +79,8 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
         TextView incomeTitletextView = view.findViewById(R.id.titleTextView);
         netCashinHand = view.findViewById(R.id.total_amt_txt_view);
+        netCashImageView = view.findViewById(R.id.netcash_image);
+        netCashCardView = view.findViewById(R.id.netCash_cardView);
         /*
          * observer pattern applied to viewModel object so that
          * data can be observed
@@ -152,6 +159,20 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
     private void updateNetCashTextView() {
         expenseTotalSum = getSum(mainActivityViewModel.getExpenses().getValue());
         incomeTotalSum = getSum(mainActivityViewModel.getIncomes().getValue());
+
+
+
+        int netCash = incomeTotalSum - expenseTotalSum;
+
+        if (netCash == 0) {
+            netCashImageView.setImageResource(R.drawable.ic_balance);
+        }else if (netCash > 0) {
+            netCashImageView.setImageResource(R.drawable.ic_balance_left);
+            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.alterAccent));
+        }else {
+            netCashImageView.setImageResource(R.drawable.ic_balance_right);
+            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.error));
+        }
         netCashinHand.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),
                 String.valueOf(incomeTotalSum - expenseTotalSum)));
