@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import info.devram.dailyexpenses.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dailyexpenses.Adapters.RecyclerOnClick;
 import info.devram.dailyexpenses.ExpenseActivity;
 import info.devram.dailyexpenses.Models.Expense;
+import info.devram.dailyexpenses.Models.Income;
 import info.devram.dailyexpenses.R;
 import info.devram.dailyexpenses.ViewModel.MainActivityViewModel;
 
@@ -35,6 +38,9 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
 
     private DialogFragment dialog;
     private MainActivityViewModel mainActivityViewModel;
+    private TextView totalExpenseTextView;
+    public static final int REQUEST_CODE = 1;
+    private ExpenseRecyclerAdapter expenseRecyclerAdapter;
 
     public ExpensePageFragment(MainActivityViewModel mainActivityViewModel) {
         this.mainActivityViewModel = mainActivityViewModel;
@@ -49,12 +55,19 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
         View view = inflater.inflate(R.layout.fragment_expense_page,container,false);
 
         RecyclerView expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
+        totalExpenseTextView = view.findViewById(R.id.total_exp_amt_txt_view);
+        TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
 
-        ExpenseRecyclerAdapter expenseRecyclerAdapter = new ExpenseRecyclerAdapter(
+        expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
+                "Total",view.getResources().getString(R.string.total_expense)));
+
+        expenseRecyclerAdapter = new ExpenseRecyclerAdapter(
                 mainActivityViewModel.getExpenses().getValue(),this);
 
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
+
+        setTotalExpense();
 
         FloatingActionButton fab = view.findViewById(R.id.fab_expense);
 
@@ -64,7 +77,7 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
 
                 Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
 
-                startActivity(expenseIntent);
+                startActivityForResult(expenseIntent,REQUEST_CODE);
 
 //                dialog = new SaveDataDialog(adapter,"Enter Expenses");
 //
@@ -78,28 +91,47 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
     }
 
     @Override
-    public void onPause() {
-        Log.i(TAG, "onPause started: ");
-        mainActivityViewModel.getExpenses().observe(getActivity(),
-                new Observer<List<Expense>>() {
-            @Override
-            public void onChanged(List<Expense> expenses) {
-                Log.i(TAG, "onChanged: " + expenses);
-            }
-        });
-        super.onPause();
-        Log.i(TAG, "onPause ended: ");
-    }
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public void onStop() {
-        Log.i(TAG, "onStop started: ");
-        super.onStop();
-        Log.i(TAG, "onStop ended: ");
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == 1) {
+                if (data != null){
+                    Expense expense = new Expense();
+                    expense.setExpenseType(data.getStringExtra("type"));
+                    expense.setExpenseDate(data.getStringExtra("date"));
+                    expense.setExpenseAmount(data.getIntExtra("amount",0));
+                    expense.setExpenseDesc(data.getStringExtra("desc"));
+                    if (mainActivityViewModel.addExpense(expense)) {
+                        expenseRecyclerAdapter.notifyDataSetChanged();
+                        setTotalExpense();
+                    }
+                }else {
+                    Log.e(TAG, "onActivityResult: intent data is null " );
+                }
+            }
+        }
     }
 
     @Override
     public void onItemClicked(int position) {
         Log.i(TAG, "onItemClicked: " + position);
+    }
+
+    private int getSum(List<Expense> obj) {
+        int totalSum = 0;
+        for (int i = 0; i < obj.size(); i++) {
+            totalSum += obj.get(i).getExpenseAmount();
+
+        }
+        return totalSum;
+    }
+
+    private void setTotalExpense() {
+        int totalExpenses = getSum(mainActivityViewModel.getExpenses().getValue());
+
+        totalExpenseTextView.setText(MessageFormat.format("{0} {1}",
+                getResources().getString(R.string.rs_symbol),
+                String.valueOf(totalExpenses)));
     }
 }

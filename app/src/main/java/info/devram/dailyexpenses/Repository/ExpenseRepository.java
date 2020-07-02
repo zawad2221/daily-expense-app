@@ -17,6 +17,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     private DatabaseHandler db;
     private static ExpenseRepository mInstance = null;
+    private List<Expense> expenseList;
 
     private ExpenseRepository(Context context) {
         this.db = DatabaseHandler.getInstance(context);
@@ -33,14 +34,15 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     public Boolean addData(Expense obj) {
         try{
 
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(Util.EXPENSE_KEY_TYPE,obj.getExpenseType());
-            contentValues.put(Util.EXPENSE_KEY_DESC,obj.getExpenseDesc());
-            contentValues.put(Util.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
-            contentValues.put(Util.EXPENSE_KEY_DATE,obj.getExpenseDate());
-
-            db.getWritableDatabase().insert(Util.EXPENSE_TABLE_NAME,
-                    null,contentValues);
+            expenseList.add(obj);
+//            ContentValues contentValues = new ContentValues();
+//            contentValues.put(Util.EXPENSE_KEY_TYPE,obj.getExpenseType());
+//            contentValues.put(Util.EXPENSE_KEY_DESC,obj.getExpenseDesc());
+//            contentValues.put(Util.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
+//            contentValues.put(Util.EXPENSE_KEY_DATE,obj.getExpenseDate());
+//
+//            db.getWritableDatabase().insert(Util.EXPENSE_TABLE_NAME,
+//                    null,contentValues);
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -53,7 +55,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     @Override
     public List<Expense> getAll() {
 
-        List<Expense> expenseList = new ArrayList<>();
+        expenseList = new ArrayList<>();
 
         for (int i = 0 ; i < 5 ; i++) {
             Expense expense = new Expense();

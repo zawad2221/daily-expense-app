@@ -4,14 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,25 +28,28 @@ public class ExpenseActivity extends AppCompatActivity {
     private ArrayAdapter<CharSequence> adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setTitle("Test");
+        setTitle("Add Expense");
 
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter
+        adapter = ArrayAdapter
                 .createFromResource(this,
                         R.array.expense_type, android.R.layout.simple_spinner_item);
 
-        Spinner spinner = findViewById(R.id.spinner);
+        final Spinner spinner = findViewById(R.id.addNew_spinner);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
 
-        datePicker = findViewById(R.id.edit_text_expense);
+        datePicker = findViewById(R.id.edit_text_date);
+        Button addNew = findViewById(R.id.add_new_btn);
+        final EditText amountEditText = findViewById(R.id.edit_text_amount);
+        final EditText descEdittext = findViewById(R.id.edit_text_desc);
 
         myCalendar = Calendar.getInstance();
         updateLabel();
@@ -65,6 +71,23 @@ public class ExpenseActivity extends AppCompatActivity {
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
+            }
+        });
+
+        addNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String type = spinner.getSelectedItem().toString();
+                String date = datePicker.getText().toString();
+                int amount = Integer.parseInt(amountEditText.getText().toString());
+                String desc = descEdittext.getText().toString();
+                Intent resultIntent = getIntent();
+                resultIntent.putExtra("type",type);
+                resultIntent.putExtra("date",date);
+                resultIntent.putExtra("amount",amount);
+                resultIntent.putExtra("desc",desc);
+                setResult(1,resultIntent);
+                finish();
             }
         });
 

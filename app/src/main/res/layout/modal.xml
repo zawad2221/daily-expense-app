@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content">
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/addNew_spinner"
                     android:padding="8dp"
                     android:spinnerMode="dropdown"
                     android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 android:layout_marginBottom="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_text_expense"
+                    android:id="@+id/edit_text_income"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"

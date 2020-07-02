@@ -46,7 +46,9 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
                 .setText(income.getIncomeType());
 
         holder.incomeAmount
-                .setText(String.valueOf(income.getIncomeAmount()));
+                .setText(MessageFormat.format("{0} {1}",
+                        holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
+                        String.valueOf(income.getIncomeAmount())));
         switch (income.getIncomeType()) {
             case "cash":
                 holder.incomeImageView.setImageResource(R.drawable.ic_cash_icon);

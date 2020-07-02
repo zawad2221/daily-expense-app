@@ -49,7 +49,7 @@ public class SaveDataDialog extends DialogFragment {
 
         builder.setView(view);
 
-        Spinner spinner = view.findViewById(R.id.spinner);
+        Spinner spinner = view.findViewById(R.id.addNew_spinner);
 
         TextView titleTextView = view.findViewById(R.id.title_txt_view);
         titleTextView.setText(title);
@@ -58,7 +58,7 @@ public class SaveDataDialog extends DialogFragment {
 
         spinner.setAdapter(adapter);
 
-        datePicker = view.findViewById(R.id.edit_text_expense);
+        datePicker = view.findViewById(R.id.edit_text_income);
 
         myCalendar = Calendar.getInstance();
         updateLabel();

@@ -1,6 +1,5 @@
 package info.devram.dailyexpenses.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +34,9 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
     private RecyclerView incomeRecyclerView;
     private int expenseTotalSum;
     private int incomeTotalSum;
+    private TextView netCashinHand;
+    private TextView expenseTotalAmountTextView;
+    private TextView incomeTotalAmountTextView;
 
     public TodayPageFragment(MainActivityViewModel viewModel) {
         this.mainActivityViewModel = viewModel;
@@ -69,9 +70,11 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         incomeRecyclerView = view.findViewById(R.id.inc_recycler_view);
         expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
 
-        TextView incomeTotalAmountTextView = view.findViewById(R.id.inc_total_amt_txt_view);
-        TextView expenseTotalAmountTextView = view.findViewById(R.id.total_exp_amt_txt_view);
-
+        incomeTotalAmountTextView = view.findViewById(R.id.total_inc_amt_txt_view);
+        expenseTotalAmountTextView = view.findViewById(R.id.total_exp_amt_txt_view);
+        TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
+        TextView incomeTitletextView = view.findViewById(R.id.titleTextView);
+        netCashinHand = view.findViewById(R.id.total_amt_txt_view);
         /*
          * observer pattern applied to viewModel object so that
          * data can be observed
@@ -80,16 +83,12 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         updateIncomeRecyclerView();
         updateExpenseRecyclerView();
 
-        incomeTotalAmountTextView
-                .setText(MessageFormat.format("{0} {1}",
-                        getResources().getString(R.string.rs_symbol),
-                        String.valueOf(incomeTotalSum)));
-        
-        expenseTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
-                getResources().getString(R.string.rs_symbol),
-                String.valueOf(expenseTotalSum)));
+        expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
+                "Today",view.getResources().getString(R.string.total_expense)));
 
-        //expenseRecyclerView.setHasFixedSize(true);
+        incomeTitletextView.setText(MessageFormat.format("{0} {1}",
+                "Today",view.getResources().getString(R.string.total_income)));
+
         return view;
     }
 
@@ -101,7 +100,6 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         }
 
         return newList;
-
     }
 
     private void updateExpenseRecyclerView() {
@@ -115,9 +113,11 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
                     ExpenseRecyclerAdapter(newExpenseList,this);
             expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
+
+            expenseTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
+                    getResources().getString(R.string.rs_symbol),
+                    String.valueOf(expenseTotalSum)));
         }
-
-
     }
 
     private void updateIncomeRecyclerView() {
@@ -130,6 +130,11 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
                     newIncomeList);
             incomeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
+
+            incomeTotalAmountTextView
+                    .setText(MessageFormat.format("{0} {1}",
+                            getResources().getString(R.string.rs_symbol),
+                            String.valueOf(incomeTotalSum)));
         }
     }
 
@@ -145,16 +150,27 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         return totalSum;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(TAG, "onPause: ");
+    private void updateNetCashTextView() {
+        expenseTotalSum = getSum(mainActivityViewModel.getExpenses().getValue());
+        incomeTotalSum = getSum(mainActivityViewModel.getIncomes().getValue());
+        netCashinHand.setText(MessageFormat.format("{0} {1}",
+                getResources().getString(R.string.rs_symbol),
+                String.valueOf(incomeTotalSum - expenseTotalSum)));
     }
+
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.i(TAG, "onPause: ");
+//    }
 
     @Override
     public void onResume() {
-        Log.i(TAG, "onResume: ");
+        //Log.i(TAG, "onResume: ");
         super.onResume();
+        updateExpenseRecyclerView();
+        updateIncomeRecyclerView();
+        updateNetCashTextView();
     }
 
     @Override

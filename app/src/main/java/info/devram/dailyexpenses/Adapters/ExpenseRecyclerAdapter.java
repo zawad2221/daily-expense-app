@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import info.devram.dailyexpenses.Models.Expense;
@@ -42,7 +43,9 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         holder.expenseTypeTextView
                 .setText(expense.getExpenseType());
         holder.expenseAmountTextView
-                .setText(String.valueOf(expense.getExpenseAmount()));
+                .setText(MessageFormat.format("{0} {1}",
+                        holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
+                        String.valueOf(expense.getExpenseAmount())));
         switch (expense.getExpenseType()) {
             case "clothing":
                 holder.expenseImageView.setImageResource(R.drawable.ic_cloth_icon);

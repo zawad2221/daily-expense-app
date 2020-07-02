@@ -21,6 +21,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_income" />
+    <include layout="@layout/add_new_content" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

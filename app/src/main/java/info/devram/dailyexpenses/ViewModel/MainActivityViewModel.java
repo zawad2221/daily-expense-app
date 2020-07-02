@@ -60,5 +60,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return mutableExpenseLiveData;
     }
 
-
+    public Boolean addExpense(Expense expense) {
+        if (expenseRepository.addData(expense)) {
+            return true;
+        }
+        return false;
+    }
 }
