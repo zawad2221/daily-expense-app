@@ -26,14 +26,14 @@ import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
-public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
+public class ExpensePageFragment extends Fragment{
 
     private static final String TAG = "ExpensePageFragment";
 
+    public static final int REQUEST_CODE = 1;
     private MainActivityViewModel mainActivityViewModel;
     private TextView totalExpenseTextView;
-    public static final int REQUEST_CODE = 1;
-    private ExpenseRecyclerAdapter expenseRecyclerAdapter;
+    private ExpenseRecyclerAdapter expRecyclerAdapter;
 
     public ExpensePageFragment(MainActivityViewModel mainActivityViewModel) {
         this.mainActivityViewModel = mainActivityViewModel;
@@ -54,11 +54,12 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
         expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
                 "Total",view.getResources().getString(R.string.total_expense)));
 
-        expenseRecyclerAdapter = new ExpenseRecyclerAdapter(
-                mainActivityViewModel.getExpenses().getValue(),this);
+        expRecyclerAdapter = new ExpenseRecyclerAdapter(
+                view.getContext(),
+                mainActivityViewModel.getExpenses().getValue());
 
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
+        expenseRecyclerView.setAdapter(expRecyclerAdapter);
 
         setTotalExpense();
 
@@ -96,7 +97,7 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
                     expense.setExpenseAmount(data.getIntExtra("amount",0));
                     expense.setExpenseDesc(data.getStringExtra("desc"));
                     if (mainActivityViewModel.addExpense(expense)) {
-                        expenseRecyclerAdapter.notifyDataSetChanged();
+                        expRecyclerAdapter.notifyDataSetChanged();
                         setTotalExpense();
                     }
                 }else {
@@ -104,11 +105,6 @@ public class ExpensePageFragment extends Fragment implements RecyclerOnClick {
                 }
             }
         }
-    }
-
-    @Override
-    public void onItemClicked(int position) {
-        Log.i(TAG, "onItemClicked: " + position);
     }
 
     private int getSum(List<Expense> obj) {

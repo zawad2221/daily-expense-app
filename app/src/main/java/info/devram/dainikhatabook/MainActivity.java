@@ -2,18 +2,20 @@ package info.devram.dainikhatabook;
 
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
+//import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import info.devram.dainikhatabook.Adapters.ViewPagerAdapter;
+import info.devram.dainikhatabook.Adapters.MainActivityPagerAdapter;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
-import info.devram.dainikhatabook.ui.IncomePageFragment;
-import info.devram.dainikhatabook.ui.TodayPageFragment;
-import info.devram.dainikhatabook.ui.ExpensePageFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,18 +36,27 @@ public class MainActivity extends AppCompatActivity {
 
         mainActivityViewModel.init();
 
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        final ViewPager2 viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        viewPagerAdapter.addFragment(new TodayPageFragment(mainActivityViewModel), "Today");
-        viewPagerAdapter.addFragment(new ExpensePageFragment(mainActivityViewModel), "Expenses");
-        viewPagerAdapter.addFragment(new IncomePageFragment(mainActivityViewModel), "Income");
+        FragmentStateAdapter viewPagerAdapter = new MainActivityPagerAdapter(
+                getSupportFragmentManager(),
+                getLifecycle(),
+                mainActivityViewModel
+        );
 
         viewPager.setAdapter(viewPagerAdapter);
 
-        tabLayout.setupWithViewPager(viewPager);
+        new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                String[] tabTitles = new String[]{
+                        "Today","Expenses","Income"
+                };
+                tab.setText(tabTitles[position]);
+                viewPager.setCurrentItem(tab.getPosition(),true);
+            }
+        }).attach();
 
     }
 

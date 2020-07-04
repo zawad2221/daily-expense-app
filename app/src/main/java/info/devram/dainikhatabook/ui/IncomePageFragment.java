@@ -57,7 +57,6 @@ public class IncomePageFragment extends Fragment {
                 "Total",view.getResources().getString(R.string.total_income)));
 
         incomeRecyclerAdapter = new IncomeRecyclerAdapter(
-                view.getContext(),
                 mainActivityViewModel.getIncomes().getValue());
 
         incomeRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -70,9 +69,9 @@ public class IncomePageFragment extends Fragment {
                 String.valueOf(totalIncome)));
 
         FloatingActionButton fab = view.findViewById(R.id.fab_income);
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(view.getContext(),
-                R.array.income_type, android.R.layout.simple_spinner_item);
+//        final ArrayAdapter<CharSequence> adapter = ArrayAdapter
+//                .createFromResource(view.getContext(),
+//                R.array.income_type, android.R.layout.simple_spinner_item);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

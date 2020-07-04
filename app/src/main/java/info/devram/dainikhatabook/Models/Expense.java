@@ -62,6 +62,12 @@ public class Expense {
         this.expenseDesc = expenseDesc;
     }
 
+    @Override
+    public String toString() {
+        //return this.getExpenseType() + " " + this.getExpenseAmount();
+        return this.getExpenseDate();
+    }
+
     public static class Model implements ModelHandler {
 
         @Override

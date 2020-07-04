@@ -1,5 +1,7 @@
 package info.devram.dainikhatabook.Adapters;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,16 @@ import info.devram.dainikhatabook.R;
 
 public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
 
-    private List<Expense> expenseList;
-    private RecyclerOnClick recyclerOnClick;
+    private static final String TAG = "ExpenseRecyclerAdapter";
 
-    public ExpenseRecyclerAdapter(List<Expense> expenseList,RecyclerOnClick recyclerOnClick) {
+    private Context mContext;
+    private List<Expense> expenseList;
+    //private RecyclerOnClick recyclerOnClick;
+
+    public ExpenseRecyclerAdapter(Context context,List<Expense> expenseList) {
+        this.mContext = context;
         this.expenseList = expenseList;
-        this.recyclerOnClick = recyclerOnClick;
+        //this.recyclerOnClick = recyclerOnClick;
     }
 
     @NonNull
@@ -33,7 +39,7 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.expense_row,parent,false);
 
-        return new ViewHolder(view,recyclerOnClick);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -46,7 +52,8 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
                         String.valueOf(expense.getExpenseAmount())));
-        switch (expense.getExpenseType()) {
+
+        switch (expense.getExpenseType().toLowerCase()) {
             case "clothing":
                 holder.expenseImageView.setImageResource(R.drawable.ic_cloth_icon);
                 break;
@@ -85,26 +92,39 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         return expenseList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public void updateData(List<Expense> newExpenseList) {
+
+        this.expenseList.clear();
+        expenseList.addAll(newExpenseList);
+        notifyDataSetChanged();
+    }
+
+    public void clearData() {
+        expenseList.clear();
+        notifyDataSetChanged();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+//        implements View.OnClickListener
 
         public ImageView expenseImageView;
         public TextView expenseTypeTextView;
         public TextView expenseAmountTextView;
         private RecyclerOnClick recyclerOnClick;
 
-        public ViewHolder(@NonNull View itemView,RecyclerOnClick recyclerOnClick) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             expenseImageView = itemView.findViewById(R.id.exp_dash_img_view);
             expenseTypeTextView = itemView.findViewById(R.id.exp_dash_txt_view);
             expenseAmountTextView = itemView.findViewById(R.id.exp_amt_dash_txt_view);
-            this.recyclerOnClick = recyclerOnClick;
-            itemView.setOnClickListener(this);
+            //this.recyclerOnClick = recyclerOnClick;
+            //itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            recyclerOnClick.onItemClicked(getAdapterPosition());
-        }
+//        @Override
+//        public void onClick(View v) {
+//            recyclerOnClick.onItemClicked(getAdapterPosition());
+//        }
     }
 }

@@ -1,6 +1,7 @@
 package info.devram.dainikhatabook.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,13 @@ import info.devram.dainikhatabook.R;
 
 public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAdapter.ViewHolder> {
 
-    private List<Income> incomeList;
-    private Context context;
+    private static final String TAG = "IncomeRecyclerAdapter";
 
-    public IncomeRecyclerAdapter(Context context,List<Income> incomeList) {
-        this.context = context;
+    private List<Income> incomeList;
+
+
+    public IncomeRecyclerAdapter(List<Income> incomeList) {
+
         this.incomeList = incomeList;
     }
 
@@ -42,14 +45,16 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
                                  int position) {
 
         Income income = incomeList.get(position);
-        holder.incomeType
+        holder.incomeTypeTextView
                 .setText(income.getIncomeType());
 
         holder.incomeAmount
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
                         String.valueOf(income.getIncomeAmount())));
-        switch (income.getIncomeType()) {
+
+
+        switch (income.getIncomeType().toLowerCase()) {
             case "cash":
                 holder.incomeImageView.setImageResource(R.drawable.ic_cash_icon);
                 break;
@@ -67,16 +72,29 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
         return this.incomeList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public void updateData(List<Income> newIncomeList) {
 
-        public TextView incomeType;
+        incomeList.clear();
+        incomeList.addAll(newIncomeList);
+        notifyDataSetChanged();
+    }
+
+
+    public void clearData() {
+        incomeList.clear();
+        notifyDataSetChanged();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView incomeTypeTextView;
         public TextView incomeAmount;
         public ImageView incomeImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            incomeType = itemView.findViewById(R.id.inc_dash_txt_view);
+            incomeTypeTextView = itemView.findViewById(R.id.inc_dash_txt_view);
             incomeAmount = itemView.findViewById(R.id.inc_amt_dash_txt_view);
             incomeImageView = itemView.findViewById(R.id.inc_dash_img_view);
         }

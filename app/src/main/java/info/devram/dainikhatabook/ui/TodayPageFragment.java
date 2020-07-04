@@ -2,6 +2,7 @@ package info.devram.dainikhatabook.ui;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
@@ -27,7 +30,7 @@ import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
-public class TodayPageFragment extends Fragment implements RecyclerOnClick{
+public class TodayPageFragment extends Fragment {
 
     public static final String TAG = "TodayFragment";
     private MainActivityViewModel mainActivityViewModel;
@@ -41,6 +44,12 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
     private TextView incomeTotalAmountTextView;
     private ImageView netCashImageView;
     private CardView netCashCardView;
+    private IncomeRecyclerAdapter incomeRecyclerAdapter;
+    private ExpenseRecyclerAdapter expenseRecyclerAdapter;
+    private int incomeCount;
+    private int expenseCount;
+    private List<Income> newIncomeList;
+    private List<Expense> newExpenseList;
 
     public TodayPageFragment(MainActivityViewModel viewModel) {
         this.mainActivityViewModel = viewModel;
@@ -53,6 +62,8 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_today_page, container, false);
+
+
 
         /*
          * instantiate view model data object
@@ -77,7 +88,7 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         incomeTotalAmountTextView = view.findViewById(R.id.total_inc_amt_txt_view);
         expenseTotalAmountTextView = view.findViewById(R.id.total_exp_amt_txt_view);
         TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
-        TextView incomeTitletextView = view.findViewById(R.id.titleTextView);
+        TextView incomeTitletextView = view.findViewById(R.id.today_inc_titleTextView);
         netCashinHand = view.findViewById(R.id.total_amt_txt_view);
         netCashImageView = view.findViewById(R.id.netcash_image);
         netCashCardView = view.findViewById(R.id.netCash_cardView);
@@ -90,10 +101,13 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         updateExpenseRecyclerView();
 
         expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
-                "Today",view.getResources().getString(R.string.total_expense)));
+                "Today", view.getResources().getString(R.string.total_expense)));
 
         incomeTitletextView.setText(MessageFormat.format("{0} {1}",
-                "Today",view.getResources().getString(R.string.total_income)));
+                "Today", view.getResources().getString(R.string.total_income)));
+
+        incomeCount = mainActivityViewModel.getIncomes().getValue().size();
+        expenseCount = mainActivityViewModel.getExpenses().getValue().size();
 
         return view;
     }
@@ -111,29 +125,37 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
     private void updateExpenseRecyclerView() {
 
         if (mainActivityViewModel.getExpenses().getValue().size() > 0) {
-            List<Expense> newExpenseList = getLastThree(
+
+            newExpenseList = getLastThree(
                     mainActivityViewModel.getExpenses().getValue()
             );
+
+
             expenseTotalSum = getSum(newExpenseList);
-            ExpenseRecyclerAdapter expenseRecyclerAdapter = new
-                    ExpenseRecyclerAdapter(newExpenseList,this);
+            expenseRecyclerAdapter = new
+                    ExpenseRecyclerAdapter(getContext(), newExpenseList);
             expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             expenseRecyclerView.setAdapter(expenseRecyclerAdapter);
 
             expenseTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
                     getResources().getString(R.string.rs_symbol),
                     String.valueOf(expenseTotalSum)));
+
+
         }
+
+
+
     }
 
     private void updateIncomeRecyclerView() {
+
         if (mainActivityViewModel.getIncomes().getValue().size() > 0) {
-            List<Income> newIncomeList = getLastThree(
+            newIncomeList = getLastThree(
                     mainActivityViewModel.getIncomes().getValue()
             );
             incomeTotalSum = getSum(newIncomeList);
-            IncomeRecyclerAdapter incomeRecyclerAdapter = new IncomeRecyclerAdapter(getContext(),
-                    newIncomeList);
+            incomeRecyclerAdapter = new IncomeRecyclerAdapter(newIncomeList);
             incomeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
 
@@ -141,7 +163,10 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
                     .setText(MessageFormat.format("{0} {1}",
                             getResources().getString(R.string.rs_symbol),
                             String.valueOf(incomeTotalSum)));
+
+
         }
+
     }
 
     private <T> int getSum(List<T> obj) {
@@ -149,7 +174,7 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         for (int i = 0; i < obj.size(); i++) {
             if (obj.get(i) instanceof Income) {
                 totalSum += ((Income) obj.get(i)).getIncomeAmount();
-            }else {
+            } else {
                 totalSum += ((Expense) obj.get(i)).getExpenseAmount();
             }
         }
@@ -161,15 +186,14 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
         incomeTotalSum = getSum(mainActivityViewModel.getIncomes().getValue());
 
 
-
         int netCash = incomeTotalSum - expenseTotalSum;
 
         if (netCash == 0) {
             netCashImageView.setImageResource(R.drawable.ic_balance);
-        }else if (netCash > 0) {
+        } else if (netCash > 0) {
             netCashImageView.setImageResource(R.drawable.ic_balance_left);
             netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.alterAccent));
-        }else {
+        } else {
             netCashImageView.setImageResource(R.drawable.ic_balance_right);
             netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.error));
         }
@@ -178,23 +202,43 @@ public class TodayPageFragment extends Fragment implements RecyclerOnClick{
                 String.valueOf(incomeTotalSum - expenseTotalSum)));
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Log.i(TAG, "onPause: ");
-//    }
-
     @Override
     public void onResume() {
-        //Log.i(TAG, "onResume: ");
         super.onResume();
-        updateExpenseRecyclerView();
-        updateIncomeRecyclerView();
+
+        mainActivityViewModel.getIncomes().observe(requireActivity(), new Observer<List<Income>>() {
+            @Override
+            public void onChanged(List<Income> incomes) {
+
+                if (incomes.size() > incomeCount) {
+                    newIncomeList = getLastThree(incomes);
+                    incomeRecyclerAdapter.updateData(newIncomeList);
+                    incomeTotalSum = getSum(newIncomeList);
+                    incomeTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
+                            getResources().getString(R.string.rs_symbol),
+                            String.valueOf(incomeTotalSum)));
+                }
+
+            }
+        });
+
+        mainActivityViewModel.getExpenses().observe(requireActivity(), new Observer<List<Expense>>() {
+            @Override
+            public void onChanged(List<Expense> expenses) {
+                if (expenses.size() > expenseCount) {
+                    newExpenseList = getLastThree(expenses);
+                    Log.i(TAG, "onChanged: uodate expenses " + newExpenseList);
+                    expenseRecyclerAdapter.updateData(newExpenseList);
+                    expenseTotalSum = getSum(newExpenseList);
+                    expenseTotalAmountTextView.setText(MessageFormat.format("{0} {1}",
+                            getResources().getString(R.string.rs_symbol),
+                            String.valueOf(expenseTotalSum)));
+                }
+            }
+        });
+
+
         updateNetCashTextView();
     }
 
-    @Override
-    public void onItemClicked(int position) {
-
-    }
 }

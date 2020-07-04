@@ -12,7 +12,8 @@
         <activity
             android:name="info.devram.dainikhatabook.IncomeActivity"
             android:label="@string/title_activity_income"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="info.devram.dainikhatabook.ExpenseActivity"
             android:theme="@style/AppTheme.NoActionBar" />

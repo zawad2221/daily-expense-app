@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,12 +21,22 @@
             android:textAlignment="center"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/alterPrimaryDark"
+            app:tabIndicatorColor="@color/alterAccent"
+            app:tabTextColor="@android:color/white"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/content_main" />
-
-
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        app:layout_anchor="@id/tabLayout"
+        app:layout_anchorGravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
