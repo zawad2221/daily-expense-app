@@ -22,11 +22,12 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
     private static final String TAG = "IncomeRecyclerAdapter";
 
     private List<Income> incomeList;
+    private RecyclerOnClick recyclerOnClick;
 
-
-    public IncomeRecyclerAdapter(List<Income> incomeList) {
+    public IncomeRecyclerAdapter(List<Income> incomeList, RecyclerOnClick recyclerOnClick) {
 
         this.incomeList = incomeList;
+        this.recyclerOnClick = recyclerOnClick;
     }
 
     @NonNull
@@ -37,7 +38,7 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
                 .from(parent.getContext())
                 .inflate(R.layout.income_row,parent,false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view,recyclerOnClick);
     }
 
     @Override
@@ -79,24 +80,27 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
         notifyDataSetChanged();
     }
 
-
-    public void clearData() {
-        incomeList.clear();
-        notifyDataSetChanged();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         public TextView incomeTypeTextView;
         public TextView incomeAmount;
         public ImageView incomeImageView;
+        private RecyclerOnClick recyclerOnClick;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView,RecyclerOnClick recyclerOnClick) {
             super(itemView);
 
             incomeTypeTextView = itemView.findViewById(R.id.inc_dash_txt_view);
             incomeAmount = itemView.findViewById(R.id.inc_amt_dash_txt_view);
             incomeImageView = itemView.findViewById(R.id.inc_dash_img_view);
+            this.recyclerOnClick = recyclerOnClick;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            recyclerOnClick.onItemClicked(v,getAdapterPosition());
         }
     }
 }

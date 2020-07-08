@@ -10,9 +10,9 @@ interface DatabaseService<T> {
 
     public T getOne();
 
-    public int onUpdate(T obj);
+    public Boolean onUpdate(T obj);
 
-    public void onDelete(T obj);
+    public Boolean onDelete(T obj);
 
     public int getCount();
 }

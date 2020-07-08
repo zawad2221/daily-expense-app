@@ -21,14 +21,14 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
 
     private static final String TAG = "ExpenseRecyclerAdapter";
 
-    private Context mContext;
-    private List<Expense> expenseList;
-    //private RecyclerOnClick recyclerOnClick;
 
-    public ExpenseRecyclerAdapter(Context context,List<Expense> expenseList) {
-        this.mContext = context;
+    private List<Expense> expenseList;
+    private RecyclerOnClick recyclerOnClick;
+
+    public ExpenseRecyclerAdapter(List<Expense> expenseList,RecyclerOnClick recyclerOnClick) {
+
         this.expenseList = expenseList;
-        //this.recyclerOnClick = recyclerOnClick;
+        this.recyclerOnClick = recyclerOnClick;
     }
 
     @NonNull
@@ -39,7 +39,7 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.expense_row,parent,false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view,recyclerOnClick);
     }
 
     @Override
@@ -93,38 +93,38 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
     }
 
     public void updateData(List<Expense> newExpenseList) {
-
-        this.expenseList.clear();
+        expenseList.clear();
         expenseList.addAll(newExpenseList);
         notifyDataSetChanged();
     }
 
-    public void clearData() {
-        expenseList.clear();
-        notifyDataSetChanged();
+    public void deleteData(int position) {
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position,expenseList.size());
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-//        implements View.OnClickListener
+
+    public static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         public ImageView expenseImageView;
         public TextView expenseTypeTextView;
         public TextView expenseAmountTextView;
         private RecyclerOnClick recyclerOnClick;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerOnClick recyclerOnClick) {
             super(itemView);
 
             expenseImageView = itemView.findViewById(R.id.exp_dash_img_view);
             expenseTypeTextView = itemView.findViewById(R.id.exp_dash_txt_view);
             expenseAmountTextView = itemView.findViewById(R.id.exp_amt_dash_txt_view);
-            //this.recyclerOnClick = recyclerOnClick;
-            //itemView.setOnClickListener(this);
+            this.recyclerOnClick = recyclerOnClick;
+            itemView.setOnClickListener(this);
         }
 
-//        @Override
-//        public void onClick(View v) {
-//            recyclerOnClick.onItemClicked(getAdapterPosition());
-//        }
+        @Override
+        public void onClick(View v) {
+            recyclerOnClick.onItemClicked(v,getAdapterPosition());
+        }
     }
 }

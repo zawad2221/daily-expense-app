@@ -64,8 +64,8 @@ public class Expense {
 
     @Override
     public String toString() {
-        //return this.getExpenseType() + " " + this.getExpenseAmount();
-        return this.getExpenseDate();
+        return this.getId() + " " + this.getExpenseType() + " " + this.getExpenseAmount();
+        //return this.getExpenseDate();
     }
 
     public static class Model implements ModelHandler {

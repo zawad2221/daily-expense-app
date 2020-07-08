@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/alterPrimaryDark"
+            android:textAlignment="center"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:id="@+id/edit_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/spinner_border"
+                android:padding="8dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editActivityDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/edit_spinner"
+                app:layout_constraintStart_toStartOf="@+id/edit_spinner"
+                app:layout_constraintTop_toBottomOf="@+id/edit_spinner">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editDateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="no"
+
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="@string/date_hint"
+                    android:inputType="none"
+                    tools:layout_editor_absoluteX="1dp"
+                    tools:layout_editor_absoluteY="133dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editActivityAmountLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/editActivityDateLayout"
+                app:layout_constraintStart_toStartOf="@+id/editActivityDateLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editActivityDateLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editAmountView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="no"
+                    android:ems="10"
+                    android:hint="@string/amount_hint"
+                    android:inputType="number"
+                    tools:layout_editor_absoluteX="28dp"
+                    tools:layout_editor_absoluteY="227dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editActivityDescLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/editActivityAmountLayout"
+                app:layout_constraintStart_toStartOf="@+id/editActivityAmountLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editActivityAmountLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editDescView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="no"
+                    android:ems="10"
+                    android:hint="@string/desc_hint"
+                    tools:layout_editor_absoluteX="12dp"
+                    tools:layout_editor_absoluteY="343dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/editActivityBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/shape"
+                android:text="@string/expense_btn_edit"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="@+id/editActivityDescLayout"
+                app:layout_constraintStart_toStartOf="@+id/editActivityDescLayout"
+                app:layout_constraintTop_toBottomOf="@+id/editActivityDescLayout" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

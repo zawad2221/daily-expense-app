@@ -64,7 +64,7 @@ public class Income {
 
     @Override
     public String toString() {
-        String person = this.getIncomeType() + " " + this.getIncomeAmount();
+        String person = this.getId() + " " + this.getIncomeType() + " " + this.getIncomeAmount();
         return person;
     }
 

@@ -33,4 +33,9 @@
     <string name="rs_symbol">\u20B9</string>
     <string name="title_activity_income">Add Income</string>
     <string name="balance">balance</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="expense_btn_edit">Edit</string>
+    <string name="modal_btn_ok">ok</string>
+    <string name="modal_btn_cancel">cancel</string>
 </resources>
