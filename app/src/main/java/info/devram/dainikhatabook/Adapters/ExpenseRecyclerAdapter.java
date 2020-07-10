@@ -92,18 +92,6 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         return expenseList.size();
     }
 
-    public void updateData(List<Expense> newExpenseList) {
-        expenseList.clear();
-        expenseList.addAll(newExpenseList);
-        notifyDataSetChanged();
-    }
-
-    public void deleteData(int position) {
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position,expenseList.size());
-    }
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 

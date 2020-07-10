@@ -94,13 +94,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         expense.setExpenseAmount(Integer.parseInt(hashtable.get("amount")));
         expense.setExpenseDesc(hashtable.get("desc"));
         if (expenseRepository.onUpdate(expense)) {
-
             return true;
-
         }
         return false;
     }
-
     public Boolean editIncome(int position,Hashtable<String,String> hashtable) {
         Income income = mutableIncomeLiveData.getValue().get(position);
         income.setIncomeType(hashtable.get("type"));
@@ -108,9 +105,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         income.setIncomeAmount(Integer.parseInt(hashtable.get("amount")));
         income.setIncomeDesc(hashtable.get("desc"));
         if (incomeRepository.onUpdate(income)) {
-
             return true;
-
         }
         return false;
     }

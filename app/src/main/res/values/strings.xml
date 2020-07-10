@@ -36,6 +36,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="expense_btn_edit">Edit</string>
-    <string name="modal_btn_ok">ok</string>
+    <string name="modal_btn_ok">OK</string>
     <string name="modal_btn_cancel">cancel</string>
+    <string name="no_value">""</string>
 </resources>
