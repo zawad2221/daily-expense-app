@@ -6,7 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +22,7 @@ import java.util.Locale;
 
 public class EditActivity extends AppCompatActivity {
 
-    private static final String TAG = "EditActivity";
+    ///private static final String TAG = "EditActivity";
 
     private Spinner spinner;
     private EditText datePicker;
@@ -43,11 +43,6 @@ public class EditActivity extends AppCompatActivity {
         String activityTitle = getIntent().getStringExtra("title");
 
         setTitle(activityTitle);
-
-//        Log.i(TAG, "intent type " + getIntent().getStringExtra("type"));
-//        Log.i(TAG, "intent date " + getIntent().getStringExtra("date"));
-//        Log.i(TAG, "intent amount " + getIntent().getIntExtra("amount",0));
-//        Log.i(TAG, "intent desc " + getIntent().getStringExtra("desc"));
 
         if (activityTitle.toLowerCase().equals("edit expense")) {
             adapter = ArrayAdapter

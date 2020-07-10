@@ -45,7 +45,6 @@ public class ExpensePageFragment extends Fragment
     private ExpenseRecyclerAdapter expRecyclerAdapter;
 
     private int editItemAdapterPosition;
-    private int editItemExpenseID;
 
     public ExpensePageFragment(MainActivityViewModel mainActivityViewModel) {
         this.mainActivityViewModel = mainActivityViewModel;
@@ -85,12 +84,6 @@ public class ExpensePageFragment extends Fragment
 
                 startActivityForResult(expenseIntent,ADD_REQUEST_CODE);
 
-//                dialog = new SaveDataDialog(adapter,"Enter Expenses");
-//
-//                dialog.show(getParentFragmentManager(),null);
-//
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
         return view;
@@ -101,7 +94,7 @@ public class ExpensePageFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ADD_REQUEST_CODE) {
-            //Log.i(TAG, "onActivityResult: add request called ");
+
             if (resultCode == 1) {
                 if (data != null){
                     if (mainActivityViewModel.addExpense(getIntentData(data))) {
@@ -117,9 +110,8 @@ public class ExpensePageFragment extends Fragment
         if (requestCode == EDIT_REQUEST_CODE) {
             if(resultCode == 1) {
                 if (data != null) {
-                    if (mainActivityViewModel.editExpense(editItemAdapterPosition,getIntentData(data))) {
-                        Log.i(TAG, "adapter position " + editItemAdapterPosition);
-
+                    if (mainActivityViewModel.editExpense(editItemAdapterPosition,
+                            getIntentData(data))) {
                         expRecyclerAdapter.notifyItemChanged(editItemAdapterPosition);
                         setTotalExpense();
                     }
@@ -138,7 +130,6 @@ public class ExpensePageFragment extends Fragment
         hashtable.put("date",data.getStringExtra("date"));
         hashtable.put("amount",String.valueOf(data.getIntExtra("amount",0)));
         hashtable.put("desc", data.getStringExtra("desc"));
-
 
         return hashtable;
     }
@@ -169,7 +160,7 @@ public class ExpensePageFragment extends Fragment
 
     @Override
     public void onItemClicked(View view, final int position) {
-
+        editItemAdapterPosition = position;
         PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
 
         popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
@@ -179,16 +170,12 @@ public class ExpensePageFragment extends Fragment
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.edit_menu_item:
-
-                        editItemAdapterPosition = position;
-
                         Intent intent = new Intent(getActivity(), EditActivity.class);
                         Expense selectedObj = mainActivityViewModel.getExpenses().getValue().get(position);
                         setIntentData(selectedObj,intent);
                         startActivityForResult(intent,EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
-                        Log.i(TAG, "delete item ");
                         showDialog();
                         break;
                     default:
@@ -202,7 +189,6 @@ public class ExpensePageFragment extends Fragment
     }
 
     private void setIntentData(Expense selectedItem,Intent intentData) {
-        editItemExpenseID = selectedItem.getId();
         intentData.putExtra("title","Edit Expense");
         intentData.putExtra("type",selectedItem.getExpenseType());
         intentData.putExtra("date",selectedItem.getExpenseDate());
@@ -221,7 +207,6 @@ public class ExpensePageFragment extends Fragment
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
         if (mainActivityViewModel.deleteExpense(editItemAdapterPosition)) {
-            Log.i(TAG, "onOkClick: " + editItemAdapterPosition);
             expRecyclerAdapter.notifyItemRemoved(editItemAdapterPosition);
             setTotalExpense();
             dialogFragment.dismiss();

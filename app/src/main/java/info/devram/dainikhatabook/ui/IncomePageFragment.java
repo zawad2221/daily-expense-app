@@ -28,7 +28,6 @@ import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.EditActivity;
 import info.devram.dainikhatabook.IncomeActivity;
-import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
@@ -49,14 +48,12 @@ public class IncomePageFragment extends Fragment
 
 
     public IncomePageFragment(MainActivityViewModel viewModel) {
-        // Required empty public constructor
         this.mainActivityViewModel = viewModel;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_income_page,
                 container, false);
@@ -81,9 +78,7 @@ public class IncomePageFragment extends Fragment
                 String.valueOf(totalIncome)));
 
         FloatingActionButton fab = view.findViewById(R.id.fab_income);
-//        final ArrayAdapter<CharSequence> adapter = ArrayAdapter
-//                .createFromResource(view.getContext(),
-//                R.array.income_type, android.R.layout.simple_spinner_item);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,8 +87,6 @@ public class IncomePageFragment extends Fragment
 
                 startActivityForResult(incomeIntent,ADD_REQUEST_CODE);
 
-//                dialog = new SaveDataDialog(adapter,"Enter Income");
-//                dialog.show(getParentFragmentManager(),null);
 
             }
         });
@@ -124,8 +117,6 @@ public class IncomePageFragment extends Fragment
                 if (data != null) {
                     if (mainActivityViewModel.editIncome(incomeItemAdapterPosition,
                             getIntentData(data))) {
-                        Log.i(TAG, "adapter position " + incomeItemAdapterPosition);
-
                         incomeRecyclerAdapter.notifyItemChanged(incomeItemAdapterPosition);
                         setTotalIncome();
                     }
@@ -172,6 +163,8 @@ public class IncomePageFragment extends Fragment
 
     @Override
     public void onItemClicked(View view, final int position) {
+        incomeItemAdapterPosition = position;
+
         PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
 
         popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
@@ -181,16 +174,13 @@ public class IncomePageFragment extends Fragment
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.edit_menu_item:
-
-                        incomeItemAdapterPosition = position;
-                        Log.i(TAG, "adapter position popup menu " + incomeItemAdapterPosition);
                         Intent intent = new Intent(getActivity(), EditActivity.class);
-                        Income selectedObj = mainActivityViewModel.getIncomes().getValue().get(incomeItemAdapterPosition);
+                        Income selectedObj = mainActivityViewModel.getIncomes().getValue()
+                                .get(incomeItemAdapterPosition);
                         setIntentData(selectedObj,intent);
                         startActivityForResult(intent,EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
-                        Log.i(TAG, "delete item ");
                         showDialog();
                         break;
                     default:

@@ -2,7 +2,7 @@ package info.devram.dainikhatabook.ViewModel;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,7 +19,7 @@ import info.devram.dainikhatabook.Repository.IncomeRepository;
 
 public class MainActivityViewModel extends AndroidViewModel {
 
-    private static final String TAG = "MainActivityViewModel";
+    //private static final String TAG = "MainActivityViewModel";
 
     private MutableLiveData<List<Income>> mutableIncomeLiveData;
     private MutableLiveData<List<Expense>> mutableExpenseLiveData;

@@ -14,20 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentFactory;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
-import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
-import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
-import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.R;
@@ -147,7 +141,6 @@ public class TodayPageFragment extends Fragment {
     public void onResume() {
         super.onResume();
         populateList();
-        Log.i(TAG, "onResume: " + dashBoardRecyclerAdapter.getItemCount());
         dashBoardRecyclerAdapter.updateData(newDashBoardList);
         updateNetCashTextView();
     }

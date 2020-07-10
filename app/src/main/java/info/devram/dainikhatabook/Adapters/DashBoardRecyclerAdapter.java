@@ -1,6 +1,6 @@
 package info.devram.dainikhatabook.Adapters;
 
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import info.devram.dainikhatabook.Models.Expense;
@@ -19,7 +18,7 @@ import info.devram.dainikhatabook.R;
 
 public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "DashBoardRecyclerAdapte";
+    //private static final String TAG = "DashBoardRecyclerAdapte";
 
     private List dashBoardList;
 
@@ -42,8 +41,6 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Expense expense;
         Income income;
-
-        Log.i(TAG, "onBindViewHolder: " + getItemCount());
 
         if (getItemCount() > 0) {
             if (dashBoardList.get(position) instanceof Expense) {

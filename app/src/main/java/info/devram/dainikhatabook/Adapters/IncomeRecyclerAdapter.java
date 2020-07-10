@@ -1,7 +1,5 @@
 package info.devram.dainikhatabook.Adapters;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,7 @@ import info.devram.dainikhatabook.R;
 
 public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "IncomeRecyclerAdapter";
+    //private static final String TAG = "IncomeRecyclerAdapter";
 
     private List<Income> incomeList;
     private RecyclerOnClick recyclerOnClick;
@@ -71,13 +69,6 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
     @Override
     public int getItemCount() {
         return this.incomeList.size();
-    }
-
-    public void updateData(List<Income> newIncomeList) {
-
-        incomeList.clear();
-        incomeList.addAll(newIncomeList);
-        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder

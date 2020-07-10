@@ -62,11 +62,11 @@ public class Income {
         this.incomeAmount = incomeAmount;
     }
 
-    @Override
-    public String toString() {
-        String person = this.getId() + " " + this.getIncomeType() + " " + this.getIncomeAmount();
-        return person;
-    }
+//    @Override
+//    public String toString() {
+//        String person = this.getId() + " " + this.getIncomeType() + " " + this.getIncomeAmount();
+//        return person;
+//    }
 
     public static class Model implements ModelHandler {
 

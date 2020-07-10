@@ -1,7 +1,5 @@
 package info.devram.dainikhatabook.Adapters;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,7 @@ import info.devram.dainikhatabook.R;
 
 public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "ExpenseRecyclerAdapter";
+    //private static final String TAG = "ExpenseRecyclerAdapter";
 
 
     private List<Expense> expenseList;

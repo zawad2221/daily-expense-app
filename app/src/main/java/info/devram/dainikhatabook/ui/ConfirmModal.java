@@ -1,7 +1,6 @@
 package info.devram.dainikhatabook.ui;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,8 @@ import info.devram.dainikhatabook.R;
 public class ConfirmModal extends DialogFragment {
 
     public interface ConfirmModalListener {
-        public void onOkClick(DialogFragment dialogFragment);
-        public void onCancelClick(DialogFragment dialogFragment);
+        void onOkClick(DialogFragment dialogFragment);
+        void onCancelClick(DialogFragment dialogFragment);
     }
 
     private AlertDialog.Builder builder;

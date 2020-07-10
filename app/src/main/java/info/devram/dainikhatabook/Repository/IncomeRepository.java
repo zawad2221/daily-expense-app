@@ -2,7 +2,7 @@ package info.devram.dainikhatabook.Repository;
 
 import android.content.Context;
 import android.database.SQLException;
-import android.util.Log;
+//import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import info.devram.dainikhatabook.Models.Income;
 
 public class IncomeRepository implements DatabaseService<Income>  {
 
-    private static final String TAG = "IncomeRepository";
+    //private static final String TAG = "IncomeRepository";
 
     private DatabaseHandler db;
     private static IncomeRepository mInstance = null;
@@ -84,10 +84,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
     public Boolean onUpdate(Income obj) {
         for (int i =0; i < incomeList.size(); i++) {
             if (incomeList.get(i).getId() == obj.getId()) {
-
-                Log.i(TAG, "new obj " + obj);
                 incomeList.set(i,obj);
-                Log.i(TAG, "list obj " + incomeList.get(i));
                 return true;
             }
         }
@@ -110,11 +107,11 @@ public class IncomeRepository implements DatabaseService<Income>  {
         return 0;
     }
 
-    private String getDate() {
-        Calendar myCalendar = Calendar.getInstance();
-        String myFormat = "dd/MM/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
-
-        return sdf.format(myCalendar.getTime());
-    }
+//    private String getDate() {
+//        Calendar myCalendar = Calendar.getInstance();
+//        String myFormat = "dd/MM/yy";
+//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
+//
+//        return sdf.format(myCalendar.getTime());
+//    }
 }

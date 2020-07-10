@@ -2,22 +2,20 @@ package info.devram.dainikhatabook.Repository;
 
 import android.content.Context;
 import android.database.SQLException;
-import android.util.Log;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+//import android.util.Log;
+//
+//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+//import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
+//import java.util.Locale;
 
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
 import info.devram.dainikhatabook.Models.Expense;
 
 public class ExpenseRepository implements DatabaseService<Expense> {
 
-    private static final String TAG = "ExpenseRepository";
+    //private static final String TAG = "ExpenseRepository";
 
     private DatabaseHandler db;
     private static ExpenseRepository mInstance = null;
@@ -109,10 +107,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         for (int i =0; i < expenseList.size(); i++) {
             if (expenseList.get(i).getId() == obj.getId()) {
-
-                Log.i(TAG, "new obj " + obj);
                 expenseList.set(i,obj);
-                Log.i(TAG, "list obj " + expenseList.get(i));
                 return true;
             }
         }
@@ -136,11 +131,11 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         return 0;
     }
 
-    private String getDate() {
-        Calendar myCalendar = Calendar.getInstance();
-        String myFormat = "dd/MM/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
-
-        return sdf.format(myCalendar.getTime());
-    }
+//    private String getDate() {
+//        Calendar myCalendar = Calendar.getInstance();
+//        String myFormat = "dd/MM/yy";
+//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
+//
+//        return sdf.format(myCalendar.getTime());
+//    }
 }
