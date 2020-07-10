@@ -90,6 +90,12 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
         return expenseList.size();
     }
 
+    public void onAddItem(List<Expense> expenses) {
+        this.expenseList.clear();
+        this.expenseList.addAll(expenses);
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 

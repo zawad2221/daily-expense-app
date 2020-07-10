@@ -33,7 +33,7 @@ import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class ExpensePageFragment extends Fragment
-        implements RecyclerOnClick, ConfirmModal.ConfirmModalListener{
+        implements RecyclerOnClick, ConfirmModal.ConfirmModalListener {
 
     private static final String TAG = "ExpensePageFragment";
 
@@ -56,14 +56,14 @@ public class ExpensePageFragment extends Fragment
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_expense_page,container,false);
+        View view = inflater.inflate(R.layout.fragment_expense_page, container, false);
 
         RecyclerView expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
         totalExpenseTextView = view.findViewById(R.id.total_exp_amt_txt_view);
         TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
 
         expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
-                "Total",view.getResources().getString(R.string.total_expense)));
+                "Total", view.getResources().getString(R.string.total_expense)));
 
         expRecyclerAdapter = new ExpenseRecyclerAdapter(
                 mainActivityViewModel.getExpenses().getValue(),
@@ -82,7 +82,7 @@ public class ExpensePageFragment extends Fragment
 
                 Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
 
-                startActivityForResult(expenseIntent,ADD_REQUEST_CODE);
+                startActivityForResult(expenseIntent, ADD_REQUEST_CODE);
 
             }
         });
@@ -96,39 +96,38 @@ public class ExpensePageFragment extends Fragment
         if (requestCode == ADD_REQUEST_CODE) {
 
             if (resultCode == 1) {
-                if (data != null){
-                    if (mainActivityViewModel.addExpense(getIntentData(data))) {
-                        expRecyclerAdapter.notifyDataSetChanged();
-                        setTotalExpense();
-                    }
-                }else {
-                    Log.e(TAG, "onActivityResult: intent data is null " );
+                if (data != null) {
+                    mainActivityViewModel.addExpense(getIntentData(data));
+                    setTotalExpense();
+
+                } else {
+                    Log.e(TAG, "onActivityResult: intent data is null ");
                 }
             }
         }
 
         if (requestCode == EDIT_REQUEST_CODE) {
-            if(resultCode == 1) {
+            if (resultCode == 1) {
                 if (data != null) {
                     if (mainActivityViewModel.editExpense(editItemAdapterPosition,
                             getIntentData(data))) {
                         expRecyclerAdapter.notifyItemChanged(editItemAdapterPosition);
                         setTotalExpense();
                     }
-                }else {
-                    Log.e(TAG, "onActivityResult: intent data is null " );
+                } else {
+                    Log.e(TAG, "onActivityResult: intent data is null ");
                 }
             }
         }
     }
 
-    private Hashtable<String,String> getIntentData(Intent data) {
+    private Hashtable<String, String> getIntentData(Intent data) {
 
-        Hashtable<String,String> hashtable = new Hashtable<>();
+        Hashtable<String, String> hashtable = new Hashtable<>();
 
-        hashtable.put("type",data.getStringExtra("type").toLowerCase());
-        hashtable.put("date",data.getStringExtra("date"));
-        hashtable.put("amount",String.valueOf(data.getIntExtra("amount",0)));
+        hashtable.put("type", data.getStringExtra("type").toLowerCase());
+        hashtable.put("date", data.getStringExtra("date"));
+        hashtable.put("amount", String.valueOf(data.getIntExtra("amount", 0)));
         hashtable.put("desc", data.getStringExtra("desc"));
 
         return hashtable;
@@ -172,8 +171,8 @@ public class ExpensePageFragment extends Fragment
                     case R.id.edit_menu_item:
                         Intent intent = new Intent(getActivity(), EditActivity.class);
                         Expense selectedObj = mainActivityViewModel.getExpenses().getValue().get(position);
-                        setIntentData(selectedObj,intent);
-                        startActivityForResult(intent,EDIT_REQUEST_CODE);
+                        setIntentData(selectedObj, intent);
+                        startActivityForResult(intent, EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
                         showDialog();
@@ -188,19 +187,19 @@ public class ExpensePageFragment extends Fragment
 
     }
 
-    private void setIntentData(Expense selectedItem,Intent intentData) {
-        intentData.putExtra("title","Edit Expense");
-        intentData.putExtra("type",selectedItem.getExpenseType());
-        intentData.putExtra("date",selectedItem.getExpenseDate());
-        intentData.putExtra("amount",selectedItem.getExpenseAmount());
-        intentData.putExtra("desc",selectedItem.getExpenseDesc());
+    private void setIntentData(Expense selectedItem, Intent intentData) {
+        intentData.putExtra("title", "Edit Expense");
+        intentData.putExtra("type", selectedItem.getExpenseType());
+        intentData.putExtra("date", selectedItem.getExpenseDate());
+        intentData.putExtra("amount", selectedItem.getExpenseAmount());
+        intentData.putExtra("desc", selectedItem.getExpenseDesc());
     }
 
     private void showDialog() {
         DialogFragment dialogFragment = new ConfirmModal();
 
-        dialogFragment.setTargetFragment(ExpensePageFragment.this,0);
-        dialogFragment.show(getParentFragmentManager(),null);
+        dialogFragment.setTargetFragment(ExpensePageFragment.this, 0);
+        dialogFragment.show(getParentFragmentManager(), null);
 
     }
 

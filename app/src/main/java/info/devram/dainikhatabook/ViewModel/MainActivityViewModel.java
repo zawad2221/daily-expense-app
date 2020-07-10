@@ -26,6 +26,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     private IncomeRepository incomeRepository;
     private ExpenseRepository expenseRepository;
     private Application application;
+    private List<Expense> expenseList;
+    private List<Income> incomeList;
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
@@ -45,8 +47,8 @@ public class MainActivityViewModel extends AndroidViewModel {
         expenseRepository = ExpenseRepository
                 .getInstance(context);
 
-        List<Income> incomeList = incomeRepository.getAll();
-        List<Expense> expenseList = expenseRepository.getAll();
+        incomeList = incomeRepository.getAll();
+        expenseList = expenseRepository.getAll();
 
         mutableIncomeLiveData = new MutableLiveData<>();
         mutableExpenseLiveData = new MutableLiveData<>();
@@ -63,28 +65,36 @@ public class MainActivityViewModel extends AndroidViewModel {
         return mutableExpenseLiveData;
     }
 
-    public Boolean addExpense(Hashtable<String,String> hashtable) {
+    public void addExpense(Hashtable<String,String> hashtable) {
         Expense expense = new Expense();
         expense.setExpenseType(hashtable.get("type"));
         expense.setExpenseDate(hashtable.get("date"));
         expense.setExpenseAmount(Integer.parseInt(hashtable.get("amount")));
         expense.setExpenseDesc(hashtable.get("desc"));
-        if (expenseRepository.addData(expense)) {
-            return true;
+
+        int id = expenseRepository.addData(expense);
+
+        if (id != -1) {
+            expense = expenseRepository.getOne(id);
+            expenseList.add(expense);
+            mutableExpenseLiveData.postValue(expenseList);
         }
-        return false;
+
     }
 
-    public Boolean addIncome(Hashtable<String,String> hashtable) {
+    public void addIncome(Hashtable<String,String> hashtable) {
         Income income = new Income();
         income.setIncomeType(hashtable.get("type"));
         income.setIncomeDate(hashtable.get("date"));
         income.setIncomeAmount(Integer.parseInt(hashtable.get("amount")));
         income.setIncomeDesc(hashtable.get("desc"));
-        if (incomeRepository.addData(income)) {
-            return true;
+        int id = incomeRepository.addData(income);
+
+        if (id != -1) {
+            income = incomeRepository.getOne(id);
+            incomeList.add(income);
+            mutableIncomeLiveData.postValue(incomeList);
         }
-        return false;
     }
 
     public Boolean editExpense(int position,Hashtable<String,String> hashtable) {
@@ -94,6 +104,8 @@ public class MainActivityViewModel extends AndroidViewModel {
         expense.setExpenseAmount(Integer.parseInt(hashtable.get("amount")));
         expense.setExpenseDesc(hashtable.get("desc"));
         if (expenseRepository.onUpdate(expense)) {
+            expenseList.set(position,expense);
+            mutableExpenseLiveData.postValue(expenseList);
             return true;
         }
         return false;
@@ -105,6 +117,8 @@ public class MainActivityViewModel extends AndroidViewModel {
         income.setIncomeAmount(Integer.parseInt(hashtable.get("amount")));
         income.setIncomeDesc(hashtable.get("desc"));
         if (incomeRepository.onUpdate(income)) {
+            incomeList.set(position,income);
+            mutableIncomeLiveData.postValue(incomeList);
             return true;
         }
         return false;
@@ -113,14 +127,18 @@ public class MainActivityViewModel extends AndroidViewModel {
     public Boolean deleteExpense(int position) {
         Expense expense = mutableExpenseLiveData.getValue().get(position);
         if (expenseRepository.onDelete(expense)) {
+            expenseList.remove(position);
+            mutableExpenseLiveData.postValue(expenseList);
             return true;
         }
-        return null;
+        return false;
     }
 
-    public boolean deleteIncome(int position) {
+    public Boolean deleteIncome(int position) {
         Income income = mutableIncomeLiveData.getValue().get(position);
         if (incomeRepository.onDelete(income)) {
+            incomeList.remove(position);
+            mutableIncomeLiveData.postValue(incomeList);
             return true;
         }
         return false;

@@ -33,7 +33,7 @@ import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class IncomePageFragment extends Fragment
-        implements RecyclerOnClick,ConfirmModal.ConfirmModalListener {
+        implements RecyclerOnClick, ConfirmModal.ConfirmModalListener {
 
     private static final String TAG = "IncomePageFragment";
 
@@ -63,10 +63,10 @@ public class IncomePageFragment extends Fragment
         TextView incomeTitletextView = view.findViewById(R.id.titleTextView);
 
         incomeTitletextView.setText(MessageFormat.format("{0} {1}",
-                "Total",view.getResources().getString(R.string.total_income)));
+                "Total", view.getResources().getString(R.string.total_income)));
 
         incomeRecyclerAdapter = new IncomeRecyclerAdapter(
-                mainActivityViewModel.getIncomes().getValue(),this);
+                mainActivityViewModel.getIncomes().getValue(), this);
 
         incomeRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
@@ -85,7 +85,7 @@ public class IncomePageFragment extends Fragment
 
                 Intent incomeIntent = new Intent(getActivity(), IncomeActivity.class);
 
-                startActivityForResult(incomeIntent,ADD_REQUEST_CODE);
+                startActivityForResult(incomeIntent, ADD_REQUEST_CODE);
 
 
             }
@@ -100,46 +100,44 @@ public class IncomePageFragment extends Fragment
 
         if (requestCode == ADD_REQUEST_CODE) {
             if (resultCode == 1) {
-                if (data != null){
-
-                    if (mainActivityViewModel.addIncome(getIntentData(data))) {
-                        incomeRecyclerAdapter.notifyDataSetChanged();
-                        setTotalIncome();
-                    }
-                }else {
-                    Log.e(TAG, "onActivityResult: intent data is null " );
+                if (data != null) {
+                    mainActivityViewModel.addIncome(getIntentData(data));
+                    setTotalIncome();
+                } else {
+                    Log.e(TAG, "onActivityResult: intent data is null ");
                 }
             }
         }
 
         if (requestCode == EDIT_REQUEST_CODE) {
-            if(resultCode == 1) {
+            if (resultCode == 1) {
                 if (data != null) {
                     if (mainActivityViewModel.editIncome(incomeItemAdapterPosition,
                             getIntentData(data))) {
                         incomeRecyclerAdapter.notifyItemChanged(incomeItemAdapterPosition);
                         setTotalIncome();
                     }
-                }else {
-                    Log.e(TAG, "onActivityResult: intent data is null " );
+                } else {
+                    Log.e(TAG, "onActivityResult: intent data is null ");
                 }
             }
         }
     }
 
 
-    private Hashtable<String,String> getIntentData(Intent data) {
+    private Hashtable<String, String> getIntentData(Intent data) {
 
-        Hashtable<String,String> hashtable = new Hashtable<>();
+        Hashtable<String, String> hashtable = new Hashtable<>();
 
-        hashtable.put("type",data.getStringExtra("type").toLowerCase());
-        hashtable.put("date",data.getStringExtra("date"));
-        hashtable.put("amount",String.valueOf(data.getIntExtra("amount",0)));
+        hashtable.put("type", data.getStringExtra("type").toLowerCase());
+        hashtable.put("date", data.getStringExtra("date"));
+        hashtable.put("amount", String.valueOf(data.getIntExtra("amount", 0)));
         hashtable.put("desc", data.getStringExtra("desc"));
 
 
         return hashtable;
     }
+
     private int getSum(List<Income> obj) {
         int totalSum = 0;
 
@@ -177,8 +175,8 @@ public class IncomePageFragment extends Fragment
                         Intent intent = new Intent(getActivity(), EditActivity.class);
                         Income selectedObj = mainActivityViewModel.getIncomes().getValue()
                                 .get(incomeItemAdapterPosition);
-                        setIntentData(selectedObj,intent);
-                        startActivityForResult(intent,EDIT_REQUEST_CODE);
+                        setIntentData(selectedObj, intent);
+                        startActivityForResult(intent, EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
                         showDialog();
@@ -206,20 +204,20 @@ public class IncomePageFragment extends Fragment
         dialogFragment.dismiss();
     }
 
-    private void setIntentData(Income selectedItem,Intent intentData) {
+    private void setIntentData(Income selectedItem, Intent intentData) {
         //editItemExpenseID = selectedItem.getId();
-        intentData.putExtra("title","Edit Income");
-        intentData.putExtra("type",selectedItem.getIncomeType().toLowerCase());
-        intentData.putExtra("date",selectedItem.getIncomeDate());
-        intentData.putExtra("amount",selectedItem.getIncomeAmount());
-        intentData.putExtra("desc",selectedItem.getIncomeDesc());
+        intentData.putExtra("title", "Edit Income");
+        intentData.putExtra("type", selectedItem.getIncomeType().toLowerCase());
+        intentData.putExtra("date", selectedItem.getIncomeDate());
+        intentData.putExtra("amount", selectedItem.getIncomeAmount());
+        intentData.putExtra("desc", selectedItem.getIncomeDesc());
     }
 
     private void showDialog() {
         DialogFragment dialogFragment = new ConfirmModal();
 
-        dialogFragment.setTargetFragment(IncomePageFragment.this,0);
-        dialogFragment.show(getParentFragmentManager(),null);
+        dialogFragment.setTargetFragment(IncomePageFragment.this, 0);
+        dialogFragment.show(getParentFragmentManager(), null);
 
     }
 }

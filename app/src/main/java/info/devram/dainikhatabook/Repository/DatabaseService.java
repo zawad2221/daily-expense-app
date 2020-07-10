@@ -4,11 +4,11 @@ import java.util.List;
 
 interface DatabaseService<T> {
 
-    public Boolean addData(T obj);
+    public int addData(T obj);
 
     public List<T> getAll();
 
-    public T getOne();
+    public T getOne(int id);
 
     public Boolean onUpdate(T obj);
 
