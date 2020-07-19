@@ -82,7 +82,12 @@ public class ExpenseActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String type = spinner.getSelectedItem().toString();
                 String date = datePicker.getText().toString();
-                int amount = Integer.parseInt(amountEditText.getText().toString());
+                int amount = 0;
+                try {
+                    amount = Integer.parseInt(amountEditText.getText().toString());
+                }catch (NumberFormatException e) {
+                    Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+                }
                 String desc = descEdittext.getText().toString();
                 Intent resultIntent = getIntent();
                 resultIntent.putExtra("type",type);
