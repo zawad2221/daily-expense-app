@@ -79,7 +79,6 @@ public class EditActivity extends AppCompatActivity {
         populateUI();
 
         myCalendar = Calendar.getInstance();
-        updateLabel();
 
         date = new DatePickerDialog.OnDateSetListener() {
             @Override

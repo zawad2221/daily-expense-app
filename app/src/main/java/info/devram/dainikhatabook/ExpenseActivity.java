@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ExpenseActivity extends AppCompatActivity {
+
+    private static final String TAG = "ExpenseActivity";
 
     private EditText datePicker;
     private Calendar myCalendar;
@@ -62,6 +65,7 @@ public class ExpenseActivity extends AppCompatActivity {
                 updateLabel();
             }
         };
+
 
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
