@@ -42,7 +42,7 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
         Expense expense;
         Income income;
 
-        if (getItemCount() > 0) {
+        if (dashBoardList.size() != 0) {
             if (dashBoardList.get(position) instanceof Expense) {
                 expense = (Expense) dashBoardList.get(position);
                 holder.typeTextView.setText(expense.getExpenseType());

@@ -6,15 +6,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import info.devram.dainikhatabook.Config.Util;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
-import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 
 public class IncomeRepository implements DatabaseService<Income>  {
@@ -27,7 +23,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
     private IncomeRepository(Context context) {
         this.db = DatabaseHandler.getInstance(context);
-        this.incomeList = new ArrayList<>();
+
     }
 
     public static IncomeRepository getInstance(Context context) {
@@ -58,6 +54,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
     @Override
     public List<Income> getAll() {
+        this.incomeList = new ArrayList<>();
         String query = "SELECT * FROM " + Util.INCOME_TABLE_NAME;
 
         Cursor cursor = db.getReadableDatabase().rawQuery(query,null);

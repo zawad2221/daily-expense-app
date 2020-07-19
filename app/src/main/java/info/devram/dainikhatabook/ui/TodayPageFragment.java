@@ -1,7 +1,6 @@
 package info.devram.dainikhatabook.ui;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,16 +32,14 @@ public class TodayPageFragment extends Fragment {
     private MainActivityViewModel mainActivityViewModel;
 
 
-    private int expenseTotalSum;
-    private int incomeTotalSum;
     private TextView netCashinHand;
     private ImageView netCashImageView;
     private CardView netCashCardView;
     private RecyclerView recyclerView;
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
-    private List<Income> newIncomeList;
-    private List<Expense> newExpenseList;
     private List newDashBoardList;
+    private List<Expense> newExpenseList;
+    private List<Income> newIncomeList;
 
     public TodayPageFragment(MainActivityViewModel viewModel) {
         this.mainActivityViewModel = viewModel;
@@ -72,11 +69,6 @@ public class TodayPageFragment extends Fragment {
         netCashImageView = view.findViewById(R.id.netcash_image);
         netCashCardView = view.findViewById(R.id.netCash_cardView);
 
-        /*
-         * observer pattern applied to viewModel object so that
-         * data can be observed
-         */
-
         updateDashboardRecycler();
         updateNetCashTextView();
 
@@ -94,10 +86,10 @@ public class TodayPageFragment extends Fragment {
     }
 
     private void populateList() {
-        newExpenseList = mainActivityViewModel.getExpenses().getValue();
-        newIncomeList = mainActivityViewModel.getIncomes().getValue();
-
         newDashBoardList = new ArrayList();
+        newExpenseList = mainActivityViewModel.getExpenses();
+        Log.d(TAG, "populateList: " + newExpenseList);
+        newIncomeList = mainActivityViewModel.getIncomes();
 
         newDashBoardList.addAll(newExpenseList);
         newDashBoardList.addAll(newIncomeList);
@@ -117,8 +109,8 @@ public class TodayPageFragment extends Fragment {
     }
 
     private void updateNetCashTextView() {
-        expenseTotalSum = getSum(mainActivityViewModel.getExpenses().getValue());
-        incomeTotalSum = getSum(mainActivityViewModel.getIncomes().getValue());
+        int expenseTotalSum = getSum(newExpenseList);
+        int incomeTotalSum = getSum(newIncomeList);
 
         int netCash = incomeTotalSum - expenseTotalSum;
 
@@ -144,4 +136,6 @@ public class TodayPageFragment extends Fragment {
         dashBoardRecyclerAdapter.updateData(newDashBoardList);
         updateNetCashTextView();
     }
+
+
 }

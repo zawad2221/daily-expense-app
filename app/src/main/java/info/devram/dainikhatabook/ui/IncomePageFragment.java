@@ -66,12 +66,12 @@ public class IncomePageFragment extends Fragment
                 "Total", view.getResources().getString(R.string.total_income)));
 
         incomeRecyclerAdapter = new IncomeRecyclerAdapter(
-                mainActivityViewModel.getIncomes().getValue(), this);
+                mainActivityViewModel.getIncomes(), this);
 
         incomeRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         incomeRecyclerView.setAdapter(incomeRecyclerAdapter);
 
-        int totalIncome = getSum(mainActivityViewModel.getIncomes().getValue());
+        int totalIncome = getSum(mainActivityViewModel.getIncomes());
 
         totalIncometextView.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),
@@ -152,7 +152,7 @@ public class IncomePageFragment extends Fragment
     }
 
     private void setTotalIncome() {
-        int totalExpenses = getSum(mainActivityViewModel.getIncomes().getValue());
+        int totalExpenses = getSum(mainActivityViewModel.getIncomes());
 
         totalIncometextView.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),
@@ -173,7 +173,7 @@ public class IncomePageFragment extends Fragment
                 switch (item.getItemId()) {
                     case R.id.edit_menu_item:
                         Intent intent = new Intent(getActivity(), EditActivity.class);
-                        Income selectedObj = mainActivityViewModel.getIncomes().getValue()
+                        Income selectedObj = mainActivityViewModel.getIncomes()
                                 .get(incomeItemAdapterPosition);
                         setIntentData(selectedObj, intent);
                         startActivityForResult(intent, EDIT_REQUEST_CODE);

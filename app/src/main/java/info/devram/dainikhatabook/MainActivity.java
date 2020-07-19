@@ -7,7 +7,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import android.view.Menu;
@@ -30,8 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         MainActivityViewModel mainActivityViewModel;
-        mainActivityViewModel = new ViewModelProvider
-                .AndroidViewModelFactory(getApplication()).create(MainActivityViewModel.class);
+        mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
 
         mainActivityViewModel.init();
 

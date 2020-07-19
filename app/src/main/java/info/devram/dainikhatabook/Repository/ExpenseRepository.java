@@ -5,13 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
-import android.util.Log;
 
-//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-//import java.util.Calendar;
 import java.util.List;
-//import java.util.Locale;
 
 import info.devram.dainikhatabook.Config.Util;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
@@ -27,7 +23,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     private ExpenseRepository(Context context) {
         this.db = DatabaseHandler.getInstance(context);
-        this.expenseList = new ArrayList<>();
+
     }
 
     public static ExpenseRepository getInstance(Context context) {
@@ -57,6 +53,8 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     @Override
     public List<Expense> getAll() {
+
+        this.expenseList = new ArrayList<>();
 
         String query = "SELECT * FROM " + Util.EXPENSE_TABLE_NAME;
 

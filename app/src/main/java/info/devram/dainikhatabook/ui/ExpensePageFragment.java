@@ -66,7 +66,7 @@ public class ExpensePageFragment extends Fragment
                 "Total", view.getResources().getString(R.string.total_expense)));
 
         expRecyclerAdapter = new ExpenseRecyclerAdapter(
-                mainActivityViewModel.getExpenses().getValue(),
+                mainActivityViewModel.getExpenses(),
                 this);
 
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -150,7 +150,7 @@ public class ExpensePageFragment extends Fragment
     }
 
     private void setTotalExpense() {
-        int totalExpenses = getSum(mainActivityViewModel.getExpenses().getValue());
+        int totalExpenses = getSum(mainActivityViewModel.getExpenses());
 
         totalExpenseTextView.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),
@@ -170,7 +170,7 @@ public class ExpensePageFragment extends Fragment
                 switch (item.getItemId()) {
                     case R.id.edit_menu_item:
                         Intent intent = new Intent(getActivity(), EditActivity.class);
-                        Expense selectedObj = mainActivityViewModel.getExpenses().getValue().get(position);
+                        Expense selectedObj = mainActivityViewModel.getExpenses().get(position);
                         setIntentData(selectedObj, intent);
                         startActivityForResult(intent, EDIT_REQUEST_CODE);
                         break;
