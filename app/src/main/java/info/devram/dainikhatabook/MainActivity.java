@@ -17,7 +17,7 @@ import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TAG = "MainActivity";
+    //public static final String TAG = "MainActivity";
 
 
     @Override

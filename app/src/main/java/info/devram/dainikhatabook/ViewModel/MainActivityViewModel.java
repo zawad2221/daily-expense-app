@@ -2,7 +2,7 @@ package info.devram.dainikhatabook.ViewModel;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+//import android.util.Log;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import info.devram.dainikhatabook.Repository.IncomeRepository;
 
 public class MainActivityViewModel {
 
-    private static final String TAG = "MainActivityViewModel";
+    //private static final String TAG = "MainActivityViewModel";
 
     private IncomeRepository incomeRepository;
     private ExpenseRepository expenseRepository;

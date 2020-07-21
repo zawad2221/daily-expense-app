@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.MessageFormat;
-import java.util.Hashtable;
 import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
