@@ -97,8 +97,9 @@ public class ExpensePageFragment extends Fragment
 
             if (resultCode == 1) {
                 if (data != null) {
-                    mainActivityViewModel.addExpense(getIntentData(data));
+                    mainActivityViewModel.addExpense(data);
                     setTotalExpense();
+                    expRecyclerAdapter.notifyDataSetChanged();
 
                 } else {
                     Log.e(TAG, "onActivityResult: intent data is null ");
@@ -110,7 +111,7 @@ public class ExpensePageFragment extends Fragment
             if (resultCode == 1) {
                 if (data != null) {
                     if (mainActivityViewModel.editExpense(editItemAdapterPosition,
-                            getIntentData(data))) {
+                            data)) {
                         expRecyclerAdapter.notifyItemChanged(editItemAdapterPosition);
                         setTotalExpense();
                     }
@@ -119,18 +120,6 @@ public class ExpensePageFragment extends Fragment
                 }
             }
         }
-    }
-
-    private Hashtable<String, String> getIntentData(Intent data) {
-
-        Hashtable<String, String> hashtable = new Hashtable<>();
-
-        hashtable.put("type", data.getStringExtra("type").toLowerCase());
-        hashtable.put("date", data.getStringExtra("date"));
-        hashtable.put("amount", String.valueOf(data.getIntExtra("amount", 0)));
-        hashtable.put("desc", data.getStringExtra("desc"));
-
-        return hashtable;
     }
 
     private int getSum(List<Expense> obj) {

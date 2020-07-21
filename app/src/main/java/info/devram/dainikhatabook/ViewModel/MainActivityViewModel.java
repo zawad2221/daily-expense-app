@@ -1,8 +1,9 @@
 package info.devram.dainikhatabook.ViewModel;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
-import java.util.Hashtable;
 import java.util.List;
 
 import info.devram.dainikhatabook.Models.Expense;
@@ -12,7 +13,7 @@ import info.devram.dainikhatabook.Repository.IncomeRepository;
 
 public class MainActivityViewModel {
 
-    //private static final String TAG = "MainActivityViewModel";
+    private static final String TAG = "MainActivityViewModel";
 
     private IncomeRepository incomeRepository;
     private ExpenseRepository expenseRepository;
@@ -46,24 +47,18 @@ public class MainActivityViewModel {
         return expenseList;
     }
 
-    public void addExpense(Hashtable<String,String> hashtable) {
-        Expense expense = new Expense();
-        expense.setExpenseType(hashtable.get("type"));
-        expense.setExpenseDate(hashtable.get("date"));
-        expense.setExpenseAmount(Integer.parseInt(hashtable.get("amount")));
-        expense.setExpenseDesc(hashtable.get("desc"));
+    public void addExpense(Intent intentData) {
+
+        Expense expense = getExpenseIntentData(intentData);
 
         expenseList.add(expense);
 
         expenseRepository.addData(expense);
     }
 
-    public void addIncome(Hashtable<String,String> hashtable) {
-        Income income = new Income();
-        income.setIncomeType(hashtable.get("type"));
-        income.setIncomeDate(hashtable.get("date"));
-        income.setIncomeAmount(Integer.parseInt(hashtable.get("amount")));
-        income.setIncomeDesc(hashtable.get("desc"));
+    public void addIncome(Intent intentData) {
+        Income income = getIncomeIntentData(intentData);
+
         int id = incomeRepository.addData(income);
 
         if (id != -1) {
@@ -72,24 +67,27 @@ public class MainActivityViewModel {
         }
     }
 
-    public Boolean editExpense(int position,Hashtable<String,String> hashtable) {
+    public Boolean editExpense(int position,Intent data) {
+
         Expense expense = expenseList.get(position);
-        expense.setExpenseType(hashtable.get("type"));
-        expense.setExpenseDate(hashtable.get("date"));
-        expense.setExpenseAmount(Integer.parseInt(hashtable.get("amount")));
-        expense.setExpenseDesc(hashtable.get("desc"));
+
+        expense.setExpenseType(data.getStringExtra("type").toLowerCase());
+        expense.setExpenseDate(data.getStringExtra("date"));
+        expense.setExpenseAmount(data.getIntExtra("amount", 0));
+        expense.setExpenseDesc(data.getStringExtra("desc"));
+
         if (expenseRepository.onUpdate(expense)) {
             expenseList.set(position,expense);
             return true;
         }
         return false;
     }
-    public Boolean editIncome(int position,Hashtable<String,String> hashtable) {
+    public Boolean editIncome(int position,Intent data) {
         Income income = incomeList.get(position);
-        income.setIncomeType(hashtable.get("type"));
-        income.setIncomeDate(hashtable.get("date"));
-        income.setIncomeAmount(Integer.parseInt(hashtable.get("amount")));
-        income.setIncomeDesc(hashtable.get("desc"));
+        income.setIncomeType(data.getStringExtra("type").toLowerCase());
+        income.setIncomeDate(data.getStringExtra("date"));
+        income.setIncomeAmount(data.getIntExtra("amount", 0));
+        income.setIncomeDesc(data.getStringExtra("desc"));
         if (incomeRepository.onUpdate(income)) {
             incomeList.set(position,income);
             return true;
@@ -113,5 +111,29 @@ public class MainActivityViewModel {
             return true;
         }
         return false;
+    }
+
+    public Expense getExpenseIntentData(Intent data) {
+        Expense expense = new Expense();
+
+        expense.setExpenseType(data.getStringExtra("type").toLowerCase());
+        expense.setExpenseDate(data.getStringExtra("date"));
+        expense.setExpenseAmount(data.getIntExtra("amount", 0));
+        expense.setExpenseDesc(data.getStringExtra("desc"));
+
+        return expense;
+
+    }
+
+    public Income getIncomeIntentData(Intent data) {
+        Income income = new Income();
+
+        income.setIncomeType(data.getStringExtra("type").toLowerCase());
+        income.setIncomeDate(data.getStringExtra("date"));
+        income.setIncomeAmount(data.getIntExtra("amount", 0));
+        income.setIncomeDesc(data.getStringExtra("desc"));
+
+        return income;
+
     }
 }

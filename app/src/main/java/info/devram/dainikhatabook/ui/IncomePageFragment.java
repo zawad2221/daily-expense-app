@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.MessageFormat;
-import java.util.Hashtable;
 import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
@@ -101,8 +100,9 @@ public class IncomePageFragment extends Fragment
         if (requestCode == ADD_REQUEST_CODE) {
             if (resultCode == 1) {
                 if (data != null) {
-                    mainActivityViewModel.addIncome(getIntentData(data));
+                    mainActivityViewModel.addIncome(data);
                     setTotalIncome();
+                    incomeRecyclerAdapter.notifyDataSetChanged();
                 } else {
                     Log.e(TAG, "onActivityResult: intent data is null ");
                 }
@@ -113,7 +113,7 @@ public class IncomePageFragment extends Fragment
             if (resultCode == 1) {
                 if (data != null) {
                     if (mainActivityViewModel.editIncome(incomeItemAdapterPosition,
-                            getIntentData(data))) {
+                            data)) {
                         incomeRecyclerAdapter.notifyItemChanged(incomeItemAdapterPosition);
                         setTotalIncome();
                     }
@@ -124,19 +124,6 @@ public class IncomePageFragment extends Fragment
         }
     }
 
-
-    private Hashtable<String, String> getIntentData(Intent data) {
-
-        Hashtable<String, String> hashtable = new Hashtable<>();
-
-        hashtable.put("type", data.getStringExtra("type").toLowerCase());
-        hashtable.put("date", data.getStringExtra("date"));
-        hashtable.put("amount", String.valueOf(data.getIntExtra("amount", 0)));
-        hashtable.put("desc", data.getStringExtra("desc"));
-
-
-        return hashtable;
-    }
 
     private int getSum(List<Income> obj) {
         int totalSum = 0;
@@ -205,7 +192,6 @@ public class IncomePageFragment extends Fragment
     }
 
     private void setIntentData(Income selectedItem, Intent intentData) {
-        //editItemExpenseID = selectedItem.getId();
         intentData.putExtra("title", "Edit Income");
         intentData.putExtra("type", selectedItem.getIncomeType().toLowerCase());
         intentData.putExtra("date", selectedItem.getIncomeDate());

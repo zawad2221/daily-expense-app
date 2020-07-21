@@ -45,6 +45,12 @@ public class TodayPageFragment extends Fragment {
         this.mainActivityViewModel = viewModel;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        populateList();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,10 +83,10 @@ public class TodayPageFragment extends Fragment {
 
     private void updateDashboardRecycler() {
 
-        populateList();
+        //populateList();
 
         dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(dashBoardRecyclerAdapter);
 
     }
@@ -88,7 +94,6 @@ public class TodayPageFragment extends Fragment {
     private void populateList() {
         newDashBoardList = new ArrayList();
         newExpenseList = mainActivityViewModel.getExpenses();
-        Log.d(TAG, "populateList: " + newExpenseList);
         newIncomeList = mainActivityViewModel.getIncomes();
 
         newDashBoardList.addAll(newExpenseList);
@@ -137,5 +142,5 @@ public class TodayPageFragment extends Fragment {
         updateNetCashTextView();
     }
 
-
+    
 }
