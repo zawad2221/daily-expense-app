@@ -39,4 +39,5 @@
     <string name="modal_btn_ok">OK</string>
     <string name="modal_btn_cancel">cancel</string>
     <string name="no_value">""</string>
+    <string name="add_button">Add Button</string>
 </resources>
