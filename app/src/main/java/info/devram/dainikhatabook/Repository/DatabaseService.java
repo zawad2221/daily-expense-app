@@ -4,7 +4,7 @@ import java.util.List;
 
 interface DatabaseService<T> {
 
-    public int addData(T obj);
+    public void addData(T obj);
 
     public List<T> getAll();
 

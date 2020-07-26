@@ -16,9 +16,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+
+import info.devram.dainikhatabook.Models.Expense;
 
 public class ExpenseActivity extends AppCompatActivity {
 
@@ -26,8 +30,9 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private EditText datePicker;
     private Calendar myCalendar;
-    private DatePickerDialog.OnDateSetListener date;
-    private ArrayAdapter<CharSequence> adapter;
+    private DatePickerDialog.OnDateSetListener date;    private ArrayAdapter<CharSequence> adapter;
+    private String myFormat;
+    private SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -52,6 +57,8 @@ public class ExpenseActivity extends AppCompatActivity {
         Button addNew = findViewById(R.id.add_new_btn);
         final EditText amountEditText = findViewById(R.id.edit_text_amount);
         final EditText descEdittext = findViewById(R.id.edit_text_desc);
+        myFormat = "dd/MM/yy";
+        sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
 
         myCalendar = Calendar.getInstance();
         updateLabel();
@@ -74,27 +81,36 @@ public class ExpenseActivity extends AppCompatActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH));
 
                 datePickerDialog.show();
-
             }
         });
+
 
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String type = spinner.getSelectedItem().toString();
-                String date = datePicker.getText().toString();
                 int amount = 0;
+
+                long checkedDate = 0;
                 try {
                     amount = Integer.parseInt(amountEditText.getText().toString());
+                    Date selectedDate = sdf.parse(datePicker.getText().toString());
+                    if (selectedDate != null) {
+                        checkedDate = selectedDate.getTime();
+                    }
                 }catch (NumberFormatException e) {
                     Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+                }catch (ParseException e) {
+                    Log.e(TAG, "date parsing error " + e.getMessage());
                 }
                 String desc = descEdittext.getText().toString();
                 Intent resultIntent = getIntent();
-                resultIntent.putExtra("type",type);
-                resultIntent.putExtra("date",date);
-                resultIntent.putExtra("amount",amount);
-                resultIntent.putExtra("desc",desc);
+                Expense expense = new Expense();
+                expense.setExpenseType(type);
+                expense.setExpenseAmount(amount);
+                expense.setExpenseDate(checkedDate);
+                expense.setExpenseDesc(desc);
+                resultIntent.putExtra(Expense.class.getSimpleName(),expense);
                 setResult(1,resultIntent);
                 finish();
             }
@@ -125,8 +141,6 @@ public class ExpenseActivity extends AppCompatActivity {
     }
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
 
         datePicker.setText(sdf.format(myCalendar.getTime()));
     }

@@ -96,7 +96,9 @@ public class ExpensePageFragment extends Fragment
 
             if (resultCode == 1) {
                 if (data != null) {
-                    mainActivityViewModel.addExpense(data);
+                    Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
+                    Log.d(TAG, "onActivityResult: " + expense);
+                    mainActivityViewModel.addExpense(expense);
                     setTotalExpense();
                     expRecyclerAdapter.notifyDataSetChanged();
 
@@ -109,8 +111,8 @@ public class ExpensePageFragment extends Fragment
         if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == 1) {
                 if (data != null) {
-                    if (mainActivityViewModel.editExpense(editItemAdapterPosition,
-                            data)) {
+                    Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
+                    if (mainActivityViewModel.editExpense(editItemAdapterPosition,expense)) {
                         expRecyclerAdapter.notifyItemChanged(editItemAdapterPosition);
                         setTotalExpense();
                     }
@@ -159,7 +161,8 @@ public class ExpensePageFragment extends Fragment
                     case R.id.edit_menu_item:
                         Intent intent = new Intent(getActivity(), EditActivity.class);
                         Expense selectedObj = mainActivityViewModel.getExpenses().get(position);
-                        setIntentData(selectedObj, intent);
+                        intent.putExtra("title", "Edit Expense");
+                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
                         startActivityForResult(intent, EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
@@ -175,13 +178,6 @@ public class ExpensePageFragment extends Fragment
 
     }
 
-    private void setIntentData(Expense selectedItem, Intent intentData) {
-        intentData.putExtra("title", "Edit Expense");
-        intentData.putExtra("type", selectedItem.getExpenseType());
-        intentData.putExtra("date", selectedItem.getExpenseDate());
-        intentData.putExtra("amount", selectedItem.getExpenseAmount());
-        intentData.putExtra("desc", selectedItem.getExpenseDesc());
-    }
 
     private void showDialog() {
         DialogFragment dialogFragment = new ConfirmModal();

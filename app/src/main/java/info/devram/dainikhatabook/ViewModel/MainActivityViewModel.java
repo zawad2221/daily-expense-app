@@ -2,9 +2,11 @@ package info.devram.dainikhatabook.ViewModel;
 
 import android.content.Context;
 import android.content.Intent;
-//import android.util.Log;
+import android.util.Log;
+import android.util.Log;
 
 import java.util.List;
+import java.util.UUID;
 
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
@@ -13,7 +15,7 @@ import info.devram.dainikhatabook.Repository.IncomeRepository;
 
 public class MainActivityViewModel {
 
-    //private static final String TAG = "MainActivityViewModel";
+    private static final String TAG = "MainActivityViewModel";
 
     private IncomeRepository incomeRepository;
     private ExpenseRepository expenseRepository;
@@ -47,10 +49,13 @@ public class MainActivityViewModel {
         return expenseList;
     }
 
-    public void addExpense(Intent intentData) {
+    public void addExpense(Expense expense) {
 
-        Expense expense = getExpenseIntentData(intentData);
+        String uniqueID = UUID.randomUUID().toString();
 
+        Log.d(TAG, "addExpense: " + uniqueID);
+
+        expense.setId(uniqueID);
         expenseList.add(expense);
 
         expenseRepository.addData(expense);
@@ -59,25 +64,17 @@ public class MainActivityViewModel {
     public void addIncome(Intent intentData) {
         Income income = getIncomeIntentData(intentData);
 
-        int id = incomeRepository.addData(income);
+        incomeList.add(income);
 
-        if (id != -1) {
-            income = incomeRepository.getOne(id);
-            incomeList.add(income);
-        }
+        incomeRepository.addData(income);
+
+
     }
 
-    public Boolean editExpense(int position,Intent data) {
+    public Boolean editExpense(int position,Expense editedExpense) {
 
-        Expense expense = expenseList.get(position);
-
-        expense.setExpenseType(data.getStringExtra("type").toLowerCase());
-        expense.setExpenseDate(data.getStringExtra("date"));
-        expense.setExpenseAmount(data.getIntExtra("amount", 0));
-        expense.setExpenseDesc(data.getStringExtra("desc"));
-
-        if (expenseRepository.onUpdate(expense)) {
-            expenseList.set(position,expense);
+        if (expenseRepository.onUpdate(editedExpense)) {
+            expenseList.set(position,editedExpense);
             return true;
         }
         return false;
@@ -112,19 +109,6 @@ public class MainActivityViewModel {
         }
         return false;
     }
-
-    public Expense getExpenseIntentData(Intent data) {
-        Expense expense = new Expense();
-
-        expense.setExpenseType(data.getStringExtra("type").toLowerCase());
-        expense.setExpenseDate(data.getStringExtra("date"));
-        expense.setExpenseAmount(data.getIntExtra("amount", 0));
-        expense.setExpenseDesc(data.getStringExtra("desc"));
-
-        return expense;
-
-    }
-
     public Income getIncomeIntentData(Intent data) {
         Income income = new Income();
 

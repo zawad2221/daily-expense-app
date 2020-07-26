@@ -34,19 +34,20 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     }
 
     @Override
-    public int addData(Expense obj) {
+    public void addData(Expense obj) {
         try{
             ContentValues contentValues = new ContentValues();
+            contentValues.put(Util.EXPENSE_KEY_ID,obj.getId());
             contentValues.put(Util.EXPENSE_KEY_TYPE,obj.getExpenseType());
             contentValues.put(Util.EXPENSE_KEY_DESC,obj.getExpenseDesc());
             contentValues.put(Util.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
             contentValues.put(Util.EXPENSE_KEY_DATE,obj.getExpenseDate());
 
-            return (int)db.getWritableDatabase().insert(Util.EXPENSE_TABLE_NAME,
+            db.getWritableDatabase().insert(Util.EXPENSE_TABLE_NAME,
                     null,contentValues);
         }catch (SQLException e) {
             Log.e(TAG, "addData: error " + e.getMessage());
-            return -1;
+
         }
 
     }
@@ -65,7 +66,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
                 Expense expense = new Expense();
                 expense.setId(cursor
-                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
                 expense.setExpenseType(cursor
                         .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
                 expense.setExpenseDesc(cursor
@@ -73,7 +74,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
                 expense.setExpenseAmount(cursor
                         .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
                 expense.setExpenseDate(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                        .getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
                 expenseList.add(expense);
             }while (cursor.moveToNext());
         }
@@ -97,13 +98,13 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         if (cursor != null) {
             cursor.moveToFirst();
-            account.setId(cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+            account.setId(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
             account.setExpenseAmount(
                     cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
             account.setExpenseType(
                     cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
             account.setExpenseDate(
-                    cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                    cursor.getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
             account.setExpenseDesc(
                     cursor.getColumnName(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
             cursor.close();

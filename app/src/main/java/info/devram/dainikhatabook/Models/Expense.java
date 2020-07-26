@@ -2,17 +2,21 @@ package info.devram.dainikhatabook.Models;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import java.io.Serializable;
+
 import info.devram.dainikhatabook.Config.Util;
 
-public class Expense {
+public class Expense implements Serializable {
 
-    private int id;
+    private static final long serialVersionUID = 20200725L;
+
+    private String id;
     private String expenseType;
-    private String expenseDate;
+    private long expenseDate;
     private String expenseDesc;
     private int expenseAmount;
 
-    public Expense(String expenseType, String expenseDesc,String expenseDate, int expenseAmount) {
+    public Expense(String expenseType, String expenseDesc,long expenseDate, int expenseAmount) {
         this.expenseType = expenseType;
         this.expenseDesc = expenseDesc;
         this.expenseDate = expenseDate;
@@ -22,11 +26,11 @@ public class Expense {
     public Expense() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -38,11 +42,11 @@ public class Expense {
         this.expenseType = expenseType;
     }
 
-    public String getExpenseDate() {
+    public long getExpenseDate() {
         return expenseDate;
     }
 
-    public void setExpenseDate(String expenseDate) {
+    public void setExpenseDate(long expenseDate) {
         this.expenseDate = expenseDate;
     }
 
@@ -64,8 +68,13 @@ public class Expense {
 
     @Override
     public String toString() {
-        return this.getId() + " " + this.getExpenseType() + " " + this.getExpenseAmount();
-
+        return "Expense{" +
+                "id='" + id + '\'' +
+                ", expenseType='" + expenseType + '\'' +
+                ", expenseDate=" + expenseDate +
+                ", expenseDesc='" + expenseDesc + '\'' +
+                ", expenseAmount=" + expenseAmount +
+                '}';
     }
 
     public static class Model implements ModelHandler {
@@ -73,7 +82,7 @@ public class Expense {
         @Override
         public void onCreate(SQLiteDatabase db) {
             String query = "CREATE TABLE IF NOT EXISTS " + Util.EXPENSE_TABLE_NAME + "("
-                    + Util.EXPENSE_KEY_ID + " INTEGER PRIMARY KEY,"
+                    + Util.EXPENSE_KEY_ID + " TEXT NOT NULL,"
                     + Util.EXPENSE_KEY_TYPE + " TEXT NOT NULL,"
                     + Util.EXPENSE_KEY_AMOUNT + " INTEGER NOT NULL,"
                     + Util.EXPENSE_KEY_DATE + " LONG NOT NULL,"

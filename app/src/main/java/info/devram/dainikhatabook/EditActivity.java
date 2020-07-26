@@ -6,7 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-//import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +16,17 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+
+import info.devram.dainikhatabook.Models.Expense;
 
 public class EditActivity extends AppCompatActivity {
 
-    ///private static final String TAG = "EditActivity";
+    private static final String TAG = "EditActivity";
 
     private Spinner spinner;
     private EditText datePicker;
@@ -32,6 +36,8 @@ public class EditActivity extends AppCompatActivity {
     private EditText amountEditText;
     private EditText descEdittext;
     private int getAdapterPosition;
+    private SimpleDateFormat sdf;
+    private Expense expense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,8 @@ public class EditActivity extends AppCompatActivity {
         String activityTitle = getIntent().getStringExtra("title");
 
         setTitle(activityTitle);
+
+        expense = (Expense) getIntent().getSerializableExtra(Expense.class.getSimpleName());
 
         if (activityTitle.toLowerCase().equals("edit expense")) {
             adapter = ArrayAdapter
@@ -56,9 +64,10 @@ public class EditActivity extends AppCompatActivity {
 
         for (int i = 0; i < adapter.getCount(); i++) {
 
-            String adapterItem = adapter.getItem(i).toString().toLowerCase();
+            String adapterItem = adapter.getItem(i).toString();
 
-            if (adapterItem.equals(getIntent().getStringExtra("type"))) {
+            Log.d(TAG, "onCreate: " + adapterItem.equalsIgnoreCase(expense.getExpenseType()));
+            if (adapterItem.equals(expense.getExpenseType())) {
                 getAdapterPosition = i;
                 break;
             }
@@ -75,6 +84,9 @@ public class EditActivity extends AppCompatActivity {
         Button editItem = findViewById(R.id.editActivityBtn);
         amountEditText = findViewById(R.id.editAmountView);
         descEdittext = findViewById(R.id.editDescView);
+        String myFormat = "dd/MM/yy";
+        sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
+
 
         populateUI();
 
@@ -104,14 +116,26 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String type = spinner.getSelectedItem().toString();
-                String date = datePicker.getText().toString();
-                int amount = Integer.parseInt(amountEditText.getText().toString());
+                int amount = 0;
+                long checkedDate = 0;
+                try {
+                    amount = Integer.parseInt(amountEditText.getText().toString());
+                    Date selectedDate = sdf.parse(datePicker.getText().toString());
+                    if (selectedDate != null) {
+                        checkedDate = selectedDate.getTime();
+                    }
+                }catch (NumberFormatException e) {
+                    Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+                }catch (ParseException e) {
+                    Log.e(TAG, "date parsing error " + e.getMessage());
+                }
                 String desc = descEdittext.getText().toString();
                 Intent resultIntent = getIntent();
-                resultIntent.putExtra("type", type);
-                resultIntent.putExtra("date", date);
-                resultIntent.putExtra("amount", amount);
-                resultIntent.putExtra("desc", desc);
+                expense.setExpenseType(type);
+                expense.setExpenseAmount(amount);
+                expense.setExpenseDate(checkedDate);
+                expense.setExpenseDesc(desc);
+                resultIntent.putExtra(Expense.class.getSimpleName(),expense);
                 setResult(1, resultIntent);
                 finish();
             }
@@ -119,17 +143,15 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void populateUI() {
+        Log.d(TAG, "populateUI: " + expense);
         spinner.setSelection(getAdapterPosition);
-        datePicker.setText(getIntent().getStringExtra("date"));
-        amountEditText.setText(String.valueOf(getIntent().getIntExtra("amount",0)));
-        descEdittext.setText(getIntent().getStringExtra("desc"));
-
+        Long date = (long) expense.getExpenseDate();
+        datePicker.setText(sdf.format(date));
+        amountEditText.setText(String.valueOf(expense.getExpenseAmount()));
+        descEdittext.setText(expense.getExpenseDesc());
     }
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
-
         datePicker.setText(sdf.format(myCalendar.getTime()));
     }
 

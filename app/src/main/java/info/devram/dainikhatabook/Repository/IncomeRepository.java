@@ -34,7 +34,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
     }
 
     @Override
-    public int addData(Income obj) {
+    public void addData(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
             contentValues.put(Util.INCOME_KEY_TYPE,obj.getIncomeType());
@@ -42,14 +42,12 @@ public class IncomeRepository implements DatabaseService<Income>  {
             contentValues.put(Util.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
             contentValues.put(Util.INCOME_KEY_DATE,obj.getIncomeDate());
 
-            return (int)db.getWritableDatabase().insert(Util.INCOME_TABLE_NAME,
+            db.getWritableDatabase().insert(Util.INCOME_TABLE_NAME,
                     null,contentValues);
         }catch (SQLException e) {
             e.printStackTrace();
 
         }
-
-        return obj.getId();
     }
 
     @Override
