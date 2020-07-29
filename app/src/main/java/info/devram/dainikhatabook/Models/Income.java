@@ -1,10 +1,13 @@
 package info.devram.dainikhatabook.Models;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import info.devram.dainikhatabook.Config.Util;
 
 public class Income {
+
+    private static final String TAG = "Income";
 
     private int id;
     private String incomeType;
@@ -80,6 +83,20 @@ public class Income {
                     + Util.INCOME_KEY_DESC + " TEXT NOT NULL);";
 
             db.execSQL(query);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            switch (oldVersion) {
+                case 1:
+                    Log.d(TAG, "onUpgrade: " + oldVersion);
+                    Log.d(TAG, "onUpgrade: " + oldVersion);
+                    break;
+                case 2:
+                    Log.d(TAG, "onUpgrade: " + newVersion);
+                    Log.d(TAG, "onUpgrade: " + newVersion);
+                    break;
+            }
         }
     }
 

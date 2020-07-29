@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -75,6 +77,10 @@ public class ExpenseRepository implements DatabaseService<Expense> {
                         .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
                 expense.setExpenseDate(cursor
                         .getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                int boolValue = cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_SYNC));
+                if (boolValue == 0) {
+                    expense.setSyncStatus(false);
+                }else expense.setSyncStatus(true);
                 expenseList.add(expense);
             }while (cursor.moveToNext());
         }
@@ -160,6 +166,29 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         return count;
     }
 
+    public void updateSync(List<Expense> expenseList) {
+        Log.d(TAG, "updateSync: starts");
+        SQLiteDatabase updateDB = db.getWritableDatabase();
+        updateDB.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (Expense expense: expenseList) {
+                values.put(Util.EXPENSE_KEY_SYNC,Util.SYNC_STATUS_TRUE);
+                updateDB.update(Util.EXPENSE_TABLE_NAME,values,
+                        Util.EXPENSE_KEY_ID + "=?",
+                        new String[]{String.valueOf(expense.getId())});
+            }
+            updateDB.setTransactionSuccessful();
+            Log.d(TAG, "updateSync: ends");
+        }catch (SQLiteException e) {
+            e.printStackTrace();
+            Log.e(TAG, "updateSync: " + e.getMessage());
+        }finally {
+            Log.d(TAG, "updateSync: end transaction");
+            updateDB.endTransaction();
+        }
+
+    }
 //    private String getDate() {
 //        Calendar myCalendar = Calendar.getInstance();
 //        String myFormat = "dd/MM/yy";

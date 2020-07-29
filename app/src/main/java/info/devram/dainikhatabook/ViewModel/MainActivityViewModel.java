@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -119,5 +120,23 @@ public class MainActivityViewModel {
 
         return income;
 
+    }
+
+    public List<Expense> getSyncList() {
+        Log.d(TAG, "syncWithServer: " + expenseList);
+        List<Expense> isNotSynced = new ArrayList<>();
+        for (int i = 0; i < expenseList.size(); i++) {
+            if (!expenseList.get(i).getSyncStatus()) {
+                isNotSynced.add(expenseList.get(i));
+            }
+        }
+        return isNotSynced;
+    }
+
+    public void updateSyncListWithDb(List<Expense> syncList) {
+        for (int i = 0; i < syncList.size(); i++) {
+            syncList.get(i).setSyncStatus(true);
+        }
+        expenseRepository.updateSync(syncList);
     }
 }

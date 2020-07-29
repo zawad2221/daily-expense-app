@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private SQLiteDatabase sqLiteDatabase;
 
     private DatabaseHandler(@Nullable Context context) {
-        super(context, Util.DATBASE_NAME, null, Util.DATABASE_VERSION);
+        super(context, Util.DATABASE_NAME, null, Util.DATABASE_VERSION);
     }
 
     public static DatabaseHandler getInstance(Context context) {
@@ -49,7 +49,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        expenseModel.onUpgrade(db,oldVersion,newVersion);
     }
 
     @Override

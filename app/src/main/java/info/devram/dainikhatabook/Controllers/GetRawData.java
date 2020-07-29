@@ -1,36 +1,31 @@
-package info.devram.dainikhatabook.Repository;
+package info.devram.dainikhatabook.Controllers;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class PostRawData extends AsyncTask<String, Void, String> {
-    private static final String TAG = "PostRawData";
+public class GetRawData extends AsyncTask<String, Void, String> {
+    private static final String TAG = "GetRawData";
 
-    public enum DownloadStatus {IDLE, PROCESSING, NOT_INITIALISED, FAILED_OR_EMPTY, OK}
-
-    private DownloadStatus mDownloadStatus;
-    private final PostRawData.OnDownloadListener mCallback;
-
-    public interface OnDownloadListener {
-        void onDownloadComplete(String data, DownloadStatus status);
-    }
-
-    public PostRawData(OnDownloadListener mCallback) {
+    public GetRawData(GetRawData.OnDownloadListener mCallback) {
         this.mDownloadStatus = DownloadStatus.IDLE;
         this.mCallback = mCallback;
     }
 
+    public enum DownloadStatus {IDLE, PROCESSING, NOT_INITIALISED, FAILED_OR_EMPTY, OK}
+
+    private DownloadStatus mDownloadStatus;
+    private final OnDownloadListener mCallback;
+
+    public interface OnDownloadListener {
+        void onDownloadComplete(String data, DownloadStatus status);
+    }
 
     @Override
     protected void onPostExecute(String s) {
@@ -39,11 +34,9 @@ public class PostRawData extends AsyncTask<String, Void, String> {
             mCallback.onDownloadComplete(s,mDownloadStatus);
         }
     }
-
     @Override
     protected String doInBackground(String... strings) {
         HttpURLConnection connection = null;
-        BufferedWriter bufferedWriter = null;
         BufferedReader reader = null;
 
         if (strings == null) {
@@ -56,28 +49,21 @@ public class PostRawData extends AsyncTask<String, Void, String> {
             URL url = new URL(strings[0]);
 
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type","application/json");
-            connection.setDoOutput(true);
-
-            String jsonInputString = "{'type':'clothing','date':'45600','amount':'550','description':'test'}";
+            connection.setRequestMethod("GET");
+            connection.connect();
 
             int response = connection.getResponseCode();
             Log.d(TAG, "doInBackground: response code " + response);
-
-
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-
-            bufferedWriter.write(jsonInputString);
 
             StringBuilder result = new StringBuilder();
 
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
+//            String line;
+//            while (null != (line = reader.readLine())) {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 result.append(line).append("\n");
             }
-
 
             mDownloadStatus = DownloadStatus.OK;
             return result.toString();
@@ -91,13 +77,6 @@ public class PostRawData extends AsyncTask<String, Void, String> {
         }finally {
             if (connection != null) {
                 connection.disconnect();
-            }
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                }catch (IOException e) {
-                    Log.e(TAG, "doInBackground: " + e.getMessage());
-                }
             }
             if (reader != null) {
                 try {
