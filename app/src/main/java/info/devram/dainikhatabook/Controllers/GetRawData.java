@@ -53,14 +53,11 @@ public class GetRawData extends AsyncTask<String, Void, String> {
             connection.connect();
 
             int response = connection.getResponseCode();
-            Log.d(TAG, "doInBackground: response code " + response);
 
             StringBuilder result = new StringBuilder();
 
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-//            String line;
-//            while (null != (line = reader.readLine())) {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 result.append(line).append("\n");
             }

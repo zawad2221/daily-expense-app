@@ -167,7 +167,6 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     }
 
     public void updateSync(List<Expense> expenseList) {
-        Log.d(TAG, "updateSync: starts");
         SQLiteDatabase updateDB = db.getWritableDatabase();
         updateDB.beginTransaction();
         try {
@@ -179,7 +178,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
                         new String[]{String.valueOf(expense.getId())});
             }
             updateDB.setTransactionSuccessful();
-            Log.d(TAG, "updateSync: ends");
+
         }catch (SQLiteException e) {
             e.printStackTrace();
             Log.e(TAG, "updateSync: " + e.getMessage());

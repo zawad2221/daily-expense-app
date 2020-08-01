@@ -54,21 +54,21 @@ public class MainActivityViewModel {
 
         String uniqueID = UUID.randomUUID().toString();
 
-        Log.d(TAG, "addExpense: " + uniqueID);
-
         expense.setId(uniqueID);
         expenseList.add(expense);
 
         expenseRepository.addData(expense);
     }
 
-    public void addIncome(Intent intentData) {
-        Income income = getIncomeIntentData(intentData);
+    public void addIncome(Income income) {
+
+        String uniqueID = UUID.randomUUID().toString();
+
+        income.setId(uniqueID);
 
         incomeList.add(income);
 
         incomeRepository.addData(income);
-
 
     }
 
@@ -80,12 +80,9 @@ public class MainActivityViewModel {
         }
         return false;
     }
-    public Boolean editIncome(int position,Intent data) {
+    public Boolean editIncome(int position,Income editedIncome) {
         Income income = incomeList.get(position);
-        income.setIncomeType(data.getStringExtra("type").toLowerCase());
-        income.setIncomeDate(data.getStringExtra("date"));
-        income.setIncomeAmount(data.getIntExtra("amount", 0));
-        income.setIncomeDesc(data.getStringExtra("desc"));
+
         if (incomeRepository.onUpdate(income)) {
             incomeList.set(position,income);
             return true;
@@ -110,21 +107,11 @@ public class MainActivityViewModel {
         }
         return false;
     }
-    public Income getIncomeIntentData(Intent data) {
-        Income income = new Income();
 
-        income.setIncomeType(data.getStringExtra("type").toLowerCase());
-        income.setIncomeDate(data.getStringExtra("date"));
-        income.setIncomeAmount(data.getIntExtra("amount", 0));
-        income.setIncomeDesc(data.getStringExtra("desc"));
+    public List<Expense> getExpenseSyncList() {
 
-        return income;
-
-    }
-
-    public List<Expense> getSyncList() {
-        Log.d(TAG, "syncWithServer: " + expenseList);
         List<Expense> isNotSynced = new ArrayList<>();
+
         for (int i = 0; i < expenseList.size(); i++) {
             if (!expenseList.get(i).getSyncStatus()) {
                 isNotSynced.add(expenseList.get(i));
@@ -133,10 +120,29 @@ public class MainActivityViewModel {
         return isNotSynced;
     }
 
-    public void updateSyncListWithDb(List<Expense> syncList) {
+    public List<Income> getIncomeSyncList() {
+
+        List<Income> isNotSynced = new ArrayList<>();
+
+        for (int i = 0; i < incomeList.size(); i++) {
+            if (!incomeList.get(i).getSyncStatus()) {
+                isNotSynced.add(incomeList.get(i));
+            }
+        }
+        return isNotSynced;
+    }
+
+    public void updateExpenseSyncListWithDb(List<Expense> syncList) {
         for (int i = 0; i < syncList.size(); i++) {
             syncList.get(i).setSyncStatus(true);
         }
         expenseRepository.updateSync(syncList);
+    }
+
+    public void updateIncomeSyncListWithDb(List<Income> syncList) {
+        for (int i = 0; i < syncList.size(); i++) {
+            syncList.get(i).setSyncStatus(true);
+        }
+        incomeRepository.updateSync(syncList);
     }
 }

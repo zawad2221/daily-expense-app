@@ -30,7 +30,8 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private EditText datePicker;
     private Calendar myCalendar;
-    private DatePickerDialog.OnDateSetListener date;    private ArrayAdapter<CharSequence> adapter;
+    private DatePickerDialog.OnDateSetListener date;
+    private ArrayAdapter<CharSequence> adapter;
     private String myFormat;
     private SimpleDateFormat sdf;
 

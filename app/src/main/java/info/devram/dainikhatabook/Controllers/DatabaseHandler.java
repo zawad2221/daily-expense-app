@@ -50,6 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         expenseModel.onUpgrade(db,oldVersion,newVersion);
+        incomeModel.onUpgrade(db,oldVersion,newVersion);
     }
 
     @Override

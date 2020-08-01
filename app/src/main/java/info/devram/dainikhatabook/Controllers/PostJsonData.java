@@ -1,12 +1,10 @@
 package info.devram.dainikhatabook.Controllers;
 
-import android.util.Log;
+//import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import info.devram.dainikhatabook.Controllers.PostRawData.UploadStatus;
@@ -15,7 +13,7 @@ import info.devram.dainikhatabook.Models.Expense;
 public class PostJsonData implements
         PostRawData.OnUploadListener, JsonParser<Expense> {
 
-    private static final String TAG = "PostJsonData";
+    //private static final String TAG = "PostJsonData";
     private String mBaseUrl;
 
     private final OnReponseAvailableListener listener;
@@ -53,7 +51,7 @@ public class PostJsonData implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "parseJson: " + jsonArray);
+
         if (!isRunOnSameThread) {
             String[] params = {mBaseUrl, jsonArray.toString()};
             executeOnSameThread(params);
@@ -62,10 +60,10 @@ public class PostJsonData implements
     }
 
     public void executeOnSameThread(String[] searchCriteria) {
-        Log.d(TAG, "executeOnSameThread: starts");
+
         isRunOnSameThread = true;
         PostRawData postRawData = new PostRawData(this);
         postRawData.execute(searchCriteria);
-        Log.d(TAG, "executeOnSameThread: ends");
+
     }
 }

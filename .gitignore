@@ -22,3 +22,6 @@ keys/
 *.aab
 *.jks
 *.keystore
+DailyExpenses.zip
+expense_manager.db
+

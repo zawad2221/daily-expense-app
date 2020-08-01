@@ -1,21 +1,24 @@
 package info.devram.dainikhatabook.Models;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
+import java.io.Serializable;
 
 import info.devram.dainikhatabook.Config.Util;
 
-public class Income {
+public class Income implements Serializable {
 
     private static final String TAG = "Income";
+    public static final long serialVersionUID = 20200801L;
 
-    private int id;
+    private String id;
     private String incomeType;
     private String incomeDesc;
-    private String incomeDate;
+    private long incomeDate;
     private int incomeAmount;
+    private boolean syncStatus;
 
-    public Income(String incomeType, String incomeDesc,String incomeDate, int incomeAmount) {
+    public Income(String incomeType, String incomeDesc,long incomeDate, int incomeAmount) {
         this.incomeType = incomeType;
         this.incomeDesc = incomeDesc;
         this.incomeDate = incomeDate;
@@ -33,11 +36,11 @@ public class Income {
         this.incomeDesc = incomeDesc;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -49,11 +52,11 @@ public class Income {
         this.incomeType = incomeType;
     }
 
-    public String getIncomeDate() {
+    public long getIncomeDate() {
         return incomeDate;
     }
 
-    public void setIncomeDate(String incomeDate) {
+    public void setIncomeDate(long incomeDate) {
         this.incomeDate = incomeDate;
     }
 
@@ -65,22 +68,33 @@ public class Income {
         this.incomeAmount = incomeAmount;
     }
 
-//    @Override
-//    public String toString() {
-//        String person = this.getId() + " " + this.getIncomeType() + " " + this.getIncomeAmount();
-//        return person;
-//    }
+    public boolean getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(boolean syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Income{" +
+                "id='" + id + '\'' +
+                ", incomeType='" + incomeType + '\'' +
+                ", incomeDesc='" + incomeDesc + '\'' +
+                ", incomeDate=" + incomeDate +
+                ", incomeAmount=" + incomeAmount +
+                ", syncStatus=" + syncStatus +
+                '}';
+    }
 
     public static class Model implements ModelHandler {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String query = "CREATE TABLE IF NOT EXISTS " + Util.INCOME_TABLE_NAME + "("
-                    + Util.INCOME_KEY_ID + " INTEGER PRIMARY KEY,"
-                    + Util.INCOME_KEY_TYPE + " TEXT NOT NULL,"
-                    + Util.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
-                    + Util.INCOME_KEY_DATE + " LONG NOT NULL,"
-                    + Util.INCOME_KEY_DESC + " TEXT NOT NULL);";
+            String query = "CREATE TABLE income(id INTEGER PRIMARY KEY," +
+                    "type TEXT NOT NULL,amount INTEGER NOT NULL," +
+                    "date_added LONG NOT NULL,description TEXT NOT NULL);";
 
             db.execSQL(query);
         }
@@ -89,13 +103,29 @@ public class Income {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             switch (oldVersion) {
                 case 1:
-                    Log.d(TAG, "onUpgrade: " + oldVersion);
-                    Log.d(TAG, "onUpgrade: " + oldVersion);
+                    db.execSQL("CREATE TEMP TABLE inc_temp (id TEXT NOT NULL, type TEXT NOT NULL," +
+                            " amount INTEGER NOT NULL, date_added LONG NOT NULL, " +
+                            "description TEXT NOT NULL);");
+                    db.execSQL("INSERT INTO inc_temp SELECT * FROM income");
+
+                    db.execSQL("DROP TABLE income");
+                    String query = "CREATE TABLE IF NOT EXISTS " + Util.INCOME_TABLE_NAME + "("
+                            + Util.INCOME_KEY_ID + " TEXT NOT NULL,"
+                            + Util.INCOME_KEY_TYPE + " TEXT NOT NULL,"
+                            + Util.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
+                            + Util.INCOME_KEY_DATE + " LONG NOT NULL,"
+                            + Util.INCOME_KEY_DESC + " TEXT NOT NULL,"
+                            + Util.INCOME_KEY_SYNC + " INTEGER DEFAULT "
+                            + Util.SYNC_STATUS_FALSE + ");";
+                    db.execSQL(query);
+                    db.execSQL("INSERT INTO " + Util.INCOME_TABLE_NAME + "("
+                            + Util.INCOME_KEY_ID + "," + Util.INCOME_KEY_TYPE + ","
+                            + Util.INCOME_KEY_AMOUNT + "," + Util.INCOME_KEY_DATE + ","
+                            + Util.INCOME_KEY_DESC + ") SELECT "
+                            + "id,type,amount,date_added,description FROM inc_temp;");
+                    db.execSQL("DROP TABLE inc_temp");
                     break;
-                case 2:
-                    Log.d(TAG, "onUpgrade: " + newVersion);
-                    Log.d(TAG, "onUpgrade: " + newVersion);
-                    break;
+
             }
         }
     }

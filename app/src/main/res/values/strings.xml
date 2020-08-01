@@ -43,17 +43,14 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="messages_header">About</string>
+    <string name="sync_header">Backup</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    <string name="sync_title">Backup Data periodically</string>
+    <string name="backup_summary">Backup your Data to server Periodically. This Service Will
+        Run Once a Day When Device is Connected To WI-FI
     </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="about_summary">Created By Rahul Malik\n\nApp Version: %1$s</string>
+
 </resources>

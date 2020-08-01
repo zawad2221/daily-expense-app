@@ -1,6 +1,7 @@
 package info.devram.dainikhatabook;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -8,12 +9,17 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
+
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import info.devram.dainikhatabook.Adapters.MainActivityPagerAdapter;
+import info.devram.dainikhatabook.Services.SyncService;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,10 +62,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attach();
 
-
-
     }
 
+    
+    
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isBackupEnabled = sharedPreferences.getBoolean("backup",false);
+
+        SyncService syncService = new SyncService(this);
+        //Log.d(TAG, "onPostResume: pending jobs " + syncService.getAllJobs());
+        if (isBackupEnabled) {
+
+            if (syncService.getAllJobs().size() == 0) {
+                syncService.scheduleJob();
+            }
+        }else {
+            if (syncService.getAllJobs().size() > 0) {
+                syncService.cancelJob();
+            }
+
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

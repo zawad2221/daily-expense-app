@@ -100,7 +100,9 @@ public class IncomePageFragment extends Fragment
         if (requestCode == ADD_REQUEST_CODE) {
             if (resultCode == 1) {
                 if (data != null) {
-                    mainActivityViewModel.addIncome(data);
+                    Income income = (Income) data
+                            .getSerializableExtra(Income.class.getSimpleName());
+                    mainActivityViewModel.addIncome(income);
                     setTotalIncome();
                     incomeRecyclerAdapter.notifyDataSetChanged();
                 } else {
@@ -112,8 +114,10 @@ public class IncomePageFragment extends Fragment
         if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == 1) {
                 if (data != null) {
+                    Income income = (Income) data
+                            .getSerializableExtra(Income.class.getSimpleName());
                     if (mainActivityViewModel.editIncome(incomeItemAdapterPosition,
-                            data)) {
+                            income)) {
                         incomeRecyclerAdapter.notifyItemChanged(incomeItemAdapterPosition);
                         setTotalIncome();
                     }
@@ -162,7 +166,7 @@ public class IncomePageFragment extends Fragment
                         Intent intent = new Intent(getActivity(), EditActivity.class);
                         Income selectedObj = mainActivityViewModel.getIncomes()
                                 .get(incomeItemAdapterPosition);
-                        setIntentData(selectedObj, intent);
+                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
                         startActivityForResult(intent, EDIT_REQUEST_CODE);
                         break;
                     case R.id.delete_menu_item:
@@ -191,13 +195,6 @@ public class IncomePageFragment extends Fragment
         dialogFragment.dismiss();
     }
 
-    private void setIntentData(Income selectedItem, Intent intentData) {
-        intentData.putExtra("title", "Edit Income");
-        intentData.putExtra("type", selectedItem.getIncomeType().toLowerCase());
-        intentData.putExtra("date", selectedItem.getIncomeDate());
-        intentData.putExtra("amount", selectedItem.getIncomeAmount());
-        intentData.putExtra("desc", selectedItem.getIncomeDesc());
-    }
 
     private void showDialog() {
         DialogFragment dialogFragment = new ConfirmModal();

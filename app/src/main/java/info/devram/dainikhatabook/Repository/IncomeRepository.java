@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
     public void addData(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
+            contentValues.put(Util.EXPENSE_KEY_ID,obj.getId());
             contentValues.put(Util.INCOME_KEY_TYPE,obj.getIncomeType());
             contentValues.put(Util.INCOME_KEY_DESC,obj.getIncomeDesc());
             contentValues.put(Util.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
@@ -62,7 +65,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
                 Income income = new Income();
                 income.setId(cursor
-                        .getInt(cursor.getColumnIndex(Util.INCOME_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_ID)));
                 income.setIncomeType(cursor
                         .getString(cursor.getColumnIndex(Util.INCOME_KEY_TYPE)));
                 income.setIncomeDesc(cursor
@@ -70,7 +73,11 @@ public class IncomeRepository implements DatabaseService<Income>  {
                 income.setIncomeAmount(cursor
                         .getInt(cursor.getColumnIndex(Util.INCOME_KEY_AMOUNT)));
                 income.setIncomeDate(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_DATE)));
+                        .getLong(cursor.getColumnIndex(Util.INCOME_KEY_DATE)));
+                int boolValue = cursor.getInt(cursor.getColumnIndex(Util.INCOME_KEY_SYNC));
+                if (boolValue == 0) {
+                    income.setSyncStatus(false);
+                }else income.setSyncStatus(true);
                 incomeList.add(income);
             }while (cursor.moveToNext());
         }
@@ -93,13 +100,13 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
         if (cursor != null) {
             cursor.moveToFirst();
-            account.setId(cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+            account.setId(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
             account.setIncomeAmount(
                     cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
             account.setIncomeType(
                     cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
             account.setIncomeDate(
-                    cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                    cursor.getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
             account.setIncomeDesc(
                     cursor.getColumnName(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
             cursor.close();
@@ -151,6 +158,28 @@ public class IncomeRepository implements DatabaseService<Income>  {
         cursor.close();
 
         return count;
+    }
+
+    public void updateSync(List<Income> incomeList) {
+
+        SQLiteDatabase updateDB = db.getWritableDatabase();
+        updateDB.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (Income income: incomeList) {
+                values.put(Util.INCOME_KEY_SYNC,Util.SYNC_STATUS_TRUE);
+                updateDB.update(Util.INCOME_TABLE_NAME,values,
+                        Util.INCOME_KEY_ID + "=?",
+                        new String[]{income.getId()});
+            }
+            updateDB.setTransactionSuccessful();
+
+        }catch (SQLiteException e) {
+            e.printStackTrace();
+            Log.e(TAG, "updateSync: " + e.getMessage());
+        }finally {
+            updateDB.endTransaction();
+        }
     }
 
 //    private String getDate() {

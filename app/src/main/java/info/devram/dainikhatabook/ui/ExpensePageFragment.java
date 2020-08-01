@@ -1,7 +1,12 @@
 package info.devram.dainikhatabook.ui;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,12 +31,11 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
-import info.devram.dainikhatabook.Controllers.PostJsonData;
-import info.devram.dainikhatabook.Controllers.PostRawData;
 import info.devram.dainikhatabook.EditActivity;
 import info.devram.dainikhatabook.ExpenseActivity;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.R;
+import info.devram.dainikhatabook.Services.BackupJobService;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class ExpensePageFragment extends Fragment
@@ -82,10 +86,10 @@ public class ExpensePageFragment extends Fragment
             @Override
             public void onClick(View view) {
 
-//                Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
-//
-//                startActivityForResult(expenseIntent, ADD_REQUEST_CODE);
-                postData();
+                Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
+
+                startActivityForResult(expenseIntent, ADD_REQUEST_CODE);
+                //postData();
 
             }
         });
@@ -105,7 +109,7 @@ public class ExpensePageFragment extends Fragment
                     mainActivityViewModel.addExpense(expense);
                     setTotalExpense();
                     expRecyclerAdapter.notifyDataSetChanged();
-                    //postData();
+
                 } else {
                     Log.e(TAG, "onActivityResult: intent data is null ");
                 }
@@ -206,27 +210,4 @@ public class ExpensePageFragment extends Fragment
         dialogFragment.dismiss();
     }
 
-    private void postData() {
-
-        String url = "http://192.168.0.101/expenses";
-        PostJsonData postJsonData = new PostJsonData(new PostJsonData.OnReponseAvailableListener() {
-            @Override
-            public void onResponseAvailable(String httpMessage, PostRawData.UploadStatus status) {
-                Log.d(TAG, "onResponseAvailable: " + httpMessage);
-                Log.d(TAG, "onResponseAvailable: " + status);
-                if (httpMessage.equalsIgnoreCase("201") && status == PostRawData.UploadStatus.OK) {
-                    mainActivityViewModel.updateSyncListWithDb(syncList);
-                }
-            }
-        },url);
-
-        syncList = mainActivityViewModel.getSyncList();
-        Log.d(TAG, "postData: " + syncList);
-        if (syncList != null && syncList.size() > 0) {
-            postJsonData.parseJson(syncList);
-        }else {
-            Log.d(TAG, "postData: no data to upload ");
-        }
-
-    }
 }

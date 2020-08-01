@@ -16,9 +16,13 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+
+import info.devram.dainikhatabook.Models.Income;
 
 public class IncomeActivity extends AppCompatActivity {
 
@@ -28,6 +32,8 @@ public class IncomeActivity extends AppCompatActivity {
     private Calendar myCalendar;
     private DatePickerDialog.OnDateSetListener date;
     private ArrayAdapter<CharSequence> adapter;
+    private String myFormat;
+    private SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,8 @@ public class IncomeActivity extends AppCompatActivity {
         Button addNew = findViewById(R.id.add_new_btn);
         final EditText amountEditText = findViewById(R.id.edit_text_amount);
         final EditText descEdittext = findViewById(R.id.edit_text_desc);
+        myFormat = "dd/MM/yy";
+        sdf = new SimpleDateFormat(myFormat,Locale.CANADA);
 
         myCalendar = Calendar.getInstance();
         updateLabel();
@@ -82,17 +90,26 @@ public class IncomeActivity extends AppCompatActivity {
                 String type = spinner.getSelectedItem().toString();
                 String date = datePicker.getText().toString();
                 int amount = 0;
+                long checkedDate = 0;
                 try {
                     amount = Integer.parseInt(amountEditText.getText().toString());
+                    Date selectedDate = sdf.parse(datePicker.getText().toString());
+                    if (selectedDate != null) {
+                        checkedDate = selectedDate.getTime();
+                    }
                 }catch (NumberFormatException e) {
                     Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+                }catch (ParseException e) {
+                    Log.e(TAG, "date parsing error " + e.getMessage());
                 }
                 String desc = descEdittext.getText().toString();
                 Intent resultIntent = getIntent();
-                resultIntent.putExtra("type",type);
-                resultIntent.putExtra("date",date);
-                resultIntent.putExtra("amount",amount);
-                resultIntent.putExtra("desc",desc);
+                Income income = new Income();
+                income.setIncomeType(type);
+                income.setIncomeAmount(amount);
+                income.setIncomeDate(checkedDate);
+                income.setIncomeDesc(desc);
+                resultIntent.putExtra(Income.class.getSimpleName(),income);
                 setResult(1,resultIntent);
                 finish();
             }
@@ -123,8 +140,6 @@ public class IncomeActivity extends AppCompatActivity {
     }
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
 
         datePicker.setText(sdf.format(myCalendar.getTime()));
     }

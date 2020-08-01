@@ -2,10 +2,6 @@ package info.devram.dainikhatabook.Controllers;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.BlockingDeque;
+
 
 public class PostRawData extends AsyncTask<String, Void, String> {
     private static final String TAG = "PostRawData";
@@ -74,7 +70,6 @@ public class PostRawData extends AsyncTask<String, Void, String> {
 
             int response = connection.getResponseCode();
             if (response != 201) {
-                Log.d(TAG, "doInBackground: error response " + response);
 
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 
@@ -84,14 +79,12 @@ public class PostRawData extends AsyncTask<String, Void, String> {
                     errorResult.append(line).append("\n");
                 }
                 result = String.valueOf(response);
-                Log.d(TAG, "doInBackground: error result " + errorResult.toString());
+                Log.e(TAG, "doInBackground: error result " + errorResult.toString());
                 mUploadStatus = UploadStatus.FAILED_OR_EMPTY;
                 return result;
             }
 
-            Log.d(TAG, "doInBackground: success ");
             result = String.valueOf(response);
-            Log.d(TAG, "doInBackground: " + result);
             mUploadStatus = UploadStatus.OK;
             return result;
 
