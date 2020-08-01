@@ -52,15 +52,18 @@ public class EditActivity extends AppCompatActivity {
 
         expense = (Expense) getIntent().getSerializableExtra(Expense.class.getSimpleName());
 
-        if (activityTitle.toLowerCase().equals("edit expense")) {
-            adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.expense_type, android.R.layout.simple_spinner_item);
-        }else {
-            adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.income_type, android.R.layout.simple_spinner_item);
+        if (activityTitle != null) {
+            if (activityTitle.equalsIgnoreCase("edit expense")) {
+                adapter = ArrayAdapter
+                        .createFromResource(this,
+                                R.array.expense_type, android.R.layout.simple_spinner_item);
+            }else {
+                adapter = ArrayAdapter
+                        .createFromResource(this,
+                                R.array.income_type, android.R.layout.simple_spinner_item);
+            }
         }
+
 
         for (int i = 0; i < adapter.getCount(); i++) {
 
