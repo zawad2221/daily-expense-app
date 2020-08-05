@@ -1,23 +1,16 @@
 package info.devram.dainikhatabook.ui;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,11 +24,9 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
-import info.devram.dainikhatabook.EditActivity;
-import info.devram.dainikhatabook.ExpenseActivity;
+import info.devram.dainikhatabook.AddActivity;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.R;
-import info.devram.dainikhatabook.Services.BackupJobService;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 
 public class ExpensePageFragment extends Fragment
@@ -64,7 +55,7 @@ public class ExpensePageFragment extends Fragment
 
         View view = inflater.inflate(R.layout.fragment_expense_page, container, false);
 
-        RecyclerView expenseRecyclerView = view.findViewById(R.id.exp_recycler_view);
+        RecyclerView expenseRecyclerView = view.findViewById(R.id.detail_recycler_view);
         totalExpenseTextView = view.findViewById(R.id.total_exp_amt_txt_view);
         TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
 
@@ -86,7 +77,7 @@ public class ExpensePageFragment extends Fragment
             @Override
             public void onClick(View view) {
 
-                Intent expenseIntent = new Intent(getActivity(), ExpenseActivity.class);
+                Intent expenseIntent = new Intent(getActivity(), AddActivity.class);
 
                 startActivityForResult(expenseIntent, ADD_REQUEST_CODE);
                 //postData();
@@ -158,31 +149,31 @@ public class ExpensePageFragment extends Fragment
     @Override
     public void onItemClicked(View view, final int position) {
         editItemAdapterPosition = position;
-        PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
-
-        popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.edit_menu_item:
-                        Intent intent = new Intent(getActivity(), EditActivity.class);
-                        Expense selectedObj = mainActivityViewModel.getExpenses().get(position);
-                        intent.putExtra("title", "Edit Expense");
-                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
-                        startActivityForResult(intent, EDIT_REQUEST_CODE);
-                        break;
-                    case R.id.delete_menu_item:
-                        showDialog();
-                        break;
-                    default:
-                }
-                return true;
-            }
-        });
-
-        popupMenu.show();
+//        PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
+//
+//        popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
+//
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.edit_menu_item:
+//                        Intent intent = new Intent(getActivity(), EditActivity.class);
+//                        Expense selectedObj = mainActivityViewModel.getExpenses().get(position);
+//                        intent.putExtra("title", "Edit Expense");
+//                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
+//                        startActivityForResult(intent, EDIT_REQUEST_CODE);
+//                        break;
+//                    case R.id.delete_menu_item:
+//                        showDialog();
+//                        break;
+//                    default:
+//                }
+//                return true;
+//            }
+//        });
+//
+//        popupMenu.show();
 
     }
 
@@ -197,6 +188,7 @@ public class ExpensePageFragment extends Fragment
 
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
+        Log.d(TAG, "onOkClick: " + dialogFragment);
         if (mainActivityViewModel.deleteExpense(editItemAdapterPosition)) {
             expRecyclerAdapter.notifyItemRemoved(editItemAdapterPosition);
             setTotalExpense();

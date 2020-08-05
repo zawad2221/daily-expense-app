@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +88,34 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         cursor.close();
 
+        return expenseList;
+    }
+
+    public List<Expense> getSummaryByType(List<String> types) {
+        this.expenseList = new ArrayList<>();
+
+        for (int i = 0; i < types.size(); i++) {
+
+            Cursor cursor = db.getReadableDatabase().rawQuery("SELECT "
+                            + Util.EXPENSE_KEY_TYPE + ", SUM("
+                            + Util.EXPENSE_KEY_AMOUNT + ") as " + Util.EXPENSE_KEY_AMOUNT + " FROM "
+                    + Util.EXPENSE_TABLE_NAME + " WHERE " + Util.EXPENSE_KEY_TYPE + "=?",
+                    new String[]{types.get(i)});
+
+            try {
+                while (cursor.moveToNext()) {
+                    if (cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)) != 0) {
+                        Expense expense = new Expense();
+                        expense.setExpenseType(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+                        expense.setExpenseAmount(cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                        expenseList.add(expense);
+                    }
+                }
+            }finally {
+                cursor.close();
+            }
+        }
+        Log.d(TAG, "getSummaryByType: " + expenseList.size());
         return expenseList;
     }
 
@@ -187,6 +216,34 @@ public class ExpenseRepository implements DatabaseService<Expense> {
             updateDB.endTransaction();
         }
 
+    }
+
+    public List<Expense> getByDate() {
+        expenseList = new ArrayList<>();
+        Cursor cursor = db.getReadableDatabase().query(
+                Util.EXPENSE_TABLE_NAME,new String[]{Util.EXPENSE_KEY_ID,Util.EXPENSE_KEY_TYPE,
+                Util.EXPENSE_KEY_DATE, Util.EXPENSE_KEY_AMOUNT},null,null,
+                null,null,Util.EXPENSE_KEY_DATE + " ASC");
+
+        if(cursor.moveToFirst()) {
+            do {
+                Expense expense = new Expense();
+                expense.setId(cursor
+                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+                expense.setExpenseType(cursor
+                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+
+                expense.setExpenseAmount(cursor
+                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                expense.setExpenseDate(cursor
+                        .getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                expenseList.add(expense);
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return expenseList;
     }
 //    private String getDate() {
 //        Calendar myCalendar = Calendar.getInstance();

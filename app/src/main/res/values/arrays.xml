@@ -9,4 +9,12 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+    <string-array name="dashboard_select_entries">
+        <item>Expenses</item>
+        <item>Incomes</item>
+    </string-array>
+    <string-array name="dashboard_select_values">
+        <item>expense</item>
+        <item>income</item>
+    </string-array>
 </resources>

@@ -50,6 +50,12 @@ public class MainActivityViewModel {
         return expenseList;
     }
 
+    public List<Expense> getExpenseSummaryType(List<String> expenseTypes) {
+        expenseTypes.remove(0);
+        return expenseRepository.getSummaryByType(expenseTypes);
+    }
+
+
     public void addExpense(Expense expense) {
 
         String uniqueID = UUID.randomUUID().toString();
@@ -144,5 +150,13 @@ public class MainActivityViewModel {
             syncList.get(i).setSyncStatus(true);
         }
         incomeRepository.updateSync(syncList);
+    }
+
+    public List<Expense> getExpenseByDate() {
+        return expenseRepository.getByDate();
+    }
+
+    public List<Income> getIncomeByDate() {
+        return incomeRepository.getByDate();
     }
 }

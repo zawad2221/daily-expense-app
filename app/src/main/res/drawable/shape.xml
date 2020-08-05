@@ -9,9 +9,9 @@
         android:top="12dp"
         android:right="12dp" />
     <solid
-        android:color="@color/alterPrimary" />
+        android:color="@color/secondaryColor" />
 
     <stroke
-        android:color="@color/alterPrimary"
+        android:color="@color/secondaryColor"
         android:width="1.5dp" />
 </shape>

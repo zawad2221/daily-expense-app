@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IncomeActivity">
+    tools:context=".IncomeActivityBase">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -22,6 +22,6 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/add_new_content"/>
+        layout="@layout/add_edit_content"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

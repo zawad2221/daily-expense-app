@@ -3,7 +3,6 @@
     package="info.devram.dainikhatabook">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -16,17 +15,17 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/SettingsScreen"/>
+            android:theme="@style/SettingsScreen" />
         <activity
-            android:name=".EditActivity"
+            android:name=".DetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".IncomeActivity"
+            android:name=".IncomeActivityBase"
             android:label="@string/title_activity_income"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ExpenseActivity"
+            android:name=".AddActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
@@ -42,7 +41,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".Services.BackupJobService"
+
+        <service
+            android:name=".Services.BackupJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 

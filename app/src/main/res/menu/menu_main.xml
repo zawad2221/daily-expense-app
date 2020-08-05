@@ -4,7 +4,14 @@
     tools:context="info.devram.dainikhatabook.MainActivity">
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/expense_detail"
+        android:title="@string/expense_detail" />
+    <item
+        android:id="@+id/income_detail"
+        android:title="@string/income_detail" />
 </menu>

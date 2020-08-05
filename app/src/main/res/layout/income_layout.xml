@@ -28,7 +28,7 @@
             android:paddingEnd="12dp">
 
             <TextView
-                android:id="@+id/titleTextView"
+                android:id="@+id/expenseTitleTextxView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="@string/total_inc_amount"
+                android:text="@string/total_dashboard_amount"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"

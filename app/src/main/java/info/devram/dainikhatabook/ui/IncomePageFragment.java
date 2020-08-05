@@ -4,16 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,8 +22,7 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
-import info.devram.dainikhatabook.EditActivity;
-import info.devram.dainikhatabook.IncomeActivity;
+import info.devram.dainikhatabook.IncomeActivityBase;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
@@ -59,10 +55,10 @@ public class IncomePageFragment extends Fragment
 
         RecyclerView incomeRecyclerView = view.findViewById(R.id.inc_recycler_view);
         totalIncometextView = view.findViewById(R.id.total_inc_amt_txt_view);
-        TextView incomeTitletextView = view.findViewById(R.id.titleTextView);
-
-        incomeTitletextView.setText(MessageFormat.format("{0} {1}",
-                "Total", view.getResources().getString(R.string.total_income)));
+//        TextView incomeTitletextView = view.findViewById(R.id.incomeTitleTextxView);
+//
+//        incomeTitletextView.setText(MessageFormat.format("{0} {1}",
+//                "Total", view.getResources().getString(R.string.total_income)));
 
         incomeRecyclerAdapter = new IncomeRecyclerAdapter(
                 mainActivityViewModel.getIncomes(), this);
@@ -82,7 +78,7 @@ public class IncomePageFragment extends Fragment
             @Override
             public void onClick(View view) {
 
-                Intent incomeIntent = new Intent(getActivity(), IncomeActivity.class);
+                Intent incomeIntent = new Intent(getActivity(), IncomeActivityBase.class);
 
                 startActivityForResult(incomeIntent, ADD_REQUEST_CODE);
 
@@ -154,31 +150,31 @@ public class IncomePageFragment extends Fragment
     public void onItemClicked(View view, final int position) {
         incomeItemAdapterPosition = position;
 
-        PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
-
-        popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.edit_menu_item:
-                        Intent intent = new Intent(getActivity(), EditActivity.class);
-                        Income selectedObj = mainActivityViewModel.getIncomes()
-                                .get(incomeItemAdapterPosition);
-                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
-                        startActivityForResult(intent, EDIT_REQUEST_CODE);
-                        break;
-                    case R.id.delete_menu_item:
-                        showDialog();
-                        break;
-                    default:
-                }
-                return true;
-            }
-        });
-
-        popupMenu.show();
+//        PopupMenu popupMenu = new PopupMenu(view.getContext(), view, Gravity.CENTER);
+//
+//        popupMenu.getMenuInflater().inflate(R.menu.options_menu, popupMenu.getMenu());
+//
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.edit_menu_item:
+//                        Intent intent = new Intent(getActivity(), EditActivity.class);
+//                        Income selectedObj = mainActivityViewModel.getIncomes()
+//                                .get(incomeItemAdapterPosition);
+//                        intent.putExtra(selectedObj.getClass().getSimpleName(),selectedObj);
+//                        startActivityForResult(intent, EDIT_REQUEST_CODE);
+//                        break;
+//                    case R.id.delete_menu_item:
+//                        showDialog();
+//                        break;
+//                    default:
+//                }
+//                return true;
+//            }
+//        });
+//
+//        popupMenu.show();
     }
 
     @Override
@@ -203,4 +199,5 @@ public class IncomePageFragment extends Fragment
         dialogFragment.show(getParentFragmentManager(), null);
 
     }
+
 }

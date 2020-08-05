@@ -92,9 +92,14 @@ public class Income implements Serializable {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String query = "CREATE TABLE income(id INTEGER PRIMARY KEY," +
-                    "type TEXT NOT NULL,amount INTEGER NOT NULL," +
-                    "date_added LONG NOT NULL,description TEXT NOT NULL);";
+            String query = "CREATE TABLE IF NOT EXISTS " + Util.INCOME_TABLE_NAME + "("
+                    + Util.INCOME_KEY_ID + " TEXT NOT NULL,"
+                    + Util.INCOME_KEY_TYPE + " TEXT NOT NULL,"
+                    + Util.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
+                    + Util.INCOME_KEY_DATE + " LONG NOT NULL,"
+                    + Util.INCOME_KEY_DESC + " TEXT NOT NULL,"
+                    + Util.INCOME_KEY_SYNC + " INTEGER DEFAULT "
+                    + Util.SYNC_STATUS_FALSE + ");";
 
             db.execSQL(query);
         }

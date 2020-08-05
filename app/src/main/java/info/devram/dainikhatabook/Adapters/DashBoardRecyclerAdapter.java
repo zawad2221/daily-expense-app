@@ -1,28 +1,31 @@
 package info.devram.dainikhatabook.Adapters;
 
 //import android.util.Log;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
+import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.R;
 
 public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecyclerAdapter.ViewHolder> {
 
-    //private static final String TAG = "DashBoardRecyclerAdapte";
+    private static final String TAG = "DashBoardRecyclerAdapte";
 
-    private List dashBoardList;
+    private List<DashBoardObject> dashBoardList;
 
-    public DashBoardRecyclerAdapter(List dashBoardList) {
+    public DashBoardRecyclerAdapter(List<DashBoardObject> dashBoardList) {
         this.dashBoardList = dashBoardList;
 
     }
@@ -39,35 +42,23 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Expense expense;
-        Income income;
 
+        DashBoardObject dashBoardObject = dashBoardList.get(position);
+        Log.d(TAG, "onBindViewHolder: " + dashBoardObject);
         if (dashBoardList.size() != 0) {
-            if (dashBoardList.get(position) instanceof Expense) {
-                expense = (Expense) dashBoardList.get(position);
-                holder.typeTextView.setText(expense.getExpenseType());
-                holder.expenseTextView.setText(MessageFormat.format("{0} {1}",
-                        holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
-                        expense.getExpenseAmount()));
-                holder.incomeTextView.setText(
-                        holder.itemView.getContext().getResources().getString(R.string.no_value)
-                        );
-                holder.expenseTextView.setTextColor(
-                        holder.itemView.getContext().getColor(R.color.error)
-                );
-            }
-            if (dashBoardList.get(position) instanceof Income) {
-                income = (Income) dashBoardList.get(position);
-                holder.typeTextView.setText(income.getIncomeType());
-                holder.incomeTextView.setText(MessageFormat.format("{0} {1}",
-                                holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
-                                income.getIncomeAmount()));
-                holder.incomeTextView.setTextColor(
-                        holder.itemView.getContext().getColor(R.color.alterAccent)
-                );
-                holder.expenseTextView.setText(
-                        holder.itemView.getContext().getResources().getString(R.string.no_value)
-                );
+            holder.typeTextView.setText(dashBoardObject.getTypeObject());
+            holder.amountTextView.setText(String.valueOf(dashBoardObject.getAmountObject()));
+            holder.descTextView.setText(dashBoardObject.getDescObject());
+            String myFormat = "dd/MM/YY";
+            long dateObject = dashBoardObject.getDateObject();
+
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
+
+            holder.dateTextView.setText(sdf.format(dateObject));
+            if (dashBoardObject.getIsExpense()) {
+                holder.imageView.setImageResource(R.drawable.ic_arrow_up);
+            }else {
+                holder.imageView.setImageResource(R.drawable.ic_arrow_down);
             }
         }
 
@@ -78,7 +69,7 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
         return dashBoardList.size();
     }
 
-    public void updateData(List updatedList) {
+    public void updateData(List<DashBoardObject> updatedList) {
         this.dashBoardList.clear();
         this.dashBoardList.addAll(updatedList);
         notifyDataSetChanged();
@@ -87,15 +78,20 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView typeTextView;
-        public TextView expenseTextView;
-        public TextView incomeTextView;
+        public TextView amountTextView;
+        public TextView descTextView;
+        public TextView dateTextView;
+        public ImageView imageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            typeTextView = itemView.findViewById(R.id.dash_type_txt_view);
-            expenseTextView = itemView.findViewById(R.id.dash_exp_txt_view);
-            incomeTextView = itemView.findViewById(R.id.dash_inc_txt_view);
+            typeTextView = itemView.findViewById(R.id.dash_type_text);
+            amountTextView = itemView.findViewById(R.id.dashAmountTextView);
+            descTextView = itemView.findViewById(R.id.dashDescTextView);
+            dateTextView = itemView.findViewById(R.id.dashDateTextView);
+            imageView = itemView.findViewById(R.id.dashboardImageView);
+
         }
     }
 }

@@ -182,6 +182,33 @@ public class IncomeRepository implements DatabaseService<Income>  {
         }
     }
 
+    public List<Income> getByDate() {
+        incomeList = new ArrayList<>();
+        Cursor cursor = db.getReadableDatabase()
+                .query(Util.INCOME_TABLE_NAME,new String[]{Util.INCOME_KEY_ID,
+                Util.INCOME_KEY_TYPE,Util.INCOME_KEY_AMOUNT,Util.INCOME_KEY_DATE},
+                        null,null,null,
+                        null,Util.INCOME_KEY_DATE + " ASC");
+        if(cursor.moveToFirst()) {
+            do {
+
+                Income income = new Income();
+                income.setId(cursor
+                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_ID)));
+                income.setIncomeType(cursor
+                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_TYPE)));
+                income.setIncomeAmount(cursor
+                        .getInt(cursor.getColumnIndex(Util.INCOME_KEY_AMOUNT)));
+                income.setIncomeDate(cursor
+                        .getLong(cursor.getColumnIndex(Util.INCOME_KEY_DATE)));
+                incomeList.add(income);
+            }while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return incomeList;
+    }
+
 //    private String getDate() {
 //        Calendar myCalendar = Calendar.getInstance();
 //        String myFormat = "dd/MM/yy";

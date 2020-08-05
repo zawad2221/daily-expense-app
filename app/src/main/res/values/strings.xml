@@ -25,9 +25,8 @@
         <item>Loan</item>
     </string-array>
     <string name="img_view_cd">Icon</string>
-    <string name="total_income">Income</string>
-    <string name="net_inHand">In Hand</string>
-    <string name="total_inc_amount">Total Amount</string>
+    <string name="total_income">Incomes</string>
+    <string name="total_dashboard_amount">Total: %1$s/-</string>
     <string name="total_expense">Expenses</string>
     <string name="total_exp_amt">Total Amount</string>
     <string name="rs_symbol">\u20B9</string>
@@ -36,11 +35,10 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="expense_btn_edit">Edit</string>
-    <string name="modal_btn_ok">OK</string>
-    <string name="modal_btn_cancel">cancel</string>
     <string name="no_value">""</string>
     <string name="add_button">Add New</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="dashboard_select">Select Expense/Income</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">About</string>
@@ -52,5 +50,17 @@
         Run Once a Day When Device is Connected To WI-FI
     </string>
     <string name="about_summary">Created By Rahul Malik\n\nApp Version: %1$s</string>
+    <string name="expense_detail">Expense Detail</string>
+    <string name="income_detail">Income Detail</string>
+    <string name="type">Type:</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="title_activity_dash_board">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard_add">Add</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="dashboard_img_view">incoming/outgoing</string>
+    <string name="description">Description: </string>
+    <string name="amount">Amount:</string>
+    <string name="date">Date:</string>
 
 </resources>

@@ -57,7 +57,7 @@ public class TodayPageFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_today_page, container, false);
+        View view = inflater.inflate(R.layout.dashboard_layout, container, false);
         /*
          * instantiate view model data object
          *
@@ -70,13 +70,13 @@ public class TodayPageFragment extends Fragment {
          * i.e MainActivityViewModel
          */
 
-        recyclerView = view.findViewById(R.id.dashboard_recycler_view);
-        netCashinHand = view.findViewById(R.id.total_amt_txt_view);
-        netCashImageView = view.findViewById(R.id.netcash_image);
-        netCashCardView = view.findViewById(R.id.netCash_cardView);
-
-        updateDashboardRecycler();
-        updateNetCashTextView();
+//        recyclerView = view.findViewById(R.id.dashboard_recycler_view);
+//        netCashinHand = view.findViewById(R.id.total_amt_txt_view);
+//        netCashImageView = view.findViewById(R.id.netcash_image);
+//        netCashCardView = view.findViewById(R.id.exp_cardView);
+//
+//        updateDashboardRecycler();
+//        updateNetCashTextView();
 
         return view;
     }
@@ -124,10 +124,10 @@ public class TodayPageFragment extends Fragment {
             netCashCardView.setCardBackgroundColor(Color.WHITE);
         } else if (netCash > 0) {
             netCashImageView.setImageResource(R.drawable.ic_balance_left);
-            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.alterAccent));
+            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.accentSecondary));
         } else {
             netCashImageView.setImageResource(R.drawable.ic_balance_right);
-            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.error));
+            netCashCardView.setCardBackgroundColor(getResources().getColor(R.color.accentSecondary));
         }
         netCashinHand.setText(MessageFormat.format("{0} {1}",
                 getResources().getString(R.string.rs_symbol),

@@ -1,5 +1,6 @@
 package info.devram.dainikhatabook.Adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import info.devram.dainikhatabook.R;
 
 public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
 
-    //private static final String TAG = "ExpenseRecyclerAdapter";
+    private static final String TAG = "ExpenseRecyclerAdapter";
 
 
     private List<Expense> expenseList;
@@ -35,7 +36,7 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
                                                                 int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.expense_row,parent,false);
+                .inflate(R.layout.detail_layout_row,parent,false);
 
         return new ViewHolder(view,recyclerOnClick);
     }
@@ -44,6 +45,7 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
     public void onBindViewHolder(@NonNull ExpenseRecyclerAdapter.ViewHolder holder, int position) {
         //holder.expenseImageView
         Expense expense = expenseList.get(position);
+        Log.d(TAG, "onBindViewHolder: "  + expense);
         holder.expenseTypeTextView
                 .setText(expense.getExpenseType());
         holder.expenseAmountTextView
