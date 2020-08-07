@@ -28,7 +28,6 @@
     <string name="total_income">Incomes</string>
     <string name="total_dashboard_amount">Total: %1$s/-</string>
     <string name="total_expense">Expenses</string>
-    <string name="total_exp_amt">Total Amount</string>
     <string name="rs_symbol">\u20B9</string>
     <string name="title_activity_income">Add Income</string>
     <string name="balance">balance</string>
@@ -50,8 +49,8 @@
         Run Once a Day When Device is Connected To WI-FI
     </string>
     <string name="about_summary">Created By Rahul Malik\n\nApp Version: %1$s</string>
-    <string name="expense_detail">Expense Detail</string>
-    <string name="income_detail">Income Detail</string>
+    <string name="expense_summary">Expenses</string>
+    <string name="income_summary">Incomes</string>
     <string name="type">Type:</string>
     <string name="total_amount">Total Amount</string>
     <string name="title_activity_dash_board">MainActivity</string>
@@ -62,5 +61,10 @@
     <string name="description">Description: </string>
     <string name="amount">Amount:</string>
     <string name="date">Date:</string>
+    <string name="see_more">See More</string>
+    <string name="about">About</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="report">Report</string>
+    <string name="help">Help</string>
 
 </resources>

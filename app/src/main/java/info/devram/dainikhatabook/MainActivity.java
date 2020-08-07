@@ -4,32 +4,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-//import android.util.Log;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
@@ -39,7 +29,7 @@ import info.devram.dainikhatabook.ui.SelectModal;
 
 public class MainActivity extends AppCompatActivity
         implements SelectModal.OnSelectListener,
-        BottomNavigationView.OnNavigationItemSelectedListener {
+        View.OnClickListener {
 
     public static final String TAG = "MainActivity";
 
@@ -51,9 +41,15 @@ public class MainActivity extends AppCompatActivity
     private SelectModal selectModal;
     private TextView expenseSumTextView;
     private TextView incomeSumTextView;
+    private Button settingsButton;
+    private Button addExpenseButton;
+    private Button addIncomeButton;
+    private Button generateReportButton;
+    private Button helpButton;
+    private Button aboutButton;
     private List<Expense> newExpenseList = new ArrayList<>();
     private List<Income> newIncomeList = new ArrayList<>();
-    private BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +68,12 @@ public class MainActivity extends AppCompatActivity
 
         expenseSumTextView = findViewById(R.id.dashboardExpAmountTextView);
         incomeSumTextView = findViewById(R.id.dashboardIncAmountTextView);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
+        settingsButton = findViewById(R.id.dashSettingBtn);
+        addExpenseButton = findViewById(R.id.dashNewExpBtn);
+        addIncomeButton = findViewById(R.id.dashAddIncBtn);
+        generateReportButton = findViewById(R.id.dashReportBtn);
+        helpButton = findViewById(R.id.dashHelpBtn);
+        aboutButton = findViewById(R.id.dashAboutBtn);
 
     }
 
@@ -87,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         if (selectModal == null) {
             selectModal = new SelectModal(this);
         }
-        updateDashboardRecycler();
+        setupWidgets();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         boolean isBackupEnabled = sharedPreferences.getBoolean("backup",false);
@@ -116,15 +114,53 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onPause: ends " + selectModal);
     }
 
-    private void updateDashboardRecycler() {
+    private void setupWidgets() {
 
         populateList();
+        settingsButton.setOnClickListener(this);
+        addExpenseButton.setOnClickListener(this);
+        addIncomeButton.setOnClickListener(this);
+        generateReportButton.setOnClickListener(this);
+        helpButton.setOnClickListener(this);
+        aboutButton.setOnClickListener(this);
 
-        DashBoardRecyclerAdapter dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(dashBoardRecyclerAdapter);
-        Log.d(TAG, "recycler view adapter " + dashBoardRecyclerAdapter.getItemCount());
+//        DashBoardRecyclerAdapter dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(dashBoardRecyclerAdapter);
+//        Log.d(TAG, "recycler view adapter " + dashBoardRecyclerAdapter.getItemCount());
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()) {
+
+            case R.id.dashSettingBtn:
+                intent = new Intent(MainActivity.this,SettingsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.dashNewExpBtn:
+                intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra(Expense.class.getSimpleName(),"add");
+                startActivity(intent);
+                break;
+            case R.id.dashAddIncBtn:
+                intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra(Income.class.getSimpleName(),"add");
+                startActivity(intent);
+                break;
+            case R.id.dashReportBtn:
+                Log.d(TAG, "Generate new Report clicked");
+                break;
+            case R.id.dashHelpBtn:
+                Log.d(TAG, "Help Button clicked");
+                break;
+            case R.id.dashAboutBtn:
+                Log.d(TAG, "About button clicked");
+                break;
+
+        }
     }
 
     private void populateList() {
@@ -183,10 +219,10 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
-                startActivity(intent);
-                break;
+//            case R.id.action_settings:
+//                Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+//                startActivity(intent);
+//                break;
             case R.id.expense_detail:
                 Intent expDetailIntent = new Intent(MainActivity.this, DetailsActivity.class);
                 expDetailIntent.putExtra(Expense.class.getSimpleName(),"expense");
@@ -282,16 +318,18 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onStop: ");
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.navigation_addNew:
-                selectModal.show(getSupportFragmentManager(),TAG);
-                break;
-            case R.id.navigation_notifications:
-                Log.d(TAG, "onNavigationItemSelected: notification ");
-                break;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.navigation_addNew:
+//                selectModal.show(getSupportFragmentManager(),TAG);
+//                break;
+//            case R.id.navigation_notifications:
+//                Log.d(TAG, "onNavigationItemSelected: notification ");
+//                break;
+//        }
+//        return false;
+//    }
+
+
 }

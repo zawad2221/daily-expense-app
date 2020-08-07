@@ -57,7 +57,7 @@ public class TodayPageFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.dashboard_layout, container, false);
+        View view = inflater.inflate(R.layout.dashboard_layout_backup, container, false);
         /*
          * instantiate view model data object
          *

@@ -141,10 +141,6 @@ public class DetailsActivity extends AppCompatActivity implements RecyclerOnClic
 
         //noinspection SimplifiableIfStatement
         switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent(DetailsActivity.this,SettingsActivity.class);
-                startActivity(intent);
-                break;
             case android.R.id.home:
                 finish();
                 break;

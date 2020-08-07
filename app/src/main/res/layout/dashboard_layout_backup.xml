@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.TodayPageFragment"
     tools:showIn="@layout/activity_main">
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/exp_cardView"
@@ -89,82 +91,22 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <TableLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dashboard_recycler_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:stretchColumns="*"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/cardView3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/exp_cardView"
         app:layout_constraintTop_toBottomOf="@+id/exp_cardView"
         app:layout_constraintVertical_bias="0.0">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    </androidx.recyclerview.widget.RecyclerView>
 
-            <Button
-                android:id="@+id/dashSettingBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_settings"
-                android:drawablePadding="4dp"
-                android:drawableTint="?attr/colorControlNormal"
-                android:text="@string/action_settings" />
-
-            <Button
-                android:id="@+id/dashNewExpBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_dashboard_add"
-                android:drawablePadding="4dp"
-                android:text="@string/add_expense" />
-
-            <Button
-                android:id="@+id/dashAddIncBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_dashboard_add"
-                android:drawablePadding="4dp"
-                android:text="@string/title_activity_income" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/dashReportBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_report"
-                android:drawablePadding="4dp"
-                android:text="@string/report" />
-
-            <Button
-                android:id="@+id/dashHelpBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_help"
-                android:drawablePadding="4dp"
-                android:text="@string/help" />
-
-            <Button
-                android:id="@+id/dashAboutBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_info"
-                android:drawablePadding="4dp"
-                android:text="@string/about" />
-        </TableRow>
-
-    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
