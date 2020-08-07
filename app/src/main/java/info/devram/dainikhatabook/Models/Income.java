@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.io.Serializable;
 
-import info.devram.dainikhatabook.Config.Util;
+import info.devram.dainikhatabook.Helpers.Config;
 
 public class Income implements Serializable {
 
@@ -92,14 +92,14 @@ public class Income implements Serializable {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String query = "CREATE TABLE IF NOT EXISTS " + Util.INCOME_TABLE_NAME + "("
-                    + Util.INCOME_KEY_ID + " TEXT NOT NULL,"
-                    + Util.INCOME_KEY_TYPE + " TEXT NOT NULL,"
-                    + Util.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
-                    + Util.INCOME_KEY_DATE + " LONG NOT NULL,"
-                    + Util.INCOME_KEY_DESC + " TEXT NOT NULL,"
-                    + Util.INCOME_KEY_SYNC + " INTEGER DEFAULT "
-                    + Util.SYNC_STATUS_FALSE + ");";
+            String query = "CREATE TABLE IF NOT EXISTS " + Config.INCOME_TABLE_NAME + "("
+                    + Config.INCOME_KEY_ID + " TEXT NOT NULL,"
+                    + Config.INCOME_KEY_TYPE + " TEXT NOT NULL,"
+                    + Config.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
+                    + Config.INCOME_KEY_DATE + " LONG NOT NULL,"
+                    + Config.INCOME_KEY_DESC + " TEXT NOT NULL,"
+                    + Config.INCOME_KEY_SYNC + " INTEGER DEFAULT "
+                    + Config.SYNC_STATUS_FALSE + ");";
 
             db.execSQL(query);
         }
@@ -114,19 +114,19 @@ public class Income implements Serializable {
                     db.execSQL("INSERT INTO inc_temp SELECT * FROM income");
 
                     db.execSQL("DROP TABLE income");
-                    String query = "CREATE TABLE IF NOT EXISTS " + Util.INCOME_TABLE_NAME + "("
-                            + Util.INCOME_KEY_ID + " TEXT NOT NULL,"
-                            + Util.INCOME_KEY_TYPE + " TEXT NOT NULL,"
-                            + Util.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
-                            + Util.INCOME_KEY_DATE + " LONG NOT NULL,"
-                            + Util.INCOME_KEY_DESC + " TEXT NOT NULL,"
-                            + Util.INCOME_KEY_SYNC + " INTEGER DEFAULT "
-                            + Util.SYNC_STATUS_FALSE + ");";
+                    String query = "CREATE TABLE IF NOT EXISTS " + Config.INCOME_TABLE_NAME + "("
+                            + Config.INCOME_KEY_ID + " TEXT NOT NULL,"
+                            + Config.INCOME_KEY_TYPE + " TEXT NOT NULL,"
+                            + Config.INCOME_KEY_AMOUNT + " INTEGER NOT NULL,"
+                            + Config.INCOME_KEY_DATE + " LONG NOT NULL,"
+                            + Config.INCOME_KEY_DESC + " TEXT NOT NULL,"
+                            + Config.INCOME_KEY_SYNC + " INTEGER DEFAULT "
+                            + Config.SYNC_STATUS_FALSE + ");";
                     db.execSQL(query);
-                    db.execSQL("INSERT INTO " + Util.INCOME_TABLE_NAME + "("
-                            + Util.INCOME_KEY_ID + "," + Util.INCOME_KEY_TYPE + ","
-                            + Util.INCOME_KEY_AMOUNT + "," + Util.INCOME_KEY_DATE + ","
-                            + Util.INCOME_KEY_DESC + ") SELECT "
+                    db.execSQL("INSERT INTO " + Config.INCOME_TABLE_NAME + "("
+                            + Config.INCOME_KEY_ID + "," + Config.INCOME_KEY_TYPE + ","
+                            + Config.INCOME_KEY_AMOUNT + "," + Config.INCOME_KEY_DATE + ","
+                            + Config.INCOME_KEY_DESC + ") SELECT "
                             + "id,type,amount,date_added,description FROM inc_temp;");
                     db.execSQL("DROP TABLE inc_temp");
                     break;

@@ -179,10 +179,10 @@ public class ExpensePageFragment extends Fragment
 
 
     private void showDialog() {
-        DialogFragment dialogFragment = new ConfirmModal();
-
-        dialogFragment.setTargetFragment(ExpensePageFragment.this, 0);
-        dialogFragment.show(getParentFragmentManager(), null);
+//        DialogFragment dialogFragment = new ConfirmModal();
+//
+//        dialogFragment.setTargetFragment(ExpensePageFragment.this, 0);
+//        dialogFragment.show(getParentFragmentManager(), null);
 
     }
 

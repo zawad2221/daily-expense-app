@@ -11,7 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.devram.dainikhatabook.Config.Util;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
 import info.devram.dainikhatabook.Models.Income;
 
@@ -39,13 +39,13 @@ public class IncomeRepository implements DatabaseService<Income>  {
     public void addData(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Util.EXPENSE_KEY_ID,obj.getId());
-            contentValues.put(Util.INCOME_KEY_TYPE,obj.getIncomeType());
-            contentValues.put(Util.INCOME_KEY_DESC,obj.getIncomeDesc());
-            contentValues.put(Util.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
-            contentValues.put(Util.INCOME_KEY_DATE,obj.getIncomeDate());
+            contentValues.put(Config.EXPENSE_KEY_ID,obj.getId());
+            contentValues.put(Config.INCOME_KEY_TYPE,obj.getIncomeType());
+            contentValues.put(Config.INCOME_KEY_DESC,obj.getIncomeDesc());
+            contentValues.put(Config.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
+            contentValues.put(Config.INCOME_KEY_DATE,obj.getIncomeDate());
 
-            db.getWritableDatabase().insert(Util.INCOME_TABLE_NAME,
+            db.getWritableDatabase().insert(Config.INCOME_TABLE_NAME,
                     null,contentValues);
         }catch (SQLException e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
     @Override
     public List<Income> getAll() {
         this.incomeList = new ArrayList<>();
-        String query = "SELECT * FROM " + Util.INCOME_TABLE_NAME;
+        String query = "SELECT * FROM " + Config.INCOME_TABLE_NAME;
 
         Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
 
@@ -65,16 +65,16 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
                 Income income = new Income();
                 income.setId(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_ID)));
                 income.setIncomeType(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_TYPE)));
+                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_TYPE)));
                 income.setIncomeDesc(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_DESC)));
+                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_DESC)));
                 income.setIncomeAmount(cursor
-                        .getInt(cursor.getColumnIndex(Util.INCOME_KEY_AMOUNT)));
+                        .getInt(cursor.getColumnIndex(Config.INCOME_KEY_AMOUNT)));
                 income.setIncomeDate(cursor
-                        .getLong(cursor.getColumnIndex(Util.INCOME_KEY_DATE)));
-                int boolValue = cursor.getInt(cursor.getColumnIndex(Util.INCOME_KEY_SYNC));
+                        .getLong(cursor.getColumnIndex(Config.INCOME_KEY_DATE)));
+                int boolValue = cursor.getInt(cursor.getColumnIndex(Config.INCOME_KEY_SYNC));
                 if (boolValue == 0) {
                     income.setSyncStatus(false);
                 }else income.setSyncStatus(true);
@@ -89,10 +89,10 @@ public class IncomeRepository implements DatabaseService<Income>  {
     @Override
     public Income getOne(int id) {
         Cursor cursor = db.getReadableDatabase().query(
-                Util.INCOME_TABLE_NAME,new String[]{
-                        Util.INCOME_KEY_ID,Util.INCOME_KEY_TYPE,Util.INCOME_KEY_DATE,
-                        Util.INCOME_KEY_AMOUNT,Util.INCOME_KEY_DESC
-                },Util.INCOME_KEY_ID + "=?",new String[]{String.valueOf(id)},
+                Config.INCOME_TABLE_NAME,new String[]{
+                        Config.INCOME_KEY_ID, Config.INCOME_KEY_TYPE, Config.INCOME_KEY_DATE,
+                        Config.INCOME_KEY_AMOUNT, Config.INCOME_KEY_DESC
+                }, Config.INCOME_KEY_ID + "=?",new String[]{String.valueOf(id)},
                 null,null,null
         );
 
@@ -100,15 +100,15 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
         if (cursor != null) {
             cursor.moveToFirst();
-            account.setId(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+            account.setId(cursor.getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
             account.setIncomeAmount(
-                    cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                    cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
             account.setIncomeType(
-                    cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+                    cursor.getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
             account.setIncomeDate(
-                    cursor.getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                    cursor.getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
             account.setIncomeDesc(
-                    cursor.getColumnName(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
+                    cursor.getColumnName(cursor.getColumnIndex(Config.EXPENSE_KEY_DESC)));
             cursor.close();
         }
         return account;
@@ -118,13 +118,13 @@ public class IncomeRepository implements DatabaseService<Income>  {
     public Boolean onUpdate(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Util.INCOME_KEY_TYPE,obj.getIncomeType());
-            contentValues.put(Util.INCOME_KEY_DESC,obj.getIncomeDesc());
-            contentValues.put(Util.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
-            contentValues.put(Util.INCOME_KEY_DATE,obj.getIncomeDate());
+            contentValues.put(Config.INCOME_KEY_TYPE,obj.getIncomeType());
+            contentValues.put(Config.INCOME_KEY_DESC,obj.getIncomeDesc());
+            contentValues.put(Config.INCOME_KEY_AMOUNT,obj.getIncomeAmount());
+            contentValues.put(Config.INCOME_KEY_DATE,obj.getIncomeDate());
 
-            db.getWritableDatabase().update(Util.INCOME_TABLE_NAME,contentValues,
-                    Util.INCOME_KEY_ID + "=?",
+            db.getWritableDatabase().update(Config.INCOME_TABLE_NAME,contentValues,
+                    Config.INCOME_KEY_ID + "=?",
                     new String[]{String.valueOf(obj.getId())});
 
             return true;
@@ -137,8 +137,8 @@ public class IncomeRepository implements DatabaseService<Income>  {
     @Override
     public Boolean onDelete(Income obj) {
         try {
-            db.getWritableDatabase().delete(Util.INCOME_TABLE_NAME,
-                    Util.INCOME_KEY_ID + "=?",
+            db.getWritableDatabase().delete(Config.INCOME_TABLE_NAME,
+                    Config.INCOME_KEY_ID + "=?",
                     new String[]{String.valueOf(obj.getId())});
             return true;
         }catch (SQLException e) {
@@ -149,7 +149,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
 
     @Override
     public int getCount() {
-        String query = "SELECT * FROM " + Util.INCOME_TABLE_NAME;
+        String query = "SELECT * FROM " + Config.INCOME_TABLE_NAME;
 
         Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
 
@@ -167,9 +167,9 @@ public class IncomeRepository implements DatabaseService<Income>  {
         try {
             ContentValues values = new ContentValues();
             for (Income income: incomeList) {
-                values.put(Util.INCOME_KEY_SYNC,Util.SYNC_STATUS_TRUE);
-                updateDB.update(Util.INCOME_TABLE_NAME,values,
-                        Util.INCOME_KEY_ID + "=?",
+                values.put(Config.INCOME_KEY_SYNC, Config.SYNC_STATUS_TRUE);
+                updateDB.update(Config.INCOME_TABLE_NAME,values,
+                        Config.INCOME_KEY_ID + "=?",
                         new String[]{income.getId()});
             }
             updateDB.setTransactionSuccessful();
@@ -185,22 +185,22 @@ public class IncomeRepository implements DatabaseService<Income>  {
     public List<Income> getByDate() {
         incomeList = new ArrayList<>();
         Cursor cursor = db.getReadableDatabase()
-                .query(Util.INCOME_TABLE_NAME,new String[]{Util.INCOME_KEY_ID,
-                Util.INCOME_KEY_TYPE,Util.INCOME_KEY_AMOUNT,Util.INCOME_KEY_DATE},
+                .query(Config.INCOME_TABLE_NAME,new String[]{Config.INCOME_KEY_ID,
+                Config.INCOME_KEY_TYPE, Config.INCOME_KEY_AMOUNT, Config.INCOME_KEY_DATE},
                         null,null,null,
-                        null,Util.INCOME_KEY_DATE + " ASC");
+                        null, Config.INCOME_KEY_DATE + " ASC");
         if(cursor.moveToFirst()) {
             do {
 
                 Income income = new Income();
                 income.setId(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_ID)));
                 income.setIncomeType(cursor
-                        .getString(cursor.getColumnIndex(Util.INCOME_KEY_TYPE)));
+                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_TYPE)));
                 income.setIncomeAmount(cursor
-                        .getInt(cursor.getColumnIndex(Util.INCOME_KEY_AMOUNT)));
+                        .getInt(cursor.getColumnIndex(Config.INCOME_KEY_AMOUNT)));
                 income.setIncomeDate(cursor
-                        .getLong(cursor.getColumnIndex(Util.INCOME_KEY_DATE)));
+                        .getLong(cursor.getColumnIndex(Config.INCOME_KEY_DATE)));
                 incomeList.add(income);
             }while (cursor.moveToNext());
         }

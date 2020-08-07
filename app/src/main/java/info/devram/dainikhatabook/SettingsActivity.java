@@ -17,7 +17,7 @@ import info.devram.dainikhatabook.Services.SyncService;
 public class SettingsActivity extends AppCompatActivity {
 
     //private static final String TAG = "SettingsActivity";
-    public static String aboutSummary = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        aboutSummary = String.format(getResources().getString(R.string.about_summary),
-                BuildConfig.VERSION_NAME);
+
 
     }
 
@@ -57,10 +56,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            Preference about = findPreference("about");
-            assert about != null;
-            about.setSummary(aboutSummary);
-
         }
 
     }

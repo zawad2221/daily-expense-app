@@ -1,14 +1,10 @@
 package info.devram.dainikhatabook.Models;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
-import info.devram.dainikhatabook.Config.Util;
+import info.devram.dainikhatabook.Helpers.Config;
 
 public class Expense implements Serializable {
     private static final String TAG = "Expense";
@@ -95,13 +91,13 @@ public class Expense implements Serializable {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String query = "CREATE TABLE IF NOT EXISTS " + Util.EXPENSE_TABLE_NAME + "("
-                    + Util.EXPENSE_KEY_ID + " TEXT NOT NULL,"
-                    + Util.EXPENSE_KEY_TYPE + " TEXT NOT NULL,"
-                    + Util.EXPENSE_KEY_AMOUNT + " INTEGER NOT NULL,"
-                    + Util.EXPENSE_KEY_DATE + " LONG NOT NULL,"
-                    + Util.EXPENSE_KEY_DESC + " TEXT NOT NULL,"
-                    + Util.EXPENSE_KEY_SYNC + " INTEGER DEFAULT " + Util.SYNC_STATUS_FALSE + ");";
+            String query = "CREATE TABLE IF NOT EXISTS " + Config.EXPENSE_TABLE_NAME + "("
+                    + Config.EXPENSE_KEY_ID + " TEXT NOT NULL,"
+                    + Config.EXPENSE_KEY_TYPE + " TEXT NOT NULL,"
+                    + Config.EXPENSE_KEY_AMOUNT + " INTEGER NOT NULL,"
+                    + Config.EXPENSE_KEY_DATE + " LONG NOT NULL,"
+                    + Config.EXPENSE_KEY_DESC + " TEXT NOT NULL,"
+                    + Config.EXPENSE_KEY_SYNC + " INTEGER DEFAULT " + Config.SYNC_STATUS_FALSE + ");";
 
 
             db.execSQL(query);
@@ -117,18 +113,18 @@ public class Expense implements Serializable {
                     db.execSQL("INSERT INTO exp_temp SELECT * FROM expense");
 
                     db.execSQL("DROP TABLE expense");
-                    String query = "CREATE TABLE IF NOT EXISTS " + Util.EXPENSE_TABLE_NAME + "("
-                            + Util.EXPENSE_KEY_ID + " TEXT NOT NULL,"
-                            + Util.EXPENSE_KEY_TYPE + " TEXT NOT NULL,"
-                            + Util.EXPENSE_KEY_AMOUNT + " INTEGER NOT NULL,"
-                            + Util.EXPENSE_KEY_DATE + " LONG NOT NULL,"
-                            + Util.EXPENSE_KEY_DESC + " TEXT NOT NULL,"
-                            + Util.EXPENSE_KEY_SYNC + " INTEGER DEFAULT " + Util.SYNC_STATUS_FALSE + ");";
+                    String query = "CREATE TABLE IF NOT EXISTS " + Config.EXPENSE_TABLE_NAME + "("
+                            + Config.EXPENSE_KEY_ID + " TEXT NOT NULL,"
+                            + Config.EXPENSE_KEY_TYPE + " TEXT NOT NULL,"
+                            + Config.EXPENSE_KEY_AMOUNT + " INTEGER NOT NULL,"
+                            + Config.EXPENSE_KEY_DATE + " LONG NOT NULL,"
+                            + Config.EXPENSE_KEY_DESC + " TEXT NOT NULL,"
+                            + Config.EXPENSE_KEY_SYNC + " INTEGER DEFAULT " + Config.SYNC_STATUS_FALSE + ");";
                     db.execSQL(query);
-                    db.execSQL("INSERT INTO " + Util.EXPENSE_TABLE_NAME + "("
-                            + Util.EXPENSE_KEY_ID + "," + Util.EXPENSE_KEY_TYPE + ","
-                            + Util.EXPENSE_KEY_AMOUNT + "," + Util.EXPENSE_KEY_DATE + ","
-                            + Util.EXPENSE_KEY_DESC + ") SELECT id,type,amount,date_added,description FROM exp_temp;");
+                    db.execSQL("INSERT INTO " + Config.EXPENSE_TABLE_NAME + "("
+                            + Config.EXPENSE_KEY_ID + "," + Config.EXPENSE_KEY_TYPE + ","
+                            + Config.EXPENSE_KEY_AMOUNT + "," + Config.EXPENSE_KEY_DATE + ","
+                            + Config.EXPENSE_KEY_DESC + ") SELECT id,type,amount,date_added,description FROM exp_temp;");
                     db.execSQL("DROP TABLE exp_temp");
                     break;
 

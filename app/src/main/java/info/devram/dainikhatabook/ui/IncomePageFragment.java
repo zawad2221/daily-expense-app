@@ -193,10 +193,10 @@ public class IncomePageFragment extends Fragment
 
 
     private void showDialog() {
-        DialogFragment dialogFragment = new ConfirmModal();
-
-        dialogFragment.setTargetFragment(IncomePageFragment.this, 0);
-        dialogFragment.show(getParentFragmentManager(), null);
+//        DialogFragment dialogFragment = new ConfirmModal();
+//
+//        dialogFragment.setTargetFragment(IncomePageFragment.this, 0);
+//        dialogFragment.show(getParentFragmentManager(), null);
 
     }
 

@@ -11,13 +11,4 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <Preference
-            android:enabled="true"
-            android:key="about"
-            android:summary="@string/about_summary" />
-
-    </PreferenceCategory>
-
 </PreferenceScreen>

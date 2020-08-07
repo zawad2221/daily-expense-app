@@ -8,11 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.devram.dainikhatabook.Config.Util;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
 import info.devram.dainikhatabook.Models.Expense;
 
@@ -40,13 +39,13 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     public void addData(Expense obj) {
         try{
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Util.EXPENSE_KEY_ID,obj.getId());
-            contentValues.put(Util.EXPENSE_KEY_TYPE,obj.getExpenseType());
-            contentValues.put(Util.EXPENSE_KEY_DESC,obj.getExpenseDesc());
-            contentValues.put(Util.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
-            contentValues.put(Util.EXPENSE_KEY_DATE,obj.getExpenseDate());
+            contentValues.put(Config.EXPENSE_KEY_ID,obj.getId());
+            contentValues.put(Config.EXPENSE_KEY_TYPE,obj.getExpenseType());
+            contentValues.put(Config.EXPENSE_KEY_DESC,obj.getExpenseDesc());
+            contentValues.put(Config.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
+            contentValues.put(Config.EXPENSE_KEY_DATE,obj.getExpenseDate());
 
-            db.getWritableDatabase().insert(Util.EXPENSE_TABLE_NAME,
+            db.getWritableDatabase().insert(Config.EXPENSE_TABLE_NAME,
                     null,contentValues);
         }catch (SQLException e) {
             Log.e(TAG, "addData: error " + e.getMessage());
@@ -60,7 +59,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         this.expenseList = new ArrayList<>();
 
-        String query = "SELECT * FROM " + Util.EXPENSE_TABLE_NAME;
+        String query = "SELECT * FROM " + Config.EXPENSE_TABLE_NAME;
 
         Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
 
@@ -69,16 +68,16 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
                 Expense expense = new Expense();
                 expense.setId(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
                 expense.setExpenseType(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
                 expense.setExpenseDesc(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_DESC)));
                 expense.setExpenseAmount(cursor
-                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                        .getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
                 expense.setExpenseDate(cursor
-                        .getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
-                int boolValue = cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_SYNC));
+                        .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
+                int boolValue = cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_SYNC));
                 if (boolValue == 0) {
                     expense.setSyncStatus(false);
                 }else expense.setSyncStatus(true);
@@ -97,17 +96,17 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         for (int i = 0; i < types.size(); i++) {
 
             Cursor cursor = db.getReadableDatabase().rawQuery("SELECT "
-                            + Util.EXPENSE_KEY_TYPE + ", SUM("
-                            + Util.EXPENSE_KEY_AMOUNT + ") as " + Util.EXPENSE_KEY_AMOUNT + " FROM "
-                    + Util.EXPENSE_TABLE_NAME + " WHERE " + Util.EXPENSE_KEY_TYPE + "=?",
+                            + Config.EXPENSE_KEY_TYPE + ", SUM("
+                            + Config.EXPENSE_KEY_AMOUNT + ") as " + Config.EXPENSE_KEY_AMOUNT + " FROM "
+                    + Config.EXPENSE_TABLE_NAME + " WHERE " + Config.EXPENSE_KEY_TYPE + "=?",
                     new String[]{types.get(i)});
 
             try {
                 while (cursor.moveToNext()) {
-                    if (cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)) != 0) {
+                    if (cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)) != 0) {
                         Expense expense = new Expense();
-                        expense.setExpenseType(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
-                        expense.setExpenseAmount(cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                        expense.setExpenseType(cursor.getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
+                        expense.setExpenseAmount(cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
                         expenseList.add(expense);
                     }
                 }
@@ -122,10 +121,10 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     @Override
     public Expense getOne(int id) {
         Cursor cursor = db.getReadableDatabase().query(
-                Util.EXPENSE_TABLE_NAME,new String[]{
-                        Util.EXPENSE_KEY_ID,Util.EXPENSE_KEY_TYPE,Util.EXPENSE_KEY_DATE,
-                        Util.EXPENSE_KEY_AMOUNT,Util.EXPENSE_KEY_DESC
-                },Util.EXPENSE_KEY_ID + "=?",new String[]{String.valueOf(id)},
+                Config.EXPENSE_TABLE_NAME,new String[]{
+                        Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE, Config.EXPENSE_KEY_DATE,
+                        Config.EXPENSE_KEY_AMOUNT, Config.EXPENSE_KEY_DESC
+                }, Config.EXPENSE_KEY_ID + "=?",new String[]{String.valueOf(id)},
                 null,null,null
         );
 
@@ -133,15 +132,15 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         if (cursor != null) {
             cursor.moveToFirst();
-            account.setId(cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+            account.setId(cursor.getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
             account.setExpenseAmount(
-                    cursor.getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                    cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
             account.setExpenseType(
-                    cursor.getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+                    cursor.getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
             account.setExpenseDate(
-                    cursor.getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                    cursor.getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
             account.setExpenseDesc(
-                    cursor.getColumnName(cursor.getColumnIndex(Util.EXPENSE_KEY_DESC)));
+                    cursor.getColumnName(cursor.getColumnIndex(Config.EXPENSE_KEY_DESC)));
             cursor.close();
         }
         return account;
@@ -152,13 +151,13 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Util.EXPENSE_KEY_TYPE,obj.getExpenseType());
-            contentValues.put(Util.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
-            contentValues.put(Util.EXPENSE_KEY_DATE,obj.getExpenseDate());
-            contentValues.put(Util.EXPENSE_KEY_DESC,obj.getExpenseDesc());
+            contentValues.put(Config.EXPENSE_KEY_TYPE,obj.getExpenseType());
+            contentValues.put(Config.EXPENSE_KEY_AMOUNT,obj.getExpenseAmount());
+            contentValues.put(Config.EXPENSE_KEY_DATE,obj.getExpenseDate());
+            contentValues.put(Config.EXPENSE_KEY_DESC,obj.getExpenseDesc());
 
-            db.getWritableDatabase().update(Util.EXPENSE_TABLE_NAME,contentValues,
-                    Util.EXPENSE_KEY_ID + "=?",new String[]{String.valueOf(obj.getId())});
+            db.getWritableDatabase().update(Config.EXPENSE_TABLE_NAME,contentValues,
+                    Config.EXPENSE_KEY_ID + "=?",new String[]{String.valueOf(obj.getId())});
 
             return true;
         }catch (SQLException e) {
@@ -172,8 +171,8 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     @Override
     public Boolean onDelete(Expense obj) {
         try {
-            db.getWritableDatabase().delete(Util.EXPENSE_TABLE_NAME,
-                    Util.EXPENSE_KEY_ID + "=?",
+            db.getWritableDatabase().delete(Config.EXPENSE_TABLE_NAME,
+                    Config.EXPENSE_KEY_ID + "=?",
                     new String[]{String.valueOf(obj.getId())});
             return true;
         }catch (SQLException e) {
@@ -184,7 +183,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     @Override
     public int getCount() {
-        String query = "SELECT * FROM " + Util.EXPENSE_TABLE_NAME;
+        String query = "SELECT * FROM " + Config.EXPENSE_TABLE_NAME;
 
         Cursor cursor = db.getReadableDatabase().rawQuery(query,null);
 
@@ -201,9 +200,9 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         try {
             ContentValues values = new ContentValues();
             for (Expense expense: expenseList) {
-                values.put(Util.EXPENSE_KEY_SYNC,Util.SYNC_STATUS_TRUE);
-                updateDB.update(Util.EXPENSE_TABLE_NAME,values,
-                        Util.EXPENSE_KEY_ID + "=?",
+                values.put(Config.EXPENSE_KEY_SYNC, Config.SYNC_STATUS_TRUE);
+                updateDB.update(Config.EXPENSE_TABLE_NAME,values,
+                        Config.EXPENSE_KEY_ID + "=?",
                         new String[]{String.valueOf(expense.getId())});
             }
             updateDB.setTransactionSuccessful();
@@ -221,22 +220,22 @@ public class ExpenseRepository implements DatabaseService<Expense> {
     public List<Expense> getByDate() {
         expenseList = new ArrayList<>();
         Cursor cursor = db.getReadableDatabase().query(
-                Util.EXPENSE_TABLE_NAME,new String[]{Util.EXPENSE_KEY_ID,Util.EXPENSE_KEY_TYPE,
-                Util.EXPENSE_KEY_DATE, Util.EXPENSE_KEY_AMOUNT},null,null,
-                null,null,Util.EXPENSE_KEY_DATE + " ASC");
+                Config.EXPENSE_TABLE_NAME,new String[]{Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE,
+                Config.EXPENSE_KEY_DATE, Config.EXPENSE_KEY_AMOUNT},null,null,
+                null,null, Config.EXPENSE_KEY_DATE + " ASC");
 
         if(cursor.moveToFirst()) {
             do {
                 Expense expense = new Expense();
                 expense.setId(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_ID)));
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
                 expense.setExpenseType(cursor
-                        .getString(cursor.getColumnIndex(Util.EXPENSE_KEY_TYPE)));
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
 
                 expense.setExpenseAmount(cursor
-                        .getInt(cursor.getColumnIndex(Util.EXPENSE_KEY_AMOUNT)));
+                        .getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
                 expense.setExpenseDate(cursor
-                        .getLong(cursor.getColumnIndex(Util.EXPENSE_KEY_DATE)));
+                        .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
                 expenseList.add(expense);
             }while (cursor.moveToNext());
         }

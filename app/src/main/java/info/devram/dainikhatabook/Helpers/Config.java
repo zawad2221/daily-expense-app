@@ -1,6 +1,6 @@
-package info.devram.dainikhatabook.Config;
+package info.devram.dainikhatabook.Helpers;
 
-public class Util {
+public class Config {
     public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expense_manager.db";
 

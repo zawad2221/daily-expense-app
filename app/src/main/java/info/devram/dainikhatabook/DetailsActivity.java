@@ -6,17 +6,20 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,8 +28,10 @@ import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+import info.devram.dainikhatabook.ui.DateSelector;
 
-public class DetailsActivity extends AppCompatActivity implements RecyclerOnClick {
+public class DetailsActivity extends AppCompatActivity
+        implements RecyclerOnClick {
 
     private static final String TAG = "EditActivity";
 
@@ -39,6 +44,8 @@ public class DetailsActivity extends AppCompatActivity implements RecyclerOnClic
     private boolean hasClass = false;
     private RecyclerView detailRecyclerView;
     private TextView expenseTitleTextView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +71,11 @@ public class DetailsActivity extends AppCompatActivity implements RecyclerOnClic
         totalExpenseTextView = findViewById(R.id.total_exp_amt_txt_view);
         expenseTitleTextView = findViewById(R.id.title_exp_txtView);
 
+
         mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
 
         mainActivityViewModel.init();
+
 
 
     }
@@ -75,6 +84,7 @@ public class DetailsActivity extends AppCompatActivity implements RecyclerOnClic
     protected void onResume() {
         super.onResume();
         setTotalExpense();
+
         if (hasClass) {
             setTitle("Expense Details");
             List<String> expTypes = new LinkedList<>(Arrays.asList(
@@ -153,4 +163,5 @@ public class DetailsActivity extends AppCompatActivity implements RecyclerOnClic
     public void onItemClicked(View view, int position) {
 
     }
+
 }

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import info.devram.dainikhatabook.Config.Util;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Models.ModelHandler;
@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private SQLiteDatabase sqLiteDatabase;
 
     private DatabaseHandler(@Nullable Context context) {
-        super(context, Util.DATABASE_NAME, null, Util.DATABASE_VERSION);
+        super(context, Config.DATABASE_NAME, null, Config.DATABASE_VERSION);
     }
 
     public static DatabaseHandler getInstance(Context context) {
