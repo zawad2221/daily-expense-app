@@ -24,12 +24,12 @@ public class BaseAddActivity extends AppCompatActivity {
 
     private static final String TAG = "AddActivity";
 
-    private EditText datePicker;
-    private EditText amountEditText;
-    private EditText descEditText;
-    private Calendar myCalendar;
-    private DatePickerDialog.OnDateSetListener date;
-    private SimpleDateFormat sdf;
+    protected EditText datePicker;
+    protected EditText amountEditText;
+    protected EditText descEditText;
+    protected Calendar myCalendar;
+    protected DatePickerDialog.OnDateSetListener date;
+    protected SimpleDateFormat sdf;
     protected int selectedAmount;
     protected long parsedDate;
     protected String selectedDesc;

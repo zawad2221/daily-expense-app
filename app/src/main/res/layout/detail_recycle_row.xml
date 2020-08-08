@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/detailTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:padding="4dp"
+            android:text="@string/type"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/detailTypeDataTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            app:layout_constraintBaseline_toBaselineOf="@+id/detailTypeTextView"
+            app:layout_constraintStart_toStartOf="@+id/detailAmtDataTxtView" />
+
+        <TextView
+            android:id="@+id/detailAmtTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="4dp"
+            android:text="@string/amount"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/detailTypeTextView"
+            app:layout_constraintTop_toBottomOf="@+id/detailTypeTextView" />
+
+        <TextView
+            android:id="@+id/detailAmtDataTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            app:layout_constraintBaseline_toBaselineOf="@+id/detailAmtTxtView"
+            app:layout_constraintStart_toStartOf="@+id/detailDateDataTxtView" />
+
+        <TextView
+            android:id="@+id/detailDateTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="4dp"
+            android:text="@string/date"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/detailAmtTxtView"
+            app:layout_constraintTop_toBottomOf="@+id/detailAmtTxtView" />
+
+        <TextView
+            android:id="@+id/detailDateDataTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            app:layout_constraintBaseline_toBaselineOf="@+id/detailDateTxtView"
+            app:layout_constraintStart_toStartOf="@+id/detailDescDataTxtView" />
+
+        <TextView
+            android:id="@+id/detailDescTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="4dp"
+            android:text="@string/description"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/detailDateTxtView"
+            app:layout_constraintTop_toBottomOf="@+id/detailDateTxtView" />
+
+        <TextView
+            android:id="@+id/detailDescDataTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="@string/app_name"
+            app:layout_constraintBaseline_toBaselineOf="@+id/detailDescTxtView"
+            app:layout_constraintStart_toEndOf="@+id/detailDescTxtView" />
+
+        <View
+            android:id="@+id/detailDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detailDescTxtView" />
+
+        <ImageButton
+            android:id="@+id/detailEditBtn"
+            android:layout_width="67dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#ffffff"
+            android:contentDescription="@string/detail_edit_btn"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_edit" />
+
+        <ImageButton
+            android:id="@+id/detailDeleteBtn"
+            android:layout_width="67dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#FFFFFF"
+            android:contentDescription="@string/detail_del_btn"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/detailEditBtn"
+            app:layout_constraintTop_toBottomOf="@+id/detailEditBtn"
+            app:srcCompat="@drawable/ic_delete" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

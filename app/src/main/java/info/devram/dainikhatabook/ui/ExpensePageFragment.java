@@ -55,9 +55,9 @@ public class ExpensePageFragment extends Fragment
 
         View view = inflater.inflate(R.layout.fragment_expense_page, container, false);
 
-        RecyclerView expenseRecyclerView = view.findViewById(R.id.detail_recycler_view);
-        totalExpenseTextView = view.findViewById(R.id.total_exp_amt_txt_view);
-        TextView expenseTitleTextView = view.findViewById(R.id.title_exp_txtView);
+        RecyclerView expenseRecyclerView = view.findViewById(R.id.summary_recycler_view);
+        totalExpenseTextView = view.findViewById(R.id.detailSumTxtView);
+        TextView expenseTitleTextView = view.findViewById(R.id.detailTtitleTxtView);
 
         expenseTitleTextView.setText(MessageFormat.format("{0} {1}",
                 "Total", view.getResources().getString(R.string.total_expense)));

@@ -85,9 +85,9 @@ public class TodayPageFragment extends Fragment {
 
         //populateList();
 
-        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(dashBoardRecyclerAdapter);
+//        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView.setAdapter(dashBoardRecyclerAdapter);
 
     }
 

@@ -34,7 +34,7 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
                                                                int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.income_row,parent,false);
+                .inflate(R.layout.summary_layout_row,parent,false);
 
         return new ViewHolder(view,recyclerOnClick);
     }
@@ -44,10 +44,10 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
                                  int position) {
 
         Income income = incomeList.get(position);
-        holder.incomeTypeTextView
+        holder.detailTypeTextView
                 .setText(income.getIncomeType());
 
-        holder.incomeAmount
+        holder.detailAmountTextView
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
                         String.valueOf(income.getIncomeAmount())));
@@ -55,13 +55,13 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
 
         switch (income.getIncomeType().toLowerCase()) {
             case "cash":
-                holder.incomeImageView.setImageResource(R.drawable.ic_cash_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_cash_icon);
                 break;
             case "salary":
-                holder.incomeImageView.setImageResource(R.drawable.ic_salary_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_salary_icon);
                 break;
             case "loan":
-                holder.incomeImageView.setImageResource(R.drawable.ic_loan_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_loan_icon);
                 break;
         }
     }
@@ -74,17 +74,17 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        public TextView incomeTypeTextView;
-        public TextView incomeAmount;
-        public ImageView incomeImageView;
+        public ImageView detailImageView;
+        public TextView detailTypeTextView;
+        public TextView detailAmountTextView;
         private RecyclerOnClick recyclerOnClick;
 
         public ViewHolder(@NonNull View itemView,RecyclerOnClick recyclerOnClick) {
             super(itemView);
 
-            incomeTypeTextView = itemView.findViewById(R.id.inc_dash_txt_view);
-            incomeAmount = itemView.findViewById(R.id.inc_amt_dash_txt_view);
-            incomeImageView = itemView.findViewById(R.id.inc_dash_img_view);
+            detailImageView = itemView.findViewById(R.id.detailImgView);
+            detailTypeTextView = itemView.findViewById(R.id.detailTypeTextView);
+            detailAmountTextView = itemView.findViewById(R.id.detailAmtTxtView);
             this.recyclerOnClick = recyclerOnClick;
             itemView.setOnClickListener(this);
         }

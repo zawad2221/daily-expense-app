@@ -159,4 +159,19 @@ public class MainActivityViewModel {
     public List<Income> getIncomeByDate() {
         return incomeRepository.getByDate();
     }
+
+    public List<Expense> getExpenseByType(String type) {
+        return expenseRepository.getByType(type);
+    }
+
+    public List<Income> getIncomeByType(String type) {
+        List<Income> typeIncomeList = new ArrayList<>();
+        for (Income income: this.incomeList) {
+            if (income.getIncomeType().equalsIgnoreCase(type)) {
+                typeIncomeList.add(income);
+
+            }
+        }
+        return typeIncomeList;
+    }
 }

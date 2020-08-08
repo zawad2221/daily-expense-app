@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,9 +25,12 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     private static final String TAG = "DashBoardRecyclerAdapte";
 
     private List<DashBoardObject> dashBoardList;
+    private RecyclerOnClick recyclerOnClick;
 
-    public DashBoardRecyclerAdapter(List<DashBoardObject> dashBoardList) {
+    public DashBoardRecyclerAdapter(List<DashBoardObject> dashBoardList,
+                                    RecyclerOnClick recyclerOnClick) {
         this.dashBoardList = dashBoardList;
+        this.recyclerOnClick = recyclerOnClick;
 
     }
 
@@ -35,9 +39,9 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.dash_row,parent,false);
+                .inflate(R.layout.detail_recycle_row,parent,false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view,recyclerOnClick);
     }
 
     @Override
@@ -55,11 +59,11 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
 
             holder.dateTextView.setText(sdf.format(dateObject));
-            if (dashBoardObject.getIsExpense()) {
-                holder.imageView.setImageResource(R.drawable.ic_arrow_up);
-            }else {
-                holder.imageView.setImageResource(R.drawable.ic_arrow_down);
-            }
+//            if (dashBoardObject.getIsExpense()) {
+//                holder.imageView.setImageResource(R.drawable.ic_arrow_up);
+//            }else {
+//                holder.imageView.setImageResource(R.drawable.ic_arrow_down);
+//            }
         }
 
     }
@@ -75,23 +79,32 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView typeTextView;
         public TextView amountTextView;
         public TextView descTextView;
         public TextView dateTextView;
-        public ImageView imageView;
+        private RecyclerOnClick recyclerOnClick;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerOnClick recyclerOnClick) {
             super(itemView);
 
-            typeTextView = itemView.findViewById(R.id.dash_type_text);
-            amountTextView = itemView.findViewById(R.id.dashAmountTextView);
-            descTextView = itemView.findViewById(R.id.dashDescTextView);
-            dateTextView = itemView.findViewById(R.id.dashDateTextView);
-            imageView = itemView.findViewById(R.id.dashboardImageView);
+            typeTextView = itemView.findViewById(R.id.detailTypeDataTxtView);
+            amountTextView = itemView.findViewById(R.id.detailAmtDataTxtView);
+            descTextView = itemView.findViewById(R.id.detailDescDataTxtView);
+            dateTextView = itemView.findViewById(R.id.detailDateDataTxtView);
+            ImageButton editButton = itemView.findViewById(R.id.detailEditBtn);
+            ImageButton deleteButton = itemView.findViewById(R.id.detailDeleteBtn);
+            this.recyclerOnClick = recyclerOnClick;
+            editButton.setOnClickListener(this);
+            deleteButton.setOnClickListener(this);
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            recyclerOnClick.onItemClicked(v,getAdapterPosition());
         }
     }
 }

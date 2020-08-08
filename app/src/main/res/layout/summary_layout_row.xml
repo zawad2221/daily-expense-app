@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/secondaryLightColor">
@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/exp_dash_img_view"
+            android:id="@+id/detailImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_alignParentStart="true"
@@ -20,10 +20,10 @@
             android:cropToPadding="false"
             android:padding="4dp"
             android:scaleType="fitEnd"
-            app:layout_constraintBottom_toBottomOf="@+id/exp_dash_txt_view"
+            app:layout_constraintBottom_toBottomOf="@+id/detailTypeTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/exp_dash_txt_view"
-            app:layout_constraintTop_toTopOf="@+id/exp_dash_txt_view"
+            app:layout_constraintStart_toEndOf="@+id/detailTypeTextView"
+            app:layout_constraintTop_toTopOf="@+id/detailTypeTextView"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_tshirt" />
 
@@ -56,22 +56,22 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/exp_dash_txt_view"
+            android:id="@+id/detailTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@+id/exp_dash_img_view"
+            android:layout_toEndOf="@+id/detailImgView"
             android:padding="8dp"
             android:text="@string/app_name"
             android:textColor="@color/primaryTextColor"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/heading_type"
-            app:layout_constraintStart_toStartOf="@+id/exp_amt_dash_txt_view"
+            app:layout_constraintStart_toStartOf="@+id/detailAmtTxtView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/exp_amt_dash_txt_view"
+            android:id="@+id/detailAmtTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -88,7 +88,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/detailMoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -98,10 +98,10 @@
             android:textAllCaps="true"
             android:textColor="@color/primaryLightColor"
             android:textSize="14sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/exp_amt_dash_txt_view"
+            app:layout_constraintBaseline_toBaselineOf="@+id/detailAmtTxtView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/exp_amt_dash_txt_view" />
+            app:layout_constraintStart_toEndOf="@+id/detailAmtTxtView" />
 
         <View
             android:id="@+id/divider2"
@@ -115,7 +115,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exp_amt_dash_txt_view"
+            app:layout_constraintTop_toBottomOf="@+id/detailAmtTxtView"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

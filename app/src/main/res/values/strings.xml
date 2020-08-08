@@ -27,7 +27,8 @@
     <string name="img_view_cd">Icon</string>
     <string name="total_income">Incomes</string>
     <string name="total_dashboard_amount">Total: %1$s/-</string>
-    <string name="total_expense">Expenses Till Today</string>
+    <string name="total_sum">Till Today</string>
+    <string name="total_expense">Till Today</string>
     <string name="rs_symbol">\u20B9</string>
     <string name="title_activity_income">Add Income</string>
     <string name="balance">balance</string>
@@ -66,5 +67,8 @@
     <string name="add_expense">Add Expense</string>
     <string name="report">Report</string>
     <string name="help">Help</string>
+    <string name="summary">Summary</string>
+    <string name="detail_edit_btn">EDIT</string>
+    <string name="detail_del_btn">DELETE</string>
 
 </resources>

@@ -14,9 +14,7 @@ public class Util {
         int expenseTotalSum = 0;
         int incomeSum = 0;
 
-        if (expenseOBJ.size() == 0) {
-            return totalSum;
-        }
+
         for (int i = 0; i < expenseOBJ.size(); i++) {
             expenseTotalSum += expenseOBJ.get(i).getExpenseAmount();
         }

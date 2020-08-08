@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.ExpensePageFragment">
 
-    <include layout="@layout/detail_layout"/>
+    <include layout="@layout/summary_layout"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_expense"

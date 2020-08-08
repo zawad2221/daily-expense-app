@@ -16,13 +16,15 @@ import java.util.List;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.R;
 
-public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
+public class ExpenseRecyclerAdapter extends
+        RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
 
     private static final String TAG = "ExpenseRecyclerAdapter";
 
 
     private List<Expense> expenseList;
     private RecyclerOnClick recyclerOnClick;
+    private int clickedPosition;
 
     public ExpenseRecyclerAdapter(List<Expense> expenseList,RecyclerOnClick recyclerOnClick) {
 
@@ -36,7 +38,7 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
                                                                 int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.detail_layout_row,parent,false);
+                .inflate(R.layout.summary_layout_row,parent,false);
 
         return new ViewHolder(view,recyclerOnClick);
     }
@@ -45,44 +47,43 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
     public void onBindViewHolder(@NonNull ExpenseRecyclerAdapter.ViewHolder holder, int position) {
         //holder.expenseImageView
         Expense expense = expenseList.get(position);
-        Log.d(TAG, "onBindViewHolder: "  + expense);
-        holder.expenseTypeTextView
+        holder.detailTypeTextView
                 .setText(expense.getExpenseType());
-        holder.expenseAmountTextView
+        holder.detailAmountTextView
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
                         String.valueOf(expense.getExpenseAmount())));
 
         switch (expense.getExpenseType().toLowerCase()) {
             case "clothing":
-                holder.expenseImageView.setImageResource(R.drawable.ic_cloth_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_cloth_icon);
                 break;
             case "entertainment":
-                holder.expenseImageView.setImageResource(R.drawable.ic_entertain_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_entertain_icon);
                 break;
             case "food":
-                holder.expenseImageView.setImageResource(R.drawable.ic_food_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_food_icon);
                 break;
             case "transport":
-                holder.expenseImageView.setImageResource(R.drawable.ic_transport_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_transport_icon);
                 break;
             case "medical":
-                holder.expenseImageView.setImageResource(R.drawable.ic_medical_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_medical_icon);
                 break;
             case "shopping":
-                holder.expenseImageView.setImageResource(R.drawable.ic_shopping_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_shopping_icon);
                 break;
             case "education":
-                holder.expenseImageView.setImageResource(R.drawable.ic_education_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_education_icon);
                 break;
             case "grocery":
-                holder.expenseImageView.setImageResource(R.drawable.ic_grocery_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_grocery_icon);
                 break;
             case "personal":
-                holder.expenseImageView.setImageResource(R.drawable.ic_personal_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_personal_icon);
                 break;
             case "fuel":
-                holder.expenseImageView.setImageResource(R.drawable.ic_fuel_icon);
+                holder.detailImageView.setImageResource(R.drawable.ic_fuel_icon);
                 break;
         }
     }
@@ -101,24 +102,26 @@ public class ExpenseRecyclerAdapter extends RecyclerView.Adapter<ExpenseRecycler
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        public ImageView expenseImageView;
-        public TextView expenseTypeTextView;
-        public TextView expenseAmountTextView;
+        public ImageView detailImageView;
+        public TextView detailTypeTextView;
+        public TextView detailAmountTextView;
         private RecyclerOnClick recyclerOnClick;
+        public TextView seeMoreTextView;
 
         public ViewHolder(@NonNull View itemView, RecyclerOnClick recyclerOnClick) {
             super(itemView);
 
-            expenseImageView = itemView.findViewById(R.id.exp_dash_img_view);
-            expenseTypeTextView = itemView.findViewById(R.id.exp_dash_txt_view);
-            expenseAmountTextView = itemView.findViewById(R.id.exp_amt_dash_txt_view);
+            detailImageView = itemView.findViewById(R.id.detailImgView);
+            detailTypeTextView = itemView.findViewById(R.id.detailTypeTextView);
+            detailAmountTextView = itemView.findViewById(R.id.detailAmtTxtView);
+            seeMoreTextView = itemView.findViewById(R.id.detailMoreTextView);
             this.recyclerOnClick = recyclerOnClick;
-            itemView.setOnClickListener(this);
+            seeMoreTextView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            recyclerOnClick.onItemClicked(v,getAdapterPosition());
+            recyclerOnClick.onItemClicked(v,getLayoutPosition());
         }
     }
 }

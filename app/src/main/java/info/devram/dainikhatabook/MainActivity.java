@@ -158,12 +158,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void populateList() {
-        //newDashBoardList = new ArrayList<>();
         List<Expense> newExpenseList = mainActivityViewModel.getExpenses();
         List<Income> newIncomeList = mainActivityViewModel.getIncomes();
 
         Log.d(TAG, "expense size " + newExpenseList.size());
         Log.d(TAG, "income size " + newIncomeList.size());
+        Log.d(TAG, "income list " + newIncomeList);
 
 
 //        for(Expense expense: newExpenseList) {
@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         List<String> sumList = Util.getSum(newExpenseList, newIncomeList);
+
+        Log.d(TAG, "populateList: " + sumList);
 
         String expSum = String.format(getResources().getString(R.string.total_dashboard_amount),
                 sumList.get(0));
@@ -214,12 +216,12 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.expense_detail:
-                Intent expDetailIntent = new Intent(MainActivity.this, DetailsActivity.class);
+                Intent expDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
                 expDetailIntent.putExtra(Expense.class.getSimpleName(),"expense");
                 startActivity(expDetailIntent);
                 break;
             case R.id.income_detail:
-                Intent incDetailIntent = new Intent(MainActivity.this,DetailsActivity.class);
+                Intent incDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
                 incDetailIntent.putExtra(Income.class.getSimpleName(),"income");
                 startActivity(incDetailIntent);
                 break;

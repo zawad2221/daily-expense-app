@@ -6,51 +6,45 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
+import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Models.Expense;
+import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
-import info.devram.dainikhatabook.ui.DateSelector;
 
-public class DetailsActivity extends AppCompatActivity
+public class SummaryActivity extends AppCompatActivity
         implements RecyclerOnClick {
 
-    private static final String TAG = "EditActivity";
+    private static final String TAG = "SummaryActivity";
 
     private MainActivityViewModel mainActivityViewModel;
-    private TextView totalExpenseTextView;
+    private TextView totalSumTextView;
     private ExpenseRecyclerAdapter expRecyclerAdapter;
     private IncomeRecyclerAdapter incRecyclerAdapter;
-    private List<Expense> syncList = new ArrayList<>();
     private int editItemAdapterPosition;
     private boolean hasClass = false;
     private RecyclerView detailRecyclerView;
-    private TextView expenseTitleTextView;
-
-
+    private List<String> totalSum;
+    private List<Expense> expenseList;
+    private List<Income> incomeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_summary);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
             Toolbar toolbar = findViewById(R.id.toolbar);
@@ -67,35 +61,28 @@ public class DetailsActivity extends AppCompatActivity
 
         hasClass = getIntent().hasExtra(Expense.class.getSimpleName());
 
-        detailRecyclerView = findViewById(R.id.detail_recycler_view);
-        totalExpenseTextView = findViewById(R.id.total_exp_amt_txt_view);
-        expenseTitleTextView = findViewById(R.id.title_exp_txtView);
-
+        detailRecyclerView = findViewById(R.id.summary_recycler_view);
+        totalSumTextView = findViewById(R.id.detailSumTxtView);
 
         mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
 
         mainActivityViewModel.init();
-
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setTotalExpense();
-
+        getSumTotal();
         if (hasClass) {
             setTitle("Expense Details");
-            List<String> expTypes = new LinkedList<>(Arrays.asList(
-                    getResources().getStringArray(R.array.expense_type)));
 
             expRecyclerAdapter = new ExpenseRecyclerAdapter(
-                    mainActivityViewModel.getExpenseSummaryType(expTypes),
+                    expenseList,
                     this);
 
             detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             detailRecyclerView.setAdapter(expRecyclerAdapter);
+            totalSumTextView.setText(totalSum.get(0));
         }else{
             setTitle("Income Details");
             incRecyclerAdapter = new IncomeRecyclerAdapter(
@@ -106,40 +93,17 @@ public class DetailsActivity extends AppCompatActivity
 
             detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             detailRecyclerView.setAdapter(incRecyclerAdapter);
+            totalSumTextView.setText(totalSum.get(1));
         }
 
     }
 
-    private void setTotalExpense() {
-        int totalExpenses = getSum(mainActivityViewModel.getExpenses());
-
-        totalExpenseTextView.setText(MessageFormat.format("{0} {1}",
-                getResources().getString(R.string.rs_symbol),
-                String.valueOf(totalExpenses)));
-    }
-
-    private int getSum(List<Expense> obj) {
-
-        int totalSum = 0;
-
-        if (obj.size() == 0) {
-            return totalSum;
-        }
-        for (int i = 0; i < obj.size(); i++) {
-
-            totalSum += obj.get(i).getExpenseAmount();
-
-        }
-
-        return totalSum;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void getSumTotal() {
+        List<String> expTypes = new LinkedList<>(Arrays.asList(
+                getResources().getStringArray(R.array.expense_type)));
+        expenseList = mainActivityViewModel.getExpenseSummaryType(expTypes);
+        incomeList = mainActivityViewModel.getIncomes();
+        totalSum = Util.getSum(expenseList,incomeList);
     }
 
     @Override
@@ -162,6 +126,17 @@ public class DetailsActivity extends AppCompatActivity
     @Override
     public void onItemClicked(View view, int position) {
 
+        if (hasClass) {
+            Expense expense = expenseList.get(position);
+            Intent intent = new Intent(SummaryActivity.this,DetailActivity.class);
+            intent.putExtra("type",expense.getExpenseType());
+            startActivity(intent);
+        }else {
+            Income income = incomeList.get(position);
+            Intent intent = new Intent(SummaryActivity.this,DetailActivity.class);
+            intent.putExtra("type",income.getIncomeType());
+            startActivity(intent);
+        }
     }
 
 }

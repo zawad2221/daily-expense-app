@@ -3,6 +3,7 @@ package info.devram.dainikhatabook.Repository;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -242,6 +243,37 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         cursor.close();
 
+        return expenseList;
+    }
+
+    public List<Expense> getByType(String expenseType) {
+        this.expenseList = new ArrayList<>();
+
+        Cursor cursor = db.getReadableDatabase().query(Config.EXPENSE_TABLE_NAME,
+                new String[]{Config.EXPENSE_KEY_ID,Config.EXPENSE_KEY_DATE,
+                        Config.EXPENSE_KEY_AMOUNT,Config.EXPENSE_KEY_DESC,
+                        Config.EXPENSE_KEY_TYPE},Config.EXPENSE_KEY_TYPE + "=?",
+                new String[]{expenseType},null,null,null);
+        try {
+            while (cursor.moveToNext()) {
+                Expense expense = new Expense();
+                expense.setId(cursor
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
+                expense.setExpenseType(cursor
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
+                expense.setExpenseDesc(cursor
+                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_DESC)));
+                expense.setExpenseAmount(cursor
+                        .getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
+                expense.setExpenseDate(cursor
+                        .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
+                expenseList.add(expense);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
         return expenseList;
     }
 //    private String getDate() {
