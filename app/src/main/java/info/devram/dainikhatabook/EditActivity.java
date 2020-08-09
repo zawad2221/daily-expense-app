@@ -10,9 +10,6 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
@@ -23,6 +20,7 @@ public class EditActivity extends BaseAddActivity {
 
     private boolean hasExpense = false;
     private Expense expense;
+    private Income income;
     private ArrayAdapter<CharSequence> adapter;
 
     @Override
@@ -40,7 +38,16 @@ public class EditActivity extends BaseAddActivity {
             setupSpinner(adapter);
             expense = (Expense) getIntent()
                     .getSerializableExtra(Expense.class.getSimpleName());
-            Log.d(TAG, "onCreate: " + expense);
+
+        }else {
+            setTitle("Edit Income");
+            adapter = ArrayAdapter
+                    .createFromResource(this,
+                            R.array.income_type, android.R.layout.simple_spinner_item);
+            setupSpinner(adapter);
+            income = (Income) getIntent()
+                    .getSerializableExtra(Income.class.getSimpleName());
+
         }
 
 
@@ -61,16 +68,30 @@ public class EditActivity extends BaseAddActivity {
     }
 
     private void setupUIForEdit() {
-        int spinnerPosition = adapter.getPosition(expense.getExpenseType());
-        spinner.setSelection(spinnerPosition);
-        try {
-            String selectedDate = sdf.format(expense.getExpenseDate());
-            datePicker.setText(selectedDate);
-        } catch (NumberFormatException e) {
-            Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+        if (hasExpense) {
+            int spinnerPosition = adapter.getPosition(expense.getExpenseType());
+            spinner.setSelection(spinnerPosition);
+            try {
+                String selectedDate = sdf.format(expense.getExpenseDate());
+                datePicker.setText(selectedDate);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+            }
+            amountEditText.setText(String.valueOf(expense.getExpenseAmount()));
+            descEditText.setText(expense.getExpenseDesc());
+        }else {
+            int spinnerPosition = adapter.getPosition(income.getIncomeType());
+            spinner.setSelection(spinnerPosition);
+            try {
+                String selectedDate = sdf.format(income.getIncomeDate());
+                datePicker.setText(selectedDate);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+            }
+            amountEditText.setText(String.valueOf(income.getIncomeAmount()));
+            descEditText.setText(income.getIncomeDesc());
         }
-        amountEditText.setText(String.valueOf(expense.getExpenseAmount()));
-        descEditText.setText(expense.getExpenseDesc());
+
 
     }
 
@@ -82,10 +103,8 @@ public class EditActivity extends BaseAddActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (id == android.R.id.home) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -99,15 +118,13 @@ public class EditActivity extends BaseAddActivity {
             expense.setExpenseDate(parsedDate);
             expense.setExpenseDesc(selectedDesc);
             resultIntent.putExtra(Expense.class.getSimpleName(),expense);
-            setResult(1,resultIntent);
         }else {
-            Income income = new Income();
             income.setIncomeType(selectedType);
             income.setIncomeAmount(selectedAmount);
             income.setIncomeDate(parsedDate);
             income.setIncomeDesc(selectedDesc);
             resultIntent.putExtra(Income.class.getSimpleName(),income);
-            setResult(1,resultIntent);
         }
+        setResult(1,resultIntent);
     }
 }

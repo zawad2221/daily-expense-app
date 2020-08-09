@@ -182,38 +182,31 @@ public class IncomeRepository implements DatabaseService<Income>  {
         }
     }
 
-    public List<Income> getByDate() {
-        incomeList = new ArrayList<>();
-        Cursor cursor = db.getReadableDatabase()
-                .query(Config.INCOME_TABLE_NAME,new String[]{Config.INCOME_KEY_ID,
-                Config.INCOME_KEY_TYPE, Config.INCOME_KEY_AMOUNT, Config.INCOME_KEY_DATE},
-                        null,null,null,
-                        null, Config.INCOME_KEY_DATE + " ASC");
-        if(cursor.moveToFirst()) {
-            do {
-
-                Income income = new Income();
-                income.setId(cursor
-                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_ID)));
-                income.setIncomeType(cursor
-                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_TYPE)));
-                income.setIncomeAmount(cursor
-                        .getInt(cursor.getColumnIndex(Config.INCOME_KEY_AMOUNT)));
-                income.setIncomeDate(cursor
-                        .getLong(cursor.getColumnIndex(Config.INCOME_KEY_DATE)));
-                incomeList.add(income);
-            }while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return incomeList;
-    }
-
-//    private String getDate() {
-//        Calendar myCalendar = Calendar.getInstance();
-//        String myFormat = "dd/MM/yy";
-//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
+//    public List<Income> getByDate() {
+//        incomeList = new ArrayList<>();
+//        Cursor cursor = db.getReadableDatabase()
+//                .query(Config.INCOME_TABLE_NAME,new String[]{Config.INCOME_KEY_ID,
+//                Config.INCOME_KEY_TYPE, Config.INCOME_KEY_AMOUNT, Config.INCOME_KEY_DATE},
+//                        null,null,null,
+//                        null, Config.INCOME_KEY_DATE + " ASC");
+//        if(cursor.moveToFirst()) {
+//            do {
 //
-//        return sdf.format(myCalendar.getTime());
+//                Income income = new Income();
+//                income.setId(cursor
+//                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_ID)));
+//                income.setIncomeType(cursor
+//                        .getString(cursor.getColumnIndex(Config.INCOME_KEY_TYPE)));
+//                income.setIncomeAmount(cursor
+//                        .getInt(cursor.getColumnIndex(Config.INCOME_KEY_AMOUNT)));
+//                income.setIncomeDate(cursor
+//                        .getLong(cursor.getColumnIndex(Config.INCOME_KEY_DATE)));
+//                incomeList.add(income);
+//            }while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        return incomeList;
 //    }
+//
 }

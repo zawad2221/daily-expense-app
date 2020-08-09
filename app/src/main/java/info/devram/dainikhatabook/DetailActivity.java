@@ -1,5 +1,11 @@
 package info.devram.dainikhatabook;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,13 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,8 @@ public class DetailActivity extends AppCompatActivity
 
     private static final String TAG = "DetailActivity";
 
-    public static final int EDIT_REQUEST_CODE = 1;
+    public static final int EDIT_EXP_REQUEST_CODE = 1;
+    public static final int EDIT_INC_REQUEST_CODE = 2;
     
     private MainActivityViewModel mainActivityViewModel;
     private List<DashBoardObject> newDashBoardList;
@@ -39,7 +39,7 @@ public class DetailActivity extends AppCompatActivity
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
     private List<Expense> expenseList;
     private List<Income> incomeList;
-    private int editItemAdapterPosition;
+    private int itemAdapterPosition;
     private String intentType;
     private boolean hasExpense = false;
 
@@ -66,27 +66,8 @@ public class DetailActivity extends AppCompatActivity
 
         mainActivityViewModel.init();
 
-
         recyclerView = findViewById(R.id.detailRecycleView);
-        ImageButton editButton = findViewById(R.id.detailEditBtn);
-        ImageButton deleteButton = findViewById(R.id.detailDeleteBtn);
-
-
-
-
-//        for(Income income: newIncomeList) {
-//            DashBoardObject dashBoardObject = new DashBoardObject();
-//            dashBoardObject.setTypeObject(income.getIncomeType());
-//            dashBoardObject.setDateObject(income.getIncomeDate());
-//            dashBoardObject.setAmountObject(income.getIncomeAmount());
-//            dashBoardObject.setDescObject(income.getIncomeDesc());
-//            newDashBoardList.add(dashBoardObject);
-//        }
-
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
     }
 
@@ -98,10 +79,8 @@ public class DetailActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (id == android.R.id.home) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -110,12 +89,10 @@ public class DetailActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: started");
         intentType = getIntent().getStringExtra("type");
         inflateDashBoardList();
         dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList,this);
         recyclerView.setAdapter(dashBoardRecyclerAdapter);
-        Log.d(TAG, "recycler view adapter " + dashBoardRecyclerAdapter.getItemCount());
     }
 
     @Override
@@ -123,12 +100,20 @@ public class DetailActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.detailEditBtn:
                 Intent intent = new Intent(DetailActivity.this,EditActivity.class);
-                editItemAdapterPosition = position;
-                Expense expense = expenseList.get(position);
-                intent.putExtra(Expense.class.getSimpleName(),expense);
-                startActivityForResult(intent,EDIT_REQUEST_CODE);
+                itemAdapterPosition = position;
+                if (hasExpense) {
+                    Expense expense = expenseList.get(position);
+                    intent.putExtra(Expense.class.getSimpleName(),expense);
+                    startActivityForResult(intent,EDIT_EXP_REQUEST_CODE);
+                }else {
+                    Income income = incomeList.get(position);
+                    intent.putExtra(Income.class.getSimpleName(),income);
+                    startActivityForResult(intent,EDIT_INC_REQUEST_CODE);
+                }
+
                 break;
             case R.id.detailDeleteBtn:
+                itemAdapterPosition = position;
                 ConfirmModal confirmModal = new ConfirmModal("Are You Sure You Want To Delete This",
                         "Alert!" + "\n\n",true,this);
                 confirmModal.show(getSupportFragmentManager(),TAG);
@@ -138,27 +123,40 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.d(TAG, "onActivityResult: start");
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_REQUEST_CODE) {
+        if (requestCode == EDIT_EXP_REQUEST_CODE) {
             if (resultCode == 1) {
                 if (data != null) {
                     Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
-                    mainActivityViewModel.editExpense(editItemAdapterPosition,expense);
+                    mainActivityViewModel.editExpense(itemAdapterPosition,expense);
                 } else {
                     Log.e(TAG, "onActivityResult: intent data is null ");
                 }
             }
         }
-        Log.d(TAG, "onActivityResult: end");
+        if (requestCode == EDIT_INC_REQUEST_CODE) {
+            if (resultCode == 1) {
+                if (data != null) {
+                    Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
+                    mainActivityViewModel.editIncome(itemAdapterPosition,income);
+                }
+            }
+        }
+
     }
 
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
-        mainActivityViewModel.deleteExpense(editItemAdapterPosition);
+        if (hasExpense) {
+            mainActivityViewModel.deleteExpense(itemAdapterPosition);
+        }else {
+            Log.d(TAG, "onOkClick: " + itemAdapterPosition);
+            mainActivityViewModel.deleteIncome(itemAdapterPosition);
+        }
         inflateDashBoardList();
         dashBoardRecyclerAdapter.updateData(newDashBoardList);
         dialogFragment.dismiss();
+
     }
 
     @Override

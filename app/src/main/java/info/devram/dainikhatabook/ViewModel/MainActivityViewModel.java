@@ -1,9 +1,6 @@
 package info.devram.dainikhatabook.ViewModel;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +13,13 @@ import info.devram.dainikhatabook.Repository.IncomeRepository;
 
 public class MainActivityViewModel {
 
-    private static final String TAG = "MainActivityViewModel";
+    //private static final String TAG = "MainActivityViewModel";
 
     private IncomeRepository incomeRepository;
     private ExpenseRepository expenseRepository;
     private Context mContext;
     private List<Expense> expenseList = null;
-    private List<Income> incomeList;
+    private List<Income> incomeList = null;
 
     public MainActivityViewModel(Context context) {
         this.mContext = context;
@@ -43,16 +40,54 @@ public class MainActivityViewModel {
     }
 
     public List<Income> getIncomes() {
+        if (incomeList != null) {
+            return incomeList;
+        }
+        incomeList = incomeRepository.getAll();
         return incomeList;
     }
 
     public List<Expense> getExpenses() {
+        if (expenseList != null) {
+            return expenseList;
+        }
+        expenseList = expenseRepository.getAll();
         return expenseList;
+    }
+
+    public void setExpenses() {
+        expenseList = null;
+    }
+
+    public void setIncomes() {
+        incomeList = null;
     }
 
     public List<Expense> getExpenseSummaryType(List<String> expenseTypes) {
         expenseTypes.remove(0);
         return expenseRepository.getSummaryByType(expenseTypes);
+    }
+
+    public List<Income> getIncomeSummaryType(List<String> incomeTypes) {
+        incomeTypes.remove(0);
+        List<Income> summaryIncomeList = new ArrayList<>();
+
+        for (int i = 0; i < incomeTypes.size(); i++) {
+            int sum = 0;
+            Income newIncome = new Income();
+            for (Income income: getIncomes()) {
+
+                if (income.getIncomeType().equalsIgnoreCase(incomeTypes.get(i))) {
+                    sum += income.getIncomeAmount();
+                    newIncome.setIncomeType(income.getIncomeType());
+                }
+            }
+            if (newIncome.getIncomeType() != null) {
+                newIncome.setIncomeAmount(sum);
+                summaryIncomeList.add(newIncome);
+            }
+        }
+        return summaryIncomeList;
     }
 
 
@@ -61,8 +96,10 @@ public class MainActivityViewModel {
         String uniqueID = UUID.randomUUID().toString();
 
         expense.setId(uniqueID);
+        if (expenseList == null) {
+            expenseList = expenseRepository.getAll();
+        }
         expenseList.add(expense);
-
         expenseRepository.addData(expense);
     }
 
@@ -71,11 +108,12 @@ public class MainActivityViewModel {
         String uniqueID = UUID.randomUUID().toString();
 
         income.setId(uniqueID);
+        if (incomeList == null) {
+            incomeList = incomeRepository.getAll();
+        }
 
         incomeList.add(income);
-
         incomeRepository.addData(income);
-
     }
 
     public Boolean editExpense(int position,Expense editedExpense) {
@@ -87,10 +125,9 @@ public class MainActivityViewModel {
         return false;
     }
     public Boolean editIncome(int position,Income editedIncome) {
-        Income income = incomeList.get(position);
 
-        if (incomeRepository.onUpdate(income)) {
-            incomeList.set(position,income);
+        if (incomeRepository.onUpdate(editedIncome)) {
+            incomeList.set(position,editedIncome);
             return true;
         }
         return false;
@@ -126,17 +163,17 @@ public class MainActivityViewModel {
         return isNotSynced;
     }
 
-    public List<Income> getIncomeSyncList() {
-
-        List<Income> isNotSynced = new ArrayList<>();
-
-        for (int i = 0; i < incomeList.size(); i++) {
-            if (!incomeList.get(i).getSyncStatus()) {
-                isNotSynced.add(incomeList.get(i));
-            }
-        }
-        return isNotSynced;
-    }
+//    public List<Income> getIncomeSyncList() {
+//
+//        List<Income> isNotSynced = new ArrayList<>();
+//
+//        for (int i = 0; i < incomeList.size(); i++) {
+//            if (!incomeList.get(i).getSyncStatus()) {
+//                isNotSynced.add(incomeList.get(i));
+//            }
+//        }
+//        return isNotSynced;
+//    }
 
     public void updateExpenseSyncListWithDb(List<Expense> syncList) {
         for (int i = 0; i < syncList.size(); i++) {
@@ -145,20 +182,20 @@ public class MainActivityViewModel {
         expenseRepository.updateSync(syncList);
     }
 
-    public void updateIncomeSyncListWithDb(List<Income> syncList) {
-        for (int i = 0; i < syncList.size(); i++) {
-            syncList.get(i).setSyncStatus(true);
-        }
-        incomeRepository.updateSync(syncList);
-    }
+//    public void updateIncomeSyncListWithDb(List<Income> syncList) {
+//        for (int i = 0; i < syncList.size(); i++) {
+//            syncList.get(i).setSyncStatus(true);
+//        }
+//        incomeRepository.updateSync(syncList);
+//    }
 
-    public List<Expense> getExpenseByDate() {
-        return expenseRepository.getByDate();
-    }
-
-    public List<Income> getIncomeByDate() {
-        return incomeRepository.getByDate();
-    }
+//    public List<Expense> getExpenseByDate() {
+//        return expenseRepository.getByDate();
+//    }
+//
+//    public List<Income> getIncomeByDate() {
+//        return incomeRepository.getByDate();
+//    }
 
     public List<Expense> getExpenseByType(String type) {
         return expenseRepository.getByType(type);

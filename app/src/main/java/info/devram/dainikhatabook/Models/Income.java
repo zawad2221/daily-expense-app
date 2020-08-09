@@ -8,7 +8,7 @@ import info.devram.dainikhatabook.Helpers.Config;
 
 public class Income implements Serializable {
 
-    private static final String TAG = "Income";
+    //private static final String TAG = "Income";
     public static final long serialVersionUID = 20200801L;
 
     private String id;

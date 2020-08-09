@@ -52,7 +52,7 @@ public class GetRawData extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.connect();
 
-            int response = connection.getResponseCode();
+            //int response = connection.getResponseCode();
 
             StringBuilder result = new StringBuilder();
 

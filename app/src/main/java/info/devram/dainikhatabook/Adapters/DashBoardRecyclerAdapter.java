@@ -1,19 +1,17 @@
 package info.devram.dainikhatabook.Adapters;
 
 //import android.util.Log;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +20,7 @@ import info.devram.dainikhatabook.R;
 
 public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "DashBoardRecyclerAdapte";
+    //private static final String TAG = "DashBoardRecyclerAdapte";
 
     private List<DashBoardObject> dashBoardList;
     private RecyclerOnClick recyclerOnClick;
@@ -48,22 +46,14 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         DashBoardObject dashBoardObject = dashBoardList.get(position);
-        Log.d(TAG, "onBindViewHolder: " + dashBoardObject);
         if (dashBoardList.size() != 0) {
             holder.typeTextView.setText(dashBoardObject.getTypeObject());
             holder.amountTextView.setText(String.valueOf(dashBoardObject.getAmountObject()));
             holder.descTextView.setText(dashBoardObject.getDescObject());
             String myFormat = "dd/MM/YY";
             long dateObject = dashBoardObject.getDateObject();
-
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
-
             holder.dateTextView.setText(sdf.format(dateObject));
-//            if (dashBoardObject.getIsExpense()) {
-//                holder.imageView.setImageResource(R.drawable.ic_arrow_up);
-//            }else {
-//                holder.imageView.setImageResource(R.drawable.ic_arrow_down);
-//            }
         }
 
     }

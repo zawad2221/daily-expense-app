@@ -3,18 +3,19 @@ package info.devram.dainikhatabook;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-import androidx.preference.PreferenceManager;
-
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import info.devram.dainikhatabook.Helpers.Util;
@@ -23,17 +24,16 @@ import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Services.SyncService;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
-import info.devram.dainikhatabook.ui.SelectModal;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener,ConfirmModal.ConfirmModalListener {
 
     public static final String TAG = "MainActivity";
 
+    public static final int ADD_EXP_REQUEST_CODE = 1;
+    public static final int ADD_INC_REQUEST_CODE = 2;
 
     private MainActivityViewModel mainActivityViewModel;
-    //private List<DashBoardObject> newDashBoardList;
-    private SelectModal selectModal;
     private TextView expenseSumTextView;
     private TextView incomeSumTextView;
     private Button settingsButton;
@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity
     private Button generateReportButton;
     private Button helpButton;
     private Button aboutButton;
-    private ConfirmModal confirmModal;
+    private List<Expense> newExpenseList;
+    private List<Income> newIncomeList;
 
 
     @Override
@@ -77,7 +78,6 @@ public class MainActivity extends AppCompatActivity
         boolean isBackupEnabled = sharedPreferences.getBoolean("backup",false);
 
         SyncService syncService = new SyncService(this);
-        //Log.d(TAG, "onPostResume: pending jobs " + syncService.getAllJobs());
         if (isBackupEnabled) {
 
             if (syncService.getAllJobs().size() == 0) {
@@ -89,15 +89,17 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
-        Log.d(TAG, "onResume: ends " + selectModal);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: starts " + selectModal);
-        selectModal = null;
-        Log.d(TAG, "onPause: ends " + selectModal);
+        newExpenseList = null;
+        newIncomeList = null;
+        mainActivityViewModel.setExpenses();
+        mainActivityViewModel.setIncomes();
+
     }
 
     private void setupWidgets() {
@@ -109,11 +111,6 @@ public class MainActivity extends AppCompatActivity
         generateReportButton.setOnClickListener(this);
         helpButton.setOnClickListener(this);
         aboutButton.setOnClickListener(this);
-
-//        DashBoardRecyclerAdapter dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(dashBoardRecyclerAdapter);
-//        Log.d(TAG, "recycler view adapter " + dashBoardRecyclerAdapter.getItemCount());
 
     }
 
@@ -129,16 +126,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.dashNewExpBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
                 intent.putExtra(Expense.class.getSimpleName(),"add");
-                startActivity(intent);
+                startActivityForResult(intent,ADD_EXP_REQUEST_CODE);
                 break;
             case R.id.dashAddIncBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
                 intent.putExtra(Income.class.getSimpleName(),"add");
-                startActivity(intent);
+                startActivityForResult(intent,ADD_INC_REQUEST_CODE);
                 break;
             case R.id.dashReportBtn:
-                confirmModal = new ConfirmModal("Ability To Generate Reports",
-                        "Coming Soon\n",false,this);
+                ConfirmModal confirmModal = new ConfirmModal("Ability To Generate Reports",
+                        "Coming Soon\n", false, this);
                 confirmModal.show(getSupportFragmentManager(),TAG);
                 break;
             case R.id.dashHelpBtn:
@@ -158,36 +155,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void populateList() {
-        List<Expense> newExpenseList = mainActivityViewModel.getExpenses();
-        List<Income> newIncomeList = mainActivityViewModel.getIncomes();
+        newExpenseList = new ArrayList<>();
+        newIncomeList = new ArrayList<>();
 
-        Log.d(TAG, "expense size " + newExpenseList.size());
-        Log.d(TAG, "income size " + newIncomeList.size());
-        Log.d(TAG, "income list " + newIncomeList);
-
-
-//        for(Expense expense: newExpenseList) {
-//            DashBoardObject dashBoardObject = new DashBoardObject();
-//            dashBoardObject.setTypeObject(expense.getExpenseType());
-//            dashBoardObject.setDateObject(expense.getExpenseDate());
-//            dashBoardObject.setAmountObject(expense.getExpenseAmount());
-//            dashBoardObject.setDescObject(expense.getExpenseDesc());
-//            dashBoardObject.setIsExpense(true);
-//            newDashBoardList.add(dashBoardObject);
-//        }
-//
-//        for(Income income: newIncomeList) {
-//            DashBoardObject dashBoardObject = new DashBoardObject();
-//            dashBoardObject.setTypeObject(income.getIncomeType());
-//            dashBoardObject.setDateObject(income.getIncomeDate());
-//            dashBoardObject.setAmountObject(income.getIncomeAmount());
-//            dashBoardObject.setDescObject(income.getIncomeDesc());
-//            newDashBoardList.add(dashBoardObject);
-//        }
+        newExpenseList = mainActivityViewModel.getExpenses();
+        newIncomeList = mainActivityViewModel.getIncomes();
 
         List<String> sumList = Util.getSum(newExpenseList, newIncomeList);
-
-        Log.d(TAG, "populateList: " + sumList);
 
         String expSum = String.format(getResources().getString(R.string.total_dashboard_amount),
                 sumList.get(0));
@@ -230,11 +204,6 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
 
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
@@ -246,4 +215,23 @@ public class MainActivity extends AppCompatActivity
         dialogFragment.dismiss();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_EXP_REQUEST_CODE && data != null) {
+            Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
+            if (expense != null) {
+                mainActivityViewModel.addExpense(expense);
+            }
+
+        }
+        if (requestCode == ADD_INC_REQUEST_CODE && data != null) {
+            Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
+            if (income != null) {
+                mainActivityViewModel.addIncome(income);
+            }
+
+        }
+        populateList();
+    }
 }

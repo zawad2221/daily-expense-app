@@ -3,7 +3,7 @@ package info.devram.dainikhatabook.ui;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment;
 
 public class ConfirmModal extends DialogFragment {
 
-    private static final String TAG = "ConfirmModal";
+    //private static final String TAG = "ConfirmModal";
 
     private String mMessage;
     private String mTitle;

@@ -1,6 +1,5 @@
 package info.devram.dainikhatabook.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,11 @@ import info.devram.dainikhatabook.R;
 public class ExpenseRecyclerAdapter extends
         RecyclerView.Adapter<ExpenseRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "ExpenseRecyclerAdapter";
+    //private static final String TAG = "ExpenseRecyclerAdapter";
 
 
     private List<Expense> expenseList;
     private RecyclerOnClick recyclerOnClick;
-    private int clickedPosition;
 
     public ExpenseRecyclerAdapter(List<Expense> expenseList,RecyclerOnClick recyclerOnClick) {
 
@@ -45,7 +43,6 @@ public class ExpenseRecyclerAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull ExpenseRecyclerAdapter.ViewHolder holder, int position) {
-        //holder.expenseImageView
         Expense expense = expenseList.get(position);
         holder.detailTypeTextView
                 .setText(expense.getExpenseType());
@@ -93,11 +90,11 @@ public class ExpenseRecyclerAdapter extends
         return expenseList.size();
     }
 
-    public void onAddItem(List<Expense> expenses) {
-        this.expenseList.clear();
-        this.expenseList.addAll(expenses);
-        notifyDataSetChanged();
-    }
+//    public void onAddItem(List<Expense> expenses) {
+//        this.expenseList.clear();
+//        this.expenseList.addAll(expenses);
+//        notifyDataSetChanged();
+//    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {

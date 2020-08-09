@@ -5,6 +5,8 @@
         app:title="@string/sync_header">
 
         <SwitchPreferenceCompat
+            app:enableCopying="false"
+            app:enabled="false"
             app:key="backup"
             app:summary="@string/backup_summary"
             app:title="@string/sync_title" />

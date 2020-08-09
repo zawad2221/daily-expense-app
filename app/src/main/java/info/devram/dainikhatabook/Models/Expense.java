@@ -7,7 +7,7 @@ import java.io.Serializable;
 import info.devram.dainikhatabook.Helpers.Config;
 
 public class Expense implements Serializable {
-    private static final String TAG = "Expense";
+    //private static final String TAG = "Expense";
     private static final long serialVersionUID = 20200725L;
 
     private String id;

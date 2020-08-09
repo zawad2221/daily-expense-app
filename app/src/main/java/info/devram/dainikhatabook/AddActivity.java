@@ -2,20 +2,17 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-
-
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class AddActivity extends BaseAddActivity {
 
-    private static final String TAG = "ExpenseActivity";
+    //private static final String TAG = "ExpenseActivity";
 
     private boolean hasExpense = false;
 
@@ -80,7 +77,6 @@ public class AddActivity extends BaseAddActivity {
             expense.setExpenseDate(parsedDate);
             expense.setExpenseDesc(selectedDesc);
             resultIntent.putExtra(Expense.class.getSimpleName(),expense);
-            setResult(1,resultIntent);
         }else {
             Income income = new Income();
             income.setIncomeType(selectedType);
@@ -88,7 +84,7 @@ public class AddActivity extends BaseAddActivity {
             income.setIncomeDate(parsedDate);
             income.setIncomeDesc(selectedDesc);
             resultIntent.putExtra(Income.class.getSimpleName(),income);
-            setResult(1,resultIntent);
         }
+        setResult(1,resultIntent);
     }
 }

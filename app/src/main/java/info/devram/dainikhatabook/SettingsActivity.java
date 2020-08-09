@@ -1,18 +1,16 @@
 package info.devram.dainikhatabook;
 
 import android.os.Bundle;
-//import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-
 import info.devram.dainikhatabook.Services.SyncService;
+
+//import android.util.Log;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -39,13 +37,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
 
     }
 

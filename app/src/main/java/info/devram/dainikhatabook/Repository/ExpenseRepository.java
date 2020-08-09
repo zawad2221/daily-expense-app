@@ -3,7 +3,6 @@ package info.devram.dainikhatabook.Repository;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -12,8 +11,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Models.Expense;
 
 public class ExpenseRepository implements DatabaseService<Expense> {
@@ -96,13 +95,11 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
         for (int i = 0; i < types.size(); i++) {
 
-            Cursor cursor = db.getReadableDatabase().rawQuery("SELECT "
+            try (Cursor cursor = db.getReadableDatabase().rawQuery("SELECT "
                             + Config.EXPENSE_KEY_TYPE + ", SUM("
                             + Config.EXPENSE_KEY_AMOUNT + ") as " + Config.EXPENSE_KEY_AMOUNT + " FROM "
-                    + Config.EXPENSE_TABLE_NAME + " WHERE " + Config.EXPENSE_KEY_TYPE + "=?",
-                    new String[]{types.get(i)});
-
-            try {
+                            + Config.EXPENSE_TABLE_NAME + " WHERE " + Config.EXPENSE_KEY_TYPE + "=?",
+                    new String[]{types.get(i)})) {
                 while (cursor.moveToNext()) {
                     if (cursor.getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)) != 0) {
                         Expense expense = new Expense();
@@ -111,11 +108,8 @@ public class ExpenseRepository implements DatabaseService<Expense> {
                         expenseList.add(expense);
                     }
                 }
-            }finally {
-                cursor.close();
             }
         }
-        Log.d(TAG, "getSummaryByType: " + expenseList.size());
         return expenseList;
     }
 
@@ -212,49 +206,46 @@ public class ExpenseRepository implements DatabaseService<Expense> {
             e.printStackTrace();
             Log.e(TAG, "updateSync: " + e.getMessage());
         }finally {
-            Log.d(TAG, "updateSync: end transaction");
             updateDB.endTransaction();
         }
 
     }
 
-    public List<Expense> getByDate() {
-        expenseList = new ArrayList<>();
-        Cursor cursor = db.getReadableDatabase().query(
-                Config.EXPENSE_TABLE_NAME,new String[]{Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE,
-                Config.EXPENSE_KEY_DATE, Config.EXPENSE_KEY_AMOUNT},null,null,
-                null,null, Config.EXPENSE_KEY_DATE + " ASC");
-
-        if(cursor.moveToFirst()) {
-            do {
-                Expense expense = new Expense();
-                expense.setId(cursor
-                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
-                expense.setExpenseType(cursor
-                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
-
-                expense.setExpenseAmount(cursor
-                        .getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
-                expense.setExpenseDate(cursor
-                        .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
-                expenseList.add(expense);
-            }while (cursor.moveToNext());
-        }
-
-        cursor.close();
-
-        return expenseList;
-    }
+//    public List<Expense> getByDate() {
+//        expenseList = new ArrayList<>();
+//        Cursor cursor = db.getReadableDatabase().query(
+//                Config.EXPENSE_TABLE_NAME,new String[]{Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE,
+//                Config.EXPENSE_KEY_DATE, Config.EXPENSE_KEY_AMOUNT},null,null,
+//                null,null, Config.EXPENSE_KEY_DATE + " ASC");
+//
+//        if(cursor.moveToFirst()) {
+//            do {
+//                Expense expense = new Expense();
+//                expense.setId(cursor
+//                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_ID)));
+//                expense.setExpenseType(cursor
+//                        .getString(cursor.getColumnIndex(Config.EXPENSE_KEY_TYPE)));
+//
+//                expense.setExpenseAmount(cursor
+//                        .getInt(cursor.getColumnIndex(Config.EXPENSE_KEY_AMOUNT)));
+//                expense.setExpenseDate(cursor
+//                        .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
+//                expenseList.add(expense);
+//            }while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        return expenseList;
+//    }
 
     public List<Expense> getByType(String expenseType) {
         this.expenseList = new ArrayList<>();
 
-        Cursor cursor = db.getReadableDatabase().query(Config.EXPENSE_TABLE_NAME,
-                new String[]{Config.EXPENSE_KEY_ID,Config.EXPENSE_KEY_DATE,
-                        Config.EXPENSE_KEY_AMOUNT,Config.EXPENSE_KEY_DESC,
-                        Config.EXPENSE_KEY_TYPE},Config.EXPENSE_KEY_TYPE + "=?",
-                new String[]{expenseType},null,null,null);
-        try {
+        try (Cursor cursor = db.getReadableDatabase().query(Config.EXPENSE_TABLE_NAME,
+                new String[]{Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_DATE,
+                        Config.EXPENSE_KEY_AMOUNT, Config.EXPENSE_KEY_DESC,
+                        Config.EXPENSE_KEY_TYPE}, Config.EXPENSE_KEY_TYPE + "=?",
+                new String[]{expenseType}, null, null, null)) {
             while (cursor.moveToNext()) {
                 Expense expense = new Expense();
                 expense.setId(cursor
@@ -269,18 +260,11 @@ public class ExpenseRepository implements DatabaseService<Expense> {
                         .getLong(cursor.getColumnIndex(Config.EXPENSE_KEY_DATE)));
                 expenseList.add(expense);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            cursor.close();
+            Log.e(TAG, "getByType: " + e.getMessage());
         }
         return expenseList;
     }
-//    private String getDate() {
-//        Calendar myCalendar = Calendar.getInstance();
-//        String myFormat = "dd/MM/yy";
-//        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA_FRENCH);
-//
-//        return sdf.format(myCalendar.getTime());
-//    }
+
 }

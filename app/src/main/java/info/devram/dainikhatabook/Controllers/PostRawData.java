@@ -79,7 +79,6 @@ public class PostRawData extends AsyncTask<String, Void, String> {
                     errorResult.append(line).append("\n");
                 }
                 result = String.valueOf(response);
-                Log.e(TAG, "doInBackground: error result " + errorResult.toString());
                 mUploadStatus = UploadStatus.FAILED_OR_EMPTY;
                 return result;
             }
