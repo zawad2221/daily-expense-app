@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
@@ -6,7 +6,6 @@
 
         <SwitchPreferenceCompat
             app:enableCopying="false"
-            app:enabled="false"
             app:key="backup"
             app:summary="@string/backup_summary"
             app:title="@string/sync_title" />

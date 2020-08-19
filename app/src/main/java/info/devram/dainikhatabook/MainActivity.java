@@ -3,6 +3,7 @@ package info.devram.dainikhatabook;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,7 @@ import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener,ConfirmModal.ConfirmModalListener {
+        implements View.OnClickListener, ConfirmModal.ConfirmModalListener {
 
     public static final String TAG = "MainActivity";
 
@@ -75,21 +76,18 @@ public class MainActivity extends AppCompatActivity
         setupWidgets();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isBackupEnabled = sharedPreferences.getBoolean("backup",false);
+        boolean isBackupEnabled = sharedPreferences.getBoolean("backup", false);
 
         SyncService syncService = new SyncService(this);
         if (isBackupEnabled) {
-
             if (syncService.getAllJobs().size() == 0) {
                 syncService.scheduleJob();
             }
-        }else {
+        } else {
             if (syncService.getAllJobs().size() > 0) {
                 syncService.cancelJob();
             }
-
         }
-
     }
 
     @Override
@@ -120,23 +118,23 @@ public class MainActivity extends AppCompatActivity
         switch (v.getId()) {
 
             case R.id.dashSettingBtn:
-                intent = new Intent(MainActivity.this,SettingsActivity.class);
+                intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.dashNewExpBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
-                intent.putExtra(Expense.class.getSimpleName(),"add");
-                startActivityForResult(intent,ADD_EXP_REQUEST_CODE);
+                intent.putExtra(Expense.class.getSimpleName(), "add");
+                startActivityForResult(intent, ADD_EXP_REQUEST_CODE);
                 break;
             case R.id.dashAddIncBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
-                intent.putExtra(Income.class.getSimpleName(),"add");
-                startActivityForResult(intent,ADD_INC_REQUEST_CODE);
+                intent.putExtra(Income.class.getSimpleName(), "add");
+                startActivityForResult(intent, ADD_INC_REQUEST_CODE);
                 break;
             case R.id.dashReportBtn:
                 ConfirmModal confirmModal = new ConfirmModal("Ability To Generate Reports",
                         "Coming Soon\n", false, this);
-                confirmModal.show(getSupportFragmentManager(),TAG);
+                confirmModal.show(getSupportFragmentManager(), TAG);
                 break;
             case R.id.dashHelpBtn:
                 confirmModal = new ConfirmModal("How to use This app",
@@ -146,9 +144,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.dashAboutBtn:
                 String aboutSummary = String.format(getResources().getString(R.string.about_summary),
                         BuildConfig.VERSION_NAME);
-                confirmModal = new ConfirmModal(aboutSummary,"About This App\n",
-                        false,MainActivity.this);
-                confirmModal.show(getSupportFragmentManager(),TAG);
+                confirmModal = new ConfirmModal(aboutSummary, "About This App\n",
+                        false, MainActivity.this);
+                confirmModal.show(getSupportFragmentManager(), TAG);
                 break;
 
         }
@@ -191,12 +189,12 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.expense_detail:
                 Intent expDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
-                expDetailIntent.putExtra(Expense.class.getSimpleName(),"expense");
+                expDetailIntent.putExtra(Expense.class.getSimpleName(), "expense");
                 startActivity(expDetailIntent);
                 break;
             case R.id.income_detail:
                 Intent incDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
-                incDetailIntent.putExtra(Income.class.getSimpleName(),"income");
+                incDetailIntent.putExtra(Income.class.getSimpleName(), "income");
                 startActivity(incDetailIntent);
                 break;
 
@@ -206,9 +204,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onOkClick(DialogFragment dialogFragment) {
-
-    }
+    public void onOkClick(DialogFragment dialogFragment) {}
 
     @Override
     public void onCancelClick(DialogFragment dialogFragment) {
@@ -234,4 +230,5 @@ public class MainActivity extends AppCompatActivity
         }
         populateList();
     }
+
 }

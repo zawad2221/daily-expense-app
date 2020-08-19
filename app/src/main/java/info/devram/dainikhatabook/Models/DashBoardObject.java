@@ -1,11 +1,13 @@
 package info.devram.dainikhatabook.Models;
 
 public class DashBoardObject {
+    private String idObject;
     private String typeObject;
     private long dateObject;
     private String descObject;
     private int amountObject;
     private boolean isExpense = false;
+    private boolean syncStatus;
 
     public DashBoardObject() {
     }
@@ -15,6 +17,14 @@ public class DashBoardObject {
         this.dateObject = dateObject;
         this.descObject = descObject;
         this.amountObject = amountObject;
+    }
+
+    public String getIdObject() {
+        return idObject;
+    }
+
+    public void setIdObject(String idObject) {
+        this.idObject = idObject;
     }
 
     public String getTypeObject() {
@@ -55,6 +65,14 @@ public class DashBoardObject {
 
     public void setIsExpense(boolean expense) {
         isExpense = expense;
+    }
+
+    public boolean getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(boolean syncStatus) {
+        this.syncStatus = syncStatus;
     }
 
     @Override

@@ -24,4 +24,8 @@ public class Config {
     public static final String INCOME_KEY_AMOUNT = "amount";
     public static final String INCOME_KEY_SYNC = "status";
 
+    public static final String LOGIN_URL = "http://exptracker.devram.info/login";
+    public static final String EXPENSE_URL = "http://exptracker.devram.info/expenses";
+    public static final String INCOME_URL = "http://exptracker.devram.info/incomes";
+
 }
