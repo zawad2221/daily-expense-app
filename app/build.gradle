@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "info.devram.dainikhatabook"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode 8
         versionName "2.1.0"
