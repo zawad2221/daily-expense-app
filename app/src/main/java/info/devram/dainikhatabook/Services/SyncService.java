@@ -7,11 +7,6 @@ import android.content.Context;
 
 import java.util.List;
 
-//import android.util.Log;
-//import java.util.Date;
-//import java.util.Locale;
-
-
 public class SyncService {
 
     //private static final String TAG = "SyncService";

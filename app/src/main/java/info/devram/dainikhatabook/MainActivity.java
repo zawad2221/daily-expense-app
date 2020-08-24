@@ -1,9 +1,13 @@
 package info.devram.dainikhatabook;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,26 +17,43 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import info.devram.dainikhatabook.Helpers.Util;
+import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
+import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
+import info.devram.dainikhatabook.Services.ExcelCreate;
+import info.devram.dainikhatabook.Services.PdfCreate;
 import info.devram.dainikhatabook.Services.SyncService;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
+import info.devram.dainikhatabook.ui.SelectModal;
+
+import static android.Manifest.permission.GET_ACCOUNTS;
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener, ConfirmModal.ConfirmModalListener {
+        implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
+        GenerateReportListener, SelectModal.OnSelectListener {
 
-    public static final String TAG = "MainActivity";
+    //public static final String TAG = "MainActivity";
 
     public static final int ADD_EXP_REQUEST_CODE = 1;
     public static final int ADD_INC_REQUEST_CODE = 2;
+    public static final int CREATE_FILE = 1;
 
     private MainActivityViewModel mainActivityViewModel;
     private TextView expenseSumTextView;
@@ -45,6 +66,9 @@ public class MainActivity extends AppCompatActivity
     private Button aboutButton;
     private List<Expense> newExpenseList;
     private List<Income> newIncomeList;
+    private String reportSelectedItem;
+    private SelectModal selectModal;
+    private List<DashBoardObject> reportDashBoardList;
 
 
     @Override
@@ -74,12 +98,13 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         setupWidgets();
+        getUserAccount();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         boolean isBackupEnabled = sharedPreferences.getBoolean("backup", false);
-
         SyncService syncService = new SyncService(this);
         if (isBackupEnabled) {
+
             if (syncService.getAllJobs().size() == 0) {
                 syncService.scheduleJob();
             }
@@ -88,6 +113,7 @@ public class MainActivity extends AppCompatActivity
                 syncService.cancelJob();
             }
         }
+
     }
 
     @Override
@@ -132,21 +158,20 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, ADD_INC_REQUEST_CODE);
                 break;
             case R.id.dashReportBtn:
-                ConfirmModal confirmModal = new ConfirmModal("Ability To Generate Reports",
-                        "Coming Soon\n", false, this);
-                confirmModal.show(getSupportFragmentManager(), TAG);
+                String[] array = getResources().getStringArray(R.array.report_generate);
+                selectModal = new SelectModal(array, this);
+                selectModal.show(getSupportFragmentManager(), null);
                 break;
             case R.id.dashHelpBtn:
-                confirmModal = new ConfirmModal("How to use This app",
-                        "Coming Soon\n",false,this);
-                confirmModal.show(getSupportFragmentManager(),TAG);
+                intent = new Intent(MainActivity.this, HelpActivity.class);
+                startActivity(intent);
                 break;
             case R.id.dashAboutBtn:
                 String aboutSummary = String.format(getResources().getString(R.string.about_summary),
                         BuildConfig.VERSION_NAME);
-                confirmModal = new ConfirmModal(aboutSummary, "About This App\n",
+                ConfirmModal confirmModal = new ConfirmModal(aboutSummary, "About This App\n",
                         false, MainActivity.this);
-                confirmModal.show(getSupportFragmentManager(), TAG);
+                confirmModal.show(getSupportFragmentManager(), null);
                 break;
 
         }
@@ -204,7 +229,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onOkClick(DialogFragment dialogFragment) {}
+    public void onOkClick(DialogFragment dialogFragment) {
+    }
 
     @Override
     public void onCancelClick(DialogFragment dialogFragment) {
@@ -229,6 +255,90 @@ public class MainActivity extends AppCompatActivity
 
         }
         populateList();
+        if (requestCode == CREATE_FILE && resultCode == Activity.RESULT_OK) {
+            Uri uri;
+            if (data != null) {
+                uri = data.getData();
+                try {
+                    assert uri != null;
+                    DocumentFile fileURI = DocumentFile.fromTreeUri(this, uri);
+                    assert fileURI != null;
+                    DocumentFile file;
+                    if (reportSelectedItem.equalsIgnoreCase("excel")) {
+                        file = fileURI.createFile("application/vnd.ms-excel", "backup");
+                    } else {
+                        file = fileURI.createFile("application/pdf", "backup");
+                    }
+                    assert file != null;
+                    OutputStream outputStream = getContentResolver().openOutputStream(file.getUri());
+                    ExecutorService executorService = Executors.newCachedThreadPool();
+                    ExcelCreate excelCreate;
+                    PdfCreate pdfCreate;
+                    if (reportSelectedItem.equalsIgnoreCase("excel")) {
+                        excelCreate = new ExcelCreate(reportDashBoardList, outputStream, this);
+                        executorService.execute(excelCreate);
+                    } else {
+                        pdfCreate = new PdfCreate(reportDashBoardList, outputStream, this);
+                        executorService.execute(pdfCreate);
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
     }
 
+
+    private void getUserAccount() {
+        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
+                MainActivity.this, GET_ACCOUNTS);
+        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
+            AccountManager am = AccountManager.get(MainActivity.this);
+
+            Account[] accounts = am.getAccountsByType("com.google");
+
+            if (accounts.length > 0) {
+                SharedPreferences sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("account", accounts[0].name);
+                editor.apply();
+            }
+        }
+
+    }
+
+
+    private void createFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        startActivityForResult(intent, CREATE_FILE);
+    }
+
+
+    @Override
+    public void onReportGenerated(String message, STATUS_CODE code) {
+        View view = findViewById(android.R.id.content);
+        if (code == STATUS_CODE.OK) {
+            Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public void onItemSelected(String selectedItem) {
+
+        reportSelectedItem = selectedItem;
+        selectModal.dismiss();
+        reportDashBoardList = mainActivityViewModel.getDataForReport();
+        if (reportDashBoardList.size() > 0) {
+            createFile();
+        }
+        if (selectModal != null) {
+
+            selectModal = null;
+        }
+
+    }
 }

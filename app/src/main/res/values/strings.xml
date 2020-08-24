@@ -47,7 +47,8 @@
     <!-- Sync Preferences -->
     <string name="sync_title">Backup Data periodically</string>
     <string name="backup_summary">Backup your Data to server Periodically. This Service Will
-        Run Once a Day When Device is Connected To WI-FI
+        Run Once a Day When Device is Connected To WI-FI.\n\nNote: By enabling this Service You are
+        Consenting to Grant Access to Read Your Device Contacts.
     </string>
     <string name="about_summary">Created By Rahul Malik\n\nApp Version: %1$s</string>
     <string name="expense_summary">Expenses</string>
@@ -70,5 +71,4 @@
     <string name="summary">Summary</string>
     <string name="detail_edit_btn">EDIT</string>
     <string name="detail_del_btn">DELETE</string>
-
 </resources>

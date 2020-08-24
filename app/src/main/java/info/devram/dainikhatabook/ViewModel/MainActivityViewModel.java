@@ -254,4 +254,33 @@ public class MainActivityViewModel {
 
         return dashBoardObjects;
     }
+
+    public List<DashBoardObject> getDataForReport() {
+        List<Expense> expenseList = this.getExpenses();
+        List<Income> incomeList = this.getIncomes();
+        List<DashBoardObject> dashBoardObjects = new ArrayList<>();
+        for (Expense expense: expenseList) {
+            DashBoardObject dashBoardObject = new DashBoardObject();
+            dashBoardObject.setIdObject(expense.getId());
+            dashBoardObject.setTypeObject(expense.getExpenseType());
+            dashBoardObject.setDateObject(expense.getExpenseDate());
+            dashBoardObject.setDescObject(expense.getExpenseDesc());
+            dashBoardObject.setAmountObject(expense.getExpenseAmount());
+            dashBoardObject.setSyncStatus(expense.getSyncStatus());
+            dashBoardObject.setIsExpense(true);
+            dashBoardObjects.add(dashBoardObject);
+        }
+        for (Income income: incomeList) {
+            DashBoardObject dashBoardObject = new DashBoardObject();
+            dashBoardObject.setIdObject(income.getId());
+            dashBoardObject.setTypeObject(income.getIncomeType());
+            dashBoardObject.setDateObject(income.getIncomeDate());
+            dashBoardObject.setDescObject(income.getIncomeDesc());
+            dashBoardObject.setAmountObject(income.getIncomeAmount());
+            dashBoardObject.setSyncStatus(income.getSyncStatus());
+            dashBoardObject.setIsExpense(false);
+            dashBoardObjects.add(dashBoardObject);
+        }
+        return dashBoardObjects;
+    }
 }

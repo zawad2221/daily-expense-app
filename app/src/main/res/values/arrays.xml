@@ -1,20 +1,13 @@
 <resources>
     <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <string-array name="help_faq">
+        <item>How To Add Expenses</item>
+        <item>How To Add Incomes</item>
+        <item>How To Enable Backup</item>
+        <item>How To Generate Report</item>
     </string-array>
-
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
-    </string-array>
-    <string-array name="dashboard_select_entries">
-        <item>Expenses</item>
-        <item>Incomes</item>
-    </string-array>
-    <string-array name="dashboard_select_values">
-        <item>expense</item>
-        <item>income</item>
+    <string-array name="report_generate">
+        <item>PDF</item>
+        <item>Excel</item>
     </string-array>
 </resources>

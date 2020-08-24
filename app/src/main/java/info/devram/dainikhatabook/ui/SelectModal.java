@@ -4,28 +4,23 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.style.AlignmentSpan;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.ArrayList;
-
-import info.devram.dainikhatabook.R;
-
 public class SelectModal extends DialogFragment {
 
-    private static final String TAG = "SelectModal";
+//    private static final String TAG = "SelectModal";
 
-    private final SelectModal.OnSelectListener mCallback;
+    private SelectModal.OnSelectListener mCallback;
+    private String[] listItems;
 
     public interface OnSelectListener {
         void onItemSelected(String selectedItem);
     }
 
-    public SelectModal(SelectModal.OnSelectListener listener) {
+    public SelectModal(String[] singleChoiceItems,SelectModal.OnSelectListener listener) {
+        this.listItems = singleChoiceItems;
         this.mCallback = listener;
     }
 
@@ -35,10 +30,9 @@ public class SelectModal extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
 
-        final String[] replyValues = getResources()
-                .getStringArray(R.array.dashboard_select_values);
+        final String[] replyValues = this.listItems;
 
-        builder.setSingleChoiceItems(R.array.dashboard_select_entries, -1,
+        builder.setSingleChoiceItems(replyValues, -1,
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

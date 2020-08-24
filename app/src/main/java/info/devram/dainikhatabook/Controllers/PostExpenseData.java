@@ -1,11 +1,13 @@
 package info.devram.dainikhatabook.Controllers;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 
 
 public class PostExpenseData implements Runnable {
-    //private static final String TAG = "PostExpenseData";
+    private static final String TAG = "PostExpenseData";
 
     private HashMap<String,String> setupRequest;
     private ResponseAvailableListener mListener;
@@ -18,6 +20,7 @@ public class PostExpenseData implements Runnable {
 
     @Override
     public void run() {
+        Log.d(TAG, "run: starts");
         Converter converter = new Converter();
         converter.setFromString(true);
         PostData postData = new PostData(setupRequest);
@@ -26,7 +29,7 @@ public class PostExpenseData implements Runnable {
         converter.setStringData(response);
         converter.run();
         this.mListener.onExpenseResponse(converter.getExpenseArray(), statusCode);
-
+        Log.d(TAG, "run: ends");
     }
 
 }

@@ -1,7 +1,16 @@
 package info.devram.dainikhatabook.Services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+//import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +29,10 @@ import info.devram.dainikhatabook.Controllers.TokenRequest;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
+import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+
+import static android.Manifest.permission.GET_ACCOUNTS;
 
 public class BackupJobService extends JobService implements ResponseAvailableListener {
 
@@ -31,7 +43,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
     private JSONArray expArr;
     private JSONArray incArr;
     private List<DashBoardObject> syncObjectList;
-
+    public static final String PRIMARY_CHANNEL_ID = "account_channel";
 
     @Override
     public boolean onStartJob(JobParameters params) {
@@ -46,6 +58,18 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
     }
 
     private void parseData() {
+        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
+                getApplicationContext(), GET_ACCOUNTS);
+        String account = null;
+        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
+            account = preferences.getString("account",null);
+            if (account == null) {
+                createNotification("Backup Notification","No account Found");
+                return;
+            }
+        }
+
         syncObjectList = mainActivityViewModel.getDataForSyncing();
         if (syncObjectList.size() > 0) {
             Converter converter = new Converter();
@@ -55,22 +79,50 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
             expArr = converter.getExpenseArray();
             incArr = converter.getIncomeArray();
 
-            if (expArr.length() > 0 || incArr.length() > 0) {
+            if (syncObjectList.size() > 0) {
                 executorService = Executors.newCachedThreadPool();
                 HashMap<String, String> hashMap = new HashMap<>();
                 hashMap.put("url", Config.LOGIN_URL);
-                hashMap.put("email", "rahulmalikcool@gmail.com");
+                hashMap.put("email", account);
                 TokenRequest tokenRequest = new TokenRequest(hashMap, this);
                 executorService.execute(tokenRequest);
             }
         }
+    }
 
+    private void createNotification(String title,String message) {
+        NotificationManager mNotifyManager;
+        mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new
+                NotificationCompat.Builder(getApplicationContext(),PRIMARY_CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
+        builder.setColor(getApplicationContext().getColor(R.color.accentSecondary));
+        builder.setContentTitle(title);
+        builder.setContentText(message);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.O) {
+
+            NotificationChannel notificationChannel = new NotificationChannel
+                    (PRIMARY_CHANNEL_ID,
+                            title,
+                            NotificationManager.IMPORTANCE_HIGH);
+
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setDescription
+                    (message);
+            mNotifyManager.createNotificationChannel(notificationChannel);
+        }
+        mNotifyManager.notify(0,builder.build());
     }
 
     @Override
     public void onTokenResponse(JSONArray jsonArray, int statusCode) {
         if (statusCode != 200) {
             shutdownExecutor();
+            createNotification("Backup","Error while syncing data");
         }
         if (!executorService.isShutdown()) {
             HashMap<String, String> hashMap = new HashMap<>();
@@ -105,7 +157,6 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
     public void onExpenseResponse(JSONArray jsonArray, int statusCode) {
         shutdownExecutor();
         if (statusCode == 201) {
-
             List<DashBoardObject> dashBoardObjects = new ArrayList<>();
             for (int i = 0; i < syncObjectList.size(); i++) {
                 if (syncObjectList.get(i).getIsExpense()) {
@@ -114,12 +165,12 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
             }
             mainActivityViewModel.updateSyncListWithDb(dashBoardObjects);
         }
+
     }
 
     @Override
     public void onIncomeResponse(JSONArray jsonArray, int statusCode) {
         if (statusCode == 201) {
-
             List<DashBoardObject> dashBoardObjects = new ArrayList<>();
             for (int i = 0; i < syncObjectList.size(); i++) {
                 if (!syncObjectList.get(i).getIsExpense()) {
@@ -142,25 +193,4 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
             executorService.shutdownNow();
         }
     }
-
-//    private void getUserAccount() {
-//
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.GET_ACCOUNTS}, 0);
-//        }
-//
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.READ_CONTACTS}, 0);
-//        }
-//
-//        AccountManager am = AccountManager.get(this);
-//
-//        Account[] accounts = am.getAccountsByType("com.google");
-//        Log.d(TAG, "getUserAccount: " + accounts.length);
-//
-//    }
 }

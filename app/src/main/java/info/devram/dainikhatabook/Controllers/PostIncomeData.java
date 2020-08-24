@@ -20,7 +20,6 @@ public class PostIncomeData implements Runnable {
 
     @Override
     public void run() {
-        Log.d(TAG, "run: starts");
         Converter converter = new Converter();
         converter.setFromString(true);
         PostData postData = new PostData(setupRequest);
@@ -29,6 +28,5 @@ public class PostIncomeData implements Runnable {
         converter.setStringData(response);
         converter.run();
         this.mListener.onIncomeResponse(converter.getIncomeArray(), statusCode);
-        Log.d(TAG, "run: ends");
     }
 }

@@ -25,7 +25,7 @@ public class TokenRequest implements Runnable {
         this.setupRequest = request;
         this.mListener = listener;
     }
-//    SR11044349026692
+
     @Override
     public void run() {
         HttpURLConnection connection = null;
@@ -68,14 +68,14 @@ public class TokenRequest implements Runnable {
             this.mListener.onTokenResponse(converter.getJsonArray(), response);
             converter = null;
         } catch (MalformedURLException e) {
-            Log.d(TAG, "run Invalid URL: " + e.getMessage());
+            Log.i(TAG, "run Invalid URL: " + e.getMessage());
         } catch (SocketTimeoutException e) {
             converter.setStringData("{'msg':'error connecting to server'}");
             converter.run();
         } catch (IOException e) {
-            Log.d(TAG, "run Error Reading Data: " + e.getMessage());
+            Log.i(TAG, "run Error Reading Data: " + e.getMessage());
         } catch (SecurityException e) {
-            Log.d(TAG, "run Security Error: " + e.getMessage());
+            Log.i(TAG, "run Security Error: " + e.getMessage());
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -84,18 +84,14 @@ public class TokenRequest implements Runnable {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.d(TAG, "run: " + e.getMessage());
+                    Log.i(TAG, "run: " + e.getMessage());
                 }
             }
-
         }
-
     }
 
     private String stringBuilder(BufferedReader reader) {
-
         StringBuilder result = new StringBuilder();
-
         try {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 result.append(line).append("\n");
