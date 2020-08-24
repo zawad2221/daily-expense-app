@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class DateSelector implements DatePickerDialog.OnDateSetListener {
 
-    private static final String TAG = "DateSelector";
+//    private static final String TAG = "DateSelector";
 
     private Calendar myCalendar;
     private SimpleDateFormat sdf;
@@ -25,12 +25,11 @@ public class DateSelector implements DatePickerDialog.OnDateSetListener {
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Log.d(TAG, "onDateSet: starts ");
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, month);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         myDate = sdf.format(myCalendar.getTime());
-        Log.d(TAG, "onDateSet: ends ");
+
     }
 
     public String getDate() {

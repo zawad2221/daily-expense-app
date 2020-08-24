@@ -1,13 +1,13 @@
 package info.devram.dainikhatabook.Controllers;
 
-import android.util.Log;
+//import android.util.Log;
 import java.util.HashMap;
 
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 
 public class PostIncomeData implements Runnable {
 
-    private static final String TAG = "PostIncomeData";
+//    private static final String TAG = "PostIncomeData";
 
     private HashMap<String,String> setupRequest;
     private ResponseAvailableListener mListener;

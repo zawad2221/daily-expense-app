@@ -14,7 +14,7 @@ import info.devram.dainikhatabook.R;
 
 public class HelpRecyclerAdapter extends RecyclerView.Adapter<HelpRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "HelpRecyclerAdapter";
+//    private static final String TAG = "HelpRecyclerAdapter";
 
     private List<String> stringList;
 

@@ -190,8 +190,8 @@ public class MainActivity extends AppCompatActivity
                 sumList.get(0));
         String incSum = String.format(getResources().getString(R.string.total_dashboard_amount),
                 sumList.get(1));
-        expenseSumTextView.setText(expSum);
 
+        expenseSumTextView.setText(expSum);
         incomeSumTextView.setText(incSum);
 
     }
@@ -290,7 +290,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void getUserAccount() {
         int hasGetAccountPermission = ContextCompat.checkSelfPermission(
                 MainActivity.this, GET_ACCOUNTS);
@@ -309,13 +308,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     private void createFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         startActivityForResult(intent, CREATE_FILE);
     }
-
 
     @Override
     public void onReportGenerated(String message, STATUS_CODE code) {
@@ -325,10 +322,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void onItemSelected(String selectedItem) {
-
         reportSelectedItem = selectedItem;
         selectModal.dismiss();
         reportDashBoardList = mainActivityViewModel.getDataForReport();
@@ -339,6 +334,5 @@ public class MainActivity extends AppCompatActivity
 
             selectModal = null;
         }
-
     }
 }

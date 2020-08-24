@@ -68,14 +68,14 @@ public class TokenRequest implements Runnable {
             this.mListener.onTokenResponse(converter.getJsonArray(), response);
             converter = null;
         } catch (MalformedURLException e) {
-            Log.i(TAG, "run Invalid URL: " + e.getMessage());
+            Log.e(TAG, "run Invalid URL: " + e.getMessage());
         } catch (SocketTimeoutException e) {
             converter.setStringData("{'msg':'error connecting to server'}");
             converter.run();
         } catch (IOException e) {
-            Log.i(TAG, "run Error Reading Data: " + e.getMessage());
+            Log.e(TAG, "run Error Reading Data: " + e.getMessage());
         } catch (SecurityException e) {
-            Log.i(TAG, "run Security Error: " + e.getMessage());
+            Log.e(TAG, "run Security Error: " + e.getMessage());
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -84,7 +84,7 @@ public class TokenRequest implements Runnable {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.i(TAG, "run: " + e.getMessage());
+                    Log.e(TAG, "run: " + e.getMessage());
                 }
             }
         }
