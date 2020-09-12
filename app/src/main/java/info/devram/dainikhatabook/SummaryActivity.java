@@ -19,23 +19,25 @@ import java.util.List;
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.IncomeRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
-import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
 public class SummaryActivity extends AppCompatActivity
         implements RecyclerOnClick {
 
     //private static final String TAG = "SummaryActivity";
 
-    private MainActivityViewModel mainActivityViewModel;
+    private AccountViewModel accountViewModel;
     private TextView totalSumTextView;
     private boolean hasClass = false;
     private RecyclerView detailRecyclerView;
     private List<String> totalSum;
-    private List<Expense> expenseList;
-    private List<Income> incomeList;
+    private List<AccountEntity> expenseList;
+    private List<AccountEntity> incomeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +57,14 @@ public class SummaryActivity extends AppCompatActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        hasClass = getIntent().hasExtra(Expense.class.getSimpleName());
+        hasClass = getIntent().hasExtra(Config.EXPENSE_TABLE_NAME);
 
         detailRecyclerView = findViewById(R.id.summary_recycler_view);
         totalSumTextView = findViewById(R.id.detailSumTxtView);
 
-        mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
+        accountViewModel = new AccountViewModel(getApplicationContext());
 
-        mainActivityViewModel.init();
+        accountViewModel.init();
 
         detailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -91,21 +93,19 @@ public class SummaryActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        mainActivityViewModel.setIncomes();
-        mainActivityViewModel.setExpenses();
     }
 
     private void getSumTotal() {
 
         List<String> expTypes = new LinkedList<>(Arrays.asList(
                 getResources().getStringArray(R.array.expense_type)));
-        expenseList = mainActivityViewModel.getExpenseSummaryType(expTypes);
+        expenseList = accountViewModel.getAccountByTypes(expTypes);
 
         List<String> incTypes = new LinkedList<>(Arrays.asList(
                 getResources().getStringArray(R.array.income_type)));
-        incomeList = mainActivityViewModel.getIncomeSummaryType(incTypes);
+        incomeList = accountViewModel.getAccountByTypes(incTypes);
 
-        totalSum = Util.getSum(expenseList, incomeList);
+        //totalSum = Util.getSum(expenseList, incomeList);
     }
 
     @Override
@@ -122,15 +122,15 @@ public class SummaryActivity extends AppCompatActivity
     public void onItemClicked(View view, int position) {
 
         if (hasClass) {
-            Expense expense = expenseList.get(position);
+            AccountEntity accountEntity = expenseList.get(position);
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
-            intent.putExtra("type", expense.getExpenseType());
+            intent.putExtra("type", accountEntity.accountType.getType());
             intent.putExtra(Expense.class.getSimpleName(), "expense");
             startActivity(intent);
         } else {
-            Income income = incomeList.get(position);
+            AccountEntity accountEntity = incomeList.get(position);
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
-            intent.putExtra("type", income.getIncomeType());
+            intent.putExtra("type", accountEntity.accountType.getType());
             intent.putExtra(Income.class.getSimpleName(), "income");
             startActivity(intent);
         }

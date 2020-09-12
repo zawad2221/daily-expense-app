@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.MessageFormat;
 import java.util.List;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.R;
 
@@ -19,10 +20,10 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
 
     //private static final String TAG = "IncomeRecyclerAdapter";
 
-    private List<Income> incomeList;
+    private List<AccountEntity> incomeList;
     private RecyclerOnClick recyclerOnClick;
 
-    public IncomeRecyclerAdapter(List<Income> incomeList, RecyclerOnClick recyclerOnClick) {
+    public IncomeRecyclerAdapter(List<AccountEntity> incomeList, RecyclerOnClick recyclerOnClick) {
 
         this.incomeList = incomeList;
         this.recyclerOnClick = recyclerOnClick;
@@ -43,17 +44,17 @@ public class IncomeRecyclerAdapter extends RecyclerView.Adapter<IncomeRecyclerAd
     public void onBindViewHolder(@NonNull ViewHolder holder,
                                  int position) {
 
-        Income income = incomeList.get(position);
+        AccountEntity accountEntity = this.incomeList.get(position);
         holder.detailTypeTextView
-                .setText(income.getIncomeType());
+                .setText(accountEntity.accountType.getType());
 
         holder.detailAmountTextView
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
-                        String.valueOf(income.getIncomeAmount())));
+                        String.valueOf(accountEntity.accountMoney.getAmount())));
 
 
-        switch (income.getIncomeType().toLowerCase()) {
+        switch (accountEntity.accountType.getType().toLowerCase()) {
             case "cash":
                 holder.detailImageView.setImageResource(R.drawable.ic_cash_icon);
                 break;

@@ -1,4 +1,4 @@
-package info.devram.dainikhatabook.Repository;
+package info.devram.dainikhatabook.Mappers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,29 +13,30 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
 import info.devram.dainikhatabook.Helpers.Config;
+import info.devram.dainikhatabook.Interfaces.MapperInterface;
 import info.devram.dainikhatabook.Models.Expense;
 
-public class ExpenseRepository implements DatabaseService<Expense> {
+public class ExpenseMapper{
 
     private static final String TAG = "ExpenseRepository";
 
     private DatabaseHandler db;
-    private static ExpenseRepository mInstance = null;
+    private static ExpenseMapper mInstance = null;
     private List<Expense> expenseList;
 
-    private ExpenseRepository(Context context) {
+    private ExpenseMapper(Context context) {
         this.db = DatabaseHandler.getInstance(context);
 
     }
 
-    public static ExpenseRepository getInstance(Context context) {
+    public static ExpenseMapper getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new ExpenseRepository(context);
+            mInstance = new ExpenseMapper(context);
         }
         return mInstance;
     }
 
-    @Override
+
     public void addData(Expense obj) {
         try{
             ContentValues contentValues = new ContentValues();
@@ -54,7 +55,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     }
 
-    @Override
+
     public List<Expense> getAll() {
 
         this.expenseList = new ArrayList<>();
@@ -113,7 +114,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         return expenseList;
     }
 
-    @Override
+
     public Expense getOne(int id) {
         Cursor cursor = db.getReadableDatabase().query(
                 Config.EXPENSE_TABLE_NAME,new String[]{
@@ -141,7 +142,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         return account;
     }
 
-    @Override
+
     public Boolean onUpdate(Expense obj) {
 
         try {
@@ -163,7 +164,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
 
     }
 
-    @Override
+
     public Boolean onDelete(Expense obj) {
         try {
             db.getWritableDatabase().delete(Config.EXPENSE_TABLE_NAME,
@@ -176,7 +177,7 @@ public class ExpenseRepository implements DatabaseService<Expense> {
         }
     }
 
-    @Override
+
     public int getCount() {
         String query = "SELECT * FROM " + Config.EXPENSE_TABLE_NAME;
 

@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.R;
 
@@ -22,12 +23,12 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
 
     //private static final String TAG = "DashBoardRecyclerAdapte";
 
-    private List<DashBoardObject> dashBoardList;
+    private List<AccountEntity> accounts;
     private RecyclerOnClick recyclerOnClick;
 
-    public DashBoardRecyclerAdapter(List<DashBoardObject> dashBoardList,
+    public DashBoardRecyclerAdapter(List<AccountEntity> accountList,
                                     RecyclerOnClick recyclerOnClick) {
-        this.dashBoardList = dashBoardList;
+        this.accounts = accountList;
         this.recyclerOnClick = recyclerOnClick;
 
     }
@@ -45,13 +46,13 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        DashBoardObject dashBoardObject = dashBoardList.get(position);
-        if (dashBoardList.size() != 0) {
-            holder.typeTextView.setText(dashBoardObject.getTypeObject());
-            holder.amountTextView.setText(String.valueOf(dashBoardObject.getAmountObject()));
-            holder.descTextView.setText(dashBoardObject.getDescObject());
+        AccountEntity account = this.accounts.get(position);
+        if (this.accounts.size() != 0) {
+            holder.typeTextView.setText(account.accountType.getType());
+            holder.amountTextView.setText(String.valueOf(account.accountMoney.getAmount()));
+            holder.descTextView.setText(account.accountDescription.getDesc());
             String myFormat = "dd/MM/YY";
-            long dateObject = dashBoardObject.getDateObject();
+            long dateObject = account.accountCreatedDate.getCreatedAt();
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CANADA);
             holder.dateTextView.setText(sdf.format(dateObject));
         }
@@ -60,12 +61,12 @@ public class DashBoardRecyclerAdapter extends RecyclerView.Adapter<DashBoardRecy
 
     @Override
     public int getItemCount() {
-        return dashBoardList.size();
+        return accounts.size();
     }
 
-    public void updateData(List<DashBoardObject> updatedList) {
-        this.dashBoardList.clear();
-        this.dashBoardList.addAll(updatedList);
+    public void updateData(List<AccountEntity> updatedList) {
+        this.accounts.clear();
+        this.accounts.addAll(updatedList);
         notifyDataSetChanged();
     }
 

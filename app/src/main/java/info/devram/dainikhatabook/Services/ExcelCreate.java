@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 
@@ -21,13 +23,13 @@ public class ExcelCreate implements Runnable {
 //    private static final String TAG = "ExcelCreate";
 
 
-    private List<DashBoardObject> dashBoardObjectList;
+    private List<AccountEntity> accounts;
     private GenerateReportListener mListener;
     private OutputStream mStream;
 
-    public ExcelCreate(List<DashBoardObject> dashBoardObjectList, OutputStream stream,
+    public ExcelCreate(List<AccountEntity> accountEntities, OutputStream stream,
                        GenerateReportListener listener) {
-        this.dashBoardObjectList = dashBoardObjectList;
+        this.accounts = accountEntities;
         this.mListener = listener;
         this.mStream = stream;
     }
@@ -46,30 +48,30 @@ public class ExcelCreate implements Runnable {
         createRowHeading(row);
         int expRowNumber = 1;
         int incRowNumber = 1;
-        for(int i = 0; i < dashBoardObjectList.size(); i++) {
-            if (dashBoardObjectList.get(i).getIsExpense()) {
+        for(int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).accountRepoType.getRepoType().equals(Config.EXPENSE_TABLE_NAME)) {
                 row = expenses.createRow(expRowNumber);
                 Cell cellDataType = row.createCell(0);
-                cellDataType.setCellValue(dashBoardObjectList.get(i).getTypeObject());
+                cellDataType.setCellValue(accounts.get(i).accountType.getType());
                 Cell cellDataDate = row.createCell(1);
-                String cellDate = serializeDate(dashBoardObjectList.get(i).getDateObject());
+                String cellDate = serializeDate(accounts.get(i).accountCreatedDate.getCreatedAt());
                 cellDataDate.setCellValue(cellDate);
                 Cell cellDataAmount = row.createCell(2);
-                cellDataAmount.setCellValue(dashBoardObjectList.get(i).getAmountObject());
+                cellDataAmount.setCellValue(accounts.get(i).accountMoney.getAmount());
                 Cell cellDataDesc = row.createCell(3);
-                cellDataDesc.setCellValue(dashBoardObjectList.get(i).getDescObject());
+                cellDataDesc.setCellValue(accounts.get(i).accountDescription.getDesc());
                 expRowNumber++;
             }else {
                 row = incomes.createRow(incRowNumber);
                 Cell cellDataType = row.createCell(0);
-                cellDataType.setCellValue(dashBoardObjectList.get(i).getTypeObject());
+                cellDataType.setCellValue(accounts.get(i).accountType.getType());
                 Cell cellDataDate = row.createCell(1);
-                String cellDate = serializeDate(dashBoardObjectList.get(i).getDateObject());
+                String cellDate = serializeDate(accounts.get(i).accountCreatedDate.getCreatedAt());
                 cellDataDate.setCellValue(cellDate);
                 Cell cellDataAmount = row.createCell(2);
-                cellDataAmount.setCellValue(dashBoardObjectList.get(i).getAmountObject());
+                cellDataAmount.setCellValue(accounts.get(i).accountMoney.getAmount());
                 Cell cellDataDesc = row.createCell(3);
-                cellDataDesc.setCellValue(dashBoardObjectList.get(i).getDescObject());
+                cellDataDesc.setCellValue(accounts.get(i).accountDescription.getDesc());
                 incRowNumber++;
             }
         }

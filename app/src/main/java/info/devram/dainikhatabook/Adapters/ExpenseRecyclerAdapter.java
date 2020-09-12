@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.MessageFormat;
 import java.util.List;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.R;
 
@@ -21,10 +22,10 @@ public class ExpenseRecyclerAdapter extends
     //private static final String TAG = "ExpenseRecyclerAdapter";
 
 
-    private List<Expense> expenseList;
+    private List<AccountEntity> expenseList;
     private RecyclerOnClick recyclerOnClick;
 
-    public ExpenseRecyclerAdapter(List<Expense> expenseList,RecyclerOnClick recyclerOnClick) {
+    public ExpenseRecyclerAdapter(List<AccountEntity> expenseList,RecyclerOnClick recyclerOnClick) {
 
         this.expenseList = expenseList;
         this.recyclerOnClick = recyclerOnClick;
@@ -43,15 +44,15 @@ public class ExpenseRecyclerAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull ExpenseRecyclerAdapter.ViewHolder holder, int position) {
-        Expense expense = expenseList.get(position);
+        AccountEntity accountEntity = this.expenseList.get(position);
         holder.detailTypeTextView
-                .setText(expense.getExpenseType());
+                .setText(accountEntity.accountType.getType());
         holder.detailAmountTextView
                 .setText(MessageFormat.format("{0} {1}",
                         holder.itemView.getContext().getResources().getString(R.string.rs_symbol),
-                        String.valueOf(expense.getExpenseAmount())));
+                        String.valueOf(accountEntity.accountMoney.getAmount())));
 
-        switch (expense.getExpenseType().toLowerCase()) {
+        switch (accountEntity.accountType.getType().toLowerCase()) {
             case "clothing":
                 holder.detailImageView.setImageResource(R.drawable.ic_cloth_icon);
                 break;

@@ -7,6 +7,7 @@ import android.app.job.JobService;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.util.Log;
 //import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -30,15 +31,15 @@ import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.R;
-import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_CONTACTS;
 
 public class BackupJobService extends JobService implements ResponseAvailableListener {
 
-    //private static final String TAG = "BackupJobService";
+    private static final String TAG = "BackupJobService";
 
-    private MainActivityViewModel mainActivityViewModel = new MainActivityViewModel(getBaseContext());
+    private AccountViewModel accountViewModel = new AccountViewModel(getBaseContext());
     private ExecutorService executorService;
     private JSONArray expArr;
     private JSONArray incArr;
@@ -47,7 +48,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        mainActivityViewModel.init();
+        accountViewModel.init();
         parseData();
         return true;
     }
@@ -59,18 +60,19 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
 
     private void parseData() {
         int hasGetAccountPermission = ContextCompat.checkSelfPermission(
-                getApplicationContext(), GET_ACCOUNTS);
+                getApplicationContext(), READ_CONTACTS);
         String account = null;
         if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
             SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
             account = preferences.getString("account",null);
+            Log.d(TAG, "parseData: " + account);
             if (account == null) {
                 createNotification("Backup Notification","No account Found");
                 return;
             }
         }
 
-        syncObjectList = mainActivityViewModel.getDataForSyncing();
+        syncObjectList = accountViewModel.getDataForSyncing();
         if (syncObjectList.size() > 0) {
             Converter converter = new Converter();
             converter.setRequestData(syncObjectList);
@@ -163,7 +165,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
                     dashBoardObjects.add(syncObjectList.get(i));
                 }
             }
-            mainActivityViewModel.updateSyncListWithDb(dashBoardObjects);
+            accountViewModel.updateSyncListWithDb(dashBoardObjects);
         }
 
     }
@@ -177,7 +179,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
                     dashBoardObjects.add(syncObjectList.get(i));
                 }
             }
-            mainActivityViewModel.updateSyncListWithDb(dashBoardObjects);
+            accountViewModel.updateSyncListWithDb(dashBoardObjects);
         }
     }
 

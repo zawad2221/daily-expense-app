@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -20,15 +21,16 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import info.devram.dainikhatabook.ui.ConfirmModal;
+import info.devram.dainikhatabook.ui.PasswordModal;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_CONTACTS;
 
-//import android.util.Log;
+import android.util.Log;
+import android.view.View;
 
 public class SettingsActivity extends AppCompatActivity {
 
-//    private static final String TAG = "SettingsActivity";
+    private static final String TAG = "SettingsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,28 +83,30 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             hasGetAccountPermission = ContextCompat.checkSelfPermission(
-                    context, GET_ACCOUNTS);
+                    context, READ_CONTACTS);
             if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
                 backupSwitch.setChecked(true);
             }
         }
 
         private boolean setAccountPermission() {
-            boolean check = ActivityCompat.shouldShowRequestPermissionRationale(activity, GET_ACCOUNTS);
+            boolean check = ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_CONTACTS);
 
             hasGetAccountPermission = ContextCompat.checkSelfPermission(
-                    context, GET_ACCOUNTS);
+                    context, READ_CONTACTS);
 
             if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
                 return setContactPermission();
             } else if (check) {
 
                 ConfirmModal confirmModal = new ConfirmModal(
-                        "For Backup Service to be enabled this app needs to have access for reading contacts stored in this phone",
+                        "For Backup Service to be enabled " +
+                                "this app needs to have access for reading " +
+                                "contacts stored in this phone",
                         "Information!\n", true, this);
                 confirmModal.show(getParentFragmentManager(), null);
             } else {
-                ActivityCompat.requestPermissions(activity, new String[]{GET_ACCOUNTS}, 1);
+                ActivityCompat.requestPermissions(activity, new String[]{READ_CONTACTS}, 1);
             }
             return false;
         }
@@ -148,6 +152,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
+
             boolean isBackEnabled = (Boolean) newValue;
 
             if (isBackEnabled) {

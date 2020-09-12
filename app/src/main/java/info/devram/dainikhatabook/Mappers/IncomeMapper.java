@@ -1,4 +1,4 @@
-package info.devram.dainikhatabook.Repository;
+package info.devram.dainikhatabook.Mappers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,29 +13,30 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Controllers.DatabaseHandler;
+import info.devram.dainikhatabook.Interfaces.MapperInterface;
 import info.devram.dainikhatabook.Models.Income;
 
-public class IncomeRepository implements DatabaseService<Income>  {
+public class IncomeMapper {
 
     private static final String TAG = "IncomeRepository";
 
     private DatabaseHandler db;
-    private static IncomeRepository mInstance = null;
+    private static IncomeMapper mInstance = null;
     private List<Income> incomeList;
 
-    private IncomeRepository(Context context) {
+    private IncomeMapper(Context context) {
         this.db = DatabaseHandler.getInstance(context);
 
     }
 
-    public static IncomeRepository getInstance(Context context) {
+    public static IncomeMapper getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new IncomeRepository(context);
+            mInstance = new IncomeMapper(context);
         }
         return mInstance;
     }
 
-    @Override
+
     public void addData(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
@@ -53,7 +54,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
         }
     }
 
-    @Override
+
     public List<Income> getAll() {
         this.incomeList = new ArrayList<>();
         String query = "SELECT * FROM " + Config.INCOME_TABLE_NAME;
@@ -86,7 +87,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
         return incomeList;
     }
 
-    @Override
+
     public Income getOne(int id) {
         Cursor cursor = db.getReadableDatabase().query(
                 Config.INCOME_TABLE_NAME,new String[]{
@@ -114,7 +115,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
         return account;
     }
 
-    @Override
+
     public Boolean onUpdate(Income obj) {
         try{
             ContentValues contentValues = new ContentValues();
@@ -134,7 +135,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
         }
     }
 
-    @Override
+
     public Boolean onDelete(Income obj) {
         try {
             db.getWritableDatabase().delete(Config.INCOME_TABLE_NAME,
@@ -147,7 +148,7 @@ public class IncomeRepository implements DatabaseService<Income>  {
         }
     }
 
-    @Override
+
     public int getCount() {
         String query = "SELECT * FROM " + Config.INCOME_TABLE_NAME;
 

@@ -19,10 +19,11 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
+import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
-import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 
 public class DetailActivity extends AppCompatActivity
@@ -33,8 +34,8 @@ public class DetailActivity extends AppCompatActivity
     public static final int EDIT_EXP_REQUEST_CODE = 1;
     public static final int EDIT_INC_REQUEST_CODE = 2;
     
-    private MainActivityViewModel mainActivityViewModel;
-    private List<DashBoardObject> newDashBoardList;
+    private AccountViewModel accountViewModel;
+    private List<AccountEntity> newDashBoardList;
     private RecyclerView recyclerView;
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
     private List<Expense> expenseList;
@@ -62,9 +63,9 @@ public class DetailActivity extends AppCompatActivity
         }
 
         hasExpense = getIntent().hasExtra(Expense.class.getSimpleName());
-        mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
+        accountViewModel = new AccountViewModel(getApplicationContext());
 
-        mainActivityViewModel.init();
+        accountViewModel.init();
 
         recyclerView = findViewById(R.id.detailRecycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -128,7 +129,7 @@ public class DetailActivity extends AppCompatActivity
             if (resultCode == 1) {
                 if (data != null) {
                     Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
-                    mainActivityViewModel.editExpense(itemAdapterPosition,expense);
+                    accountViewModel.editExpense(itemAdapterPosition,expense);
                 } else {
                     Log.e(TAG, "onActivityResult: intent data is null ");
                 }
@@ -138,7 +139,7 @@ public class DetailActivity extends AppCompatActivity
             if (resultCode == 1) {
                 if (data != null) {
                     Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
-                    mainActivityViewModel.editIncome(itemAdapterPosition,income);
+                    accountViewModel.editIncome(itemAdapterPosition,income);
                 }
             }
         }
@@ -148,10 +149,10 @@ public class DetailActivity extends AppCompatActivity
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
         if (hasExpense) {
-            mainActivityViewModel.deleteExpense(itemAdapterPosition);
+            accountViewModel.deleteExpense(itemAdapterPosition);
         }else {
             Log.d(TAG, "onOkClick: " + itemAdapterPosition);
-            mainActivityViewModel.deleteIncome(itemAdapterPosition);
+            accountViewModel.deleteIncome(itemAdapterPosition);
         }
         inflateDashBoardList();
         dashBoardRecyclerAdapter.updateData(newDashBoardList);
@@ -169,7 +170,7 @@ public class DetailActivity extends AppCompatActivity
         newDashBoardList = new ArrayList<>();
         if (hasExpense) {
             expenseList = new ArrayList<>();
-            expenseList = mainActivityViewModel.getExpenseByType(intentType);
+            expenseList = accountViewModel.getExpenseByType(intentType);
             for(Expense expense: expenseList) {
                 DashBoardObject dashBoardObject = new DashBoardObject();
                 dashBoardObject.setTypeObject(expense.getExpenseType());
@@ -180,7 +181,7 @@ public class DetailActivity extends AppCompatActivity
                 newDashBoardList.add(dashBoardObject);
             }
         }else {
-            incomeList = mainActivityViewModel.getIncomeByType(intentType);
+            incomeList = accountViewModel.getIncomeByType(intentType);
             for(Income income: incomeList) {
                 DashBoardObject dashBoardObject = new DashBoardObject();
                 dashBoardObject.setTypeObject(income.getIncomeType());

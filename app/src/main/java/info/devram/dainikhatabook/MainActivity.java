@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
@@ -39,23 +42,24 @@ import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Services.ExcelCreate;
 import info.devram.dainikhatabook.Services.PdfCreate;
 import info.devram.dainikhatabook.Services.SyncService;
-import info.devram.dainikhatabook.ViewModel.MainActivityViewModel;
+import info.devram.dainikhatabook.Values.AccountRepoType;
+import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 import info.devram.dainikhatabook.ui.SelectModal;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
         GenerateReportListener, SelectModal.OnSelectListener {
 
-    //public static final String TAG = "MainActivity";
+    public static final String TAG = "MainActivity";
 
     public static final int ADD_EXP_REQUEST_CODE = 1;
     public static final int ADD_INC_REQUEST_CODE = 2;
     public static final int CREATE_FILE = 1;
 
-    private MainActivityViewModel mainActivityViewModel;
+    private AccountViewModel accountViewModel;
     private TextView expenseSumTextView;
     private TextView incomeSumTextView;
     private Button settingsButton;
@@ -64,11 +68,9 @@ public class MainActivity extends AppCompatActivity
     private Button generateReportButton;
     private Button helpButton;
     private Button aboutButton;
-    private List<Expense> newExpenseList;
-    private List<Income> newIncomeList;
     private String reportSelectedItem;
     private SelectModal selectModal;
-    private List<DashBoardObject> reportDashBoardList;
+    private List<AccountEntity> accountEntities;
 
 
     @Override
@@ -79,9 +81,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mainActivityViewModel = new MainActivityViewModel(getApplicationContext());
+        accountViewModel = new AccountViewModel(getApplicationContext());
 
-        mainActivityViewModel.init();
+        accountViewModel.init();
 
         expenseSumTextView = findViewById(R.id.dashboardExpAmountTextView);
         incomeSumTextView = findViewById(R.id.dashboardIncAmountTextView);
@@ -119,11 +121,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        newExpenseList = null;
-        newIncomeList = null;
-        mainActivityViewModel.setExpenses();
-        mainActivityViewModel.setIncomes();
-
     }
 
     private void setupWidgets() {
@@ -149,12 +146,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.dashNewExpBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
-                intent.putExtra(Expense.class.getSimpleName(), "add");
+                intent.putExtra(Config.EXPENSE_TABLE_NAME, "add");
                 startActivityForResult(intent, ADD_EXP_REQUEST_CODE);
                 break;
             case R.id.dashAddIncBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
-                intent.putExtra(Income.class.getSimpleName(), "add");
+                intent.putExtra(Config.INCOME_TABLE_NAME, "add");
                 startActivityForResult(intent, ADD_INC_REQUEST_CODE);
                 break;
             case R.id.dashReportBtn:
@@ -178,22 +175,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void populateList() {
-        newExpenseList = new ArrayList<>();
-        newIncomeList = new ArrayList<>();
-
-        newExpenseList = mainActivityViewModel.getExpenses();
-        newIncomeList = mainActivityViewModel.getIncomes();
-
-        List<String> sumList = Util.getSum(newExpenseList, newIncomeList);
-
-        String expSum = String.format(getResources().getString(R.string.total_dashboard_amount),
-                sumList.get(0));
-        String incSum = String.format(getResources().getString(R.string.total_dashboard_amount),
-                sumList.get(1));
-
-        expenseSumTextView.setText(expSum);
-        incomeSumTextView.setText(incSum);
-
+        accountEntities = new ArrayList<>();
     }
 
     @Override
@@ -214,12 +196,12 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.expense_detail:
                 Intent expDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
-                expDetailIntent.putExtra(Expense.class.getSimpleName(), "expense");
+                expDetailIntent.putExtra(Config.EXPENSE_TABLE_NAME, "expense");
                 startActivity(expDetailIntent);
                 break;
             case R.id.income_detail:
                 Intent incDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
-                incDetailIntent.putExtra(Income.class.getSimpleName(), "income");
+                incDetailIntent.putExtra(Config.INCOME_TABLE_NAME, "income");
                 startActivity(incDetailIntent);
                 break;
 
@@ -241,16 +223,20 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_EXP_REQUEST_CODE && data != null) {
-            Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
-            if (expense != null) {
-                mainActivityViewModel.addExpense(expense);
+            AccountEntity accountEntity = (AccountEntity) data.getSerializableExtra(Config.EXPENSE_TABLE_NAME);
+            if (accountEntity != null) {
+                AccountRepoType accountRepoType = new AccountRepoType(null);
+                accountEntity.setAccountRepoType(accountRepoType);
+                accountViewModel.addAccount(accountEntity);
             }
 
         }
         if (requestCode == ADD_INC_REQUEST_CODE && data != null) {
-            Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
-            if (income != null) {
-                mainActivityViewModel.addIncome(income);
+            AccountEntity accountEntity = (AccountEntity) data.getSerializableExtra(Config.INCOME_TABLE_NAME);
+            if (accountEntity != null) {
+                AccountRepoType accountRepoType = new AccountRepoType(Config.INCOME_TABLE_NAME);
+                accountEntity.setAccountRepoType(accountRepoType);
+                accountViewModel.addAccount(accountEntity);
             }
 
         }
@@ -275,10 +261,10 @@ public class MainActivity extends AppCompatActivity
                     ExcelCreate excelCreate;
                     PdfCreate pdfCreate;
                     if (reportSelectedItem.equalsIgnoreCase("excel")) {
-                        excelCreate = new ExcelCreate(reportDashBoardList, outputStream, this);
+                        excelCreate = new ExcelCreate(accountEntities, outputStream, this);
                         executorService.execute(excelCreate);
                     } else {
-                        pdfCreate = new PdfCreate(reportDashBoardList, outputStream, this);
+                        pdfCreate = new PdfCreate(accountEntities, outputStream, this);
                         executorService.execute(pdfCreate);
                     }
 
@@ -291,14 +277,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getUserAccount() {
-        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
-                MainActivity.this, GET_ACCOUNTS);
-        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
+        int hasGetReadContactsPermission = ContextCompat.checkSelfPermission(
+                MainActivity.this, READ_CONTACTS);
+        if (hasGetReadContactsPermission == PackageManager.PERMISSION_GRANTED) {
             AccountManager am = AccountManager.get(MainActivity.this);
-
             Account[] accounts = am.getAccountsByType("com.google");
 
             if (accounts.length > 0) {
+                Log.d(TAG, "getUserAccount: " + accounts.length);
+                Log.d(TAG, "getUserAccount: " + accounts[0].name);
                 SharedPreferences sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("account", accounts[0].name);
@@ -326,8 +313,8 @@ public class MainActivity extends AppCompatActivity
     public void onItemSelected(String selectedItem) {
         reportSelectedItem = selectedItem;
         selectModal.dismiss();
-        reportDashBoardList = mainActivityViewModel.getDataForReport();
-        if (reportDashBoardList.size() > 0) {
+        accountEntities = accountViewModel.getAccounts(null);
+        if (accountEntities.size() > 0) {
             createFile();
         }
         if (selectModal != null) {

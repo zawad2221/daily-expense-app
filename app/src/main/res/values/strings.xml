@@ -41,11 +41,11 @@
     <string name="dashboard_select">Select Expense/Income</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">About</string>
-    <string name="sync_header">Backup</string>
+    <string name="sync_service_password">Backup Service Password</string>
+    <string name="sync_header">Backup Service</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Backup Data periodically</string>
+    <string name="sync_title">Backup Data periodically.</string>
     <string name="backup_summary">Backup your Data to server Periodically. This Service Will
         Run Once a Day When Device is Connected To WI-FI.\n\nNote: By enabling this Service You are
         Consenting to Grant Access to Read Your Device Contacts.
@@ -71,4 +71,8 @@
     <string name="summary">Summary</string>
     <string name="detail_edit_btn">EDIT</string>
     <string name="detail_del_btn">DELETE</string>
+    <string name="password">Password</string>
+    <string name="sync_password_summary">Password Required For Backup Service.
+        Once Set this password is used to access Sync Server Resources.\n\n
+    </string>
 </resources>

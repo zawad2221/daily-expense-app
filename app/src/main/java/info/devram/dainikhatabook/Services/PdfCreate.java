@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 
@@ -20,13 +22,13 @@ public class PdfCreate implements Runnable {
 
 //    private static final String TAG = "PdfCreate";
 
-    private List<DashBoardObject> dashBoardObjectList;
+    private List<AccountEntity> accounts;
     private GenerateReportListener mListener;
     private OutputStream mStream;
 
-    public PdfCreate(List<DashBoardObject> dashBoardObjectList, OutputStream stream,
+    public PdfCreate(List<AccountEntity> accountEntities, OutputStream stream,
                      GenerateReportListener mListener) {
-        this.dashBoardObjectList = dashBoardObjectList;
+        this.accounts = accountEntities;
         this.mListener = mListener;
         this.mStream = stream;
     }
@@ -64,14 +66,14 @@ public class PdfCreate implements Runnable {
         drawHeading(expPageCanvas);
         int expY = 70;
         int incY = 70;
-        for (int i = 0; i < dashBoardObjectList.size(); i++) {
-            if (dashBoardObjectList.get(i).getIsExpense()) {
-                expPageCanvas.drawText(dashBoardObjectList.get(i).getTypeObject(), 10, expY, new Paint());
-                String cellDate = serializeDate(dashBoardObjectList.get(i).getDateObject());
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).accountRepoType.getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
+                expPageCanvas.drawText(accounts.get(i).accountType.getType(), 10, expY, new Paint());
+                String cellDate = serializeDate(accounts.get(i).accountCreatedDate.getCreatedAt());
                 expPageCanvas.drawText(cellDate, 100, expY, new Paint());
                 expPageCanvas.drawText(String.valueOf(
-                        dashBoardObjectList.get(i).getAmountObject()), 200, expY, new Paint());
-                expPageCanvas.drawText(dashBoardObjectList.get(i).getDescObject(), 300, expY, new Paint());
+                        accounts.get(i).accountMoney.getAmount()), 200, expY, new Paint());
+                expPageCanvas.drawText(accounts.get(i).accountDescription.getDesc(), 300, expY, new Paint());
                 expY = expY + 30;
             }
         }
@@ -80,14 +82,14 @@ public class PdfCreate implements Runnable {
         Canvas incPageCanvas = incPage.getCanvas();
         incPageCanvas.drawText("Incomes", 10, 10, new Paint());
         drawHeading(incPageCanvas);
-        for (int i = 0; i < dashBoardObjectList.size(); i++) {
-            if (!dashBoardObjectList.get(i).getIsExpense()) {
-                incPageCanvas.drawText(dashBoardObjectList.get(i).getTypeObject(), 10, incY, new Paint());
-                String cellDate = serializeDate(dashBoardObjectList.get(i).getDateObject());
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).accountRepoType.getRepoType().equalsIgnoreCase(Config.INCOME_TABLE_NAME)) {
+                incPageCanvas.drawText(accounts.get(i).accountType.getType(), 10, incY, new Paint());
+                String cellDate = serializeDate(accounts.get(i).accountCreatedDate.getCreatedAt());
                 incPageCanvas.drawText(cellDate, 100, incY, new Paint());
                 incPageCanvas.drawText(String.valueOf(
-                        dashBoardObjectList.get(i).getAmountObject()), 200, incY, new Paint());
-                incPageCanvas.drawText(dashBoardObjectList.get(i).getDescObject(), 300, incY, new Paint());
+                        accounts.get(i).accountMoney.getAmount()), 200, incY, new Paint());
+                incPageCanvas.drawText(accounts.get(i).accountDescription.getDesc(), 300, incY, new Paint());
                 incY = incY + 30;
             }
 
