@@ -20,6 +20,7 @@ import java.util.List;
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
@@ -38,8 +39,7 @@ public class DetailActivity extends AppCompatActivity
     private List<AccountEntity> newDashBoardList;
     private RecyclerView recyclerView;
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
-    private List<Expense> expenseList;
-    private List<Income> incomeList;
+    private List<AccountEntity> accountList;
     private int itemAdapterPosition;
     private String intentType;
     private boolean hasExpense = false;
@@ -62,7 +62,7 @@ public class DetailActivity extends AppCompatActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        hasExpense = getIntent().hasExtra(Expense.class.getSimpleName());
+        hasExpense = getIntent().hasExtra(Config.EXPENSE_TABLE_NAME);
         accountViewModel = new AccountViewModel(getApplicationContext());
 
         accountViewModel.init();
@@ -102,13 +102,14 @@ public class DetailActivity extends AppCompatActivity
             case R.id.detailEditBtn:
                 Intent intent = new Intent(DetailActivity.this,EditActivity.class);
                 itemAdapterPosition = position;
+                AccountEntity accountEntity = accountList.get(position);
                 if (hasExpense) {
-                    Expense expense = expenseList.get(position);
-                    intent.putExtra(Expense.class.getSimpleName(),expense);
+
+                    intent.putExtra(Config.EXPENSE_TABLE_NAME,accountEntity);
                     startActivityForResult(intent,EDIT_EXP_REQUEST_CODE);
                 }else {
-                    Income income = incomeList.get(position);
-                    intent.putExtra(Income.class.getSimpleName(),income);
+
+                    intent.putExtra(Config.INCOME_TABLE_NAME,accountEntity);
                     startActivityForResult(intent,EDIT_INC_REQUEST_CODE);
                 }
 
@@ -125,38 +126,38 @@ public class DetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_EXP_REQUEST_CODE) {
-            if (resultCode == 1) {
-                if (data != null) {
-                    Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
-                    accountViewModel.editExpense(itemAdapterPosition,expense);
-                } else {
-                    Log.e(TAG, "onActivityResult: intent data is null ");
-                }
-            }
-        }
-        if (requestCode == EDIT_INC_REQUEST_CODE) {
-            if (resultCode == 1) {
-                if (data != null) {
-                    Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
-                    accountViewModel.editIncome(itemAdapterPosition,income);
-                }
-            }
-        }
+//        if (requestCode == EDIT_EXP_REQUEST_CODE) {
+//            if (resultCode == 1) {
+//                if (data != null) {
+//                    Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
+//                    accountViewModel.editAccount(itemAdapterPosition,expense);
+//                } else {
+//                    Log.e(TAG, "onActivityResult: intent data is null ");
+//                }
+//            }
+//        }
+//        if (requestCode == EDIT_INC_REQUEST_CODE) {
+//            if (resultCode == 1) {
+//                if (data != null) {
+//                    Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
+//                    accountViewModel.editIncome(itemAdapterPosition,income);
+//                }
+//            }
+//        }
 
     }
 
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
-        if (hasExpense) {
-            accountViewModel.deleteExpense(itemAdapterPosition);
-        }else {
-            Log.d(TAG, "onOkClick: " + itemAdapterPosition);
-            accountViewModel.deleteIncome(itemAdapterPosition);
-        }
-        inflateDashBoardList();
-        dashBoardRecyclerAdapter.updateData(newDashBoardList);
-        dialogFragment.dismiss();
+//        if (hasExpense) {
+//            accountViewModel.deleteExpense(itemAdapterPosition);
+//        }else {
+//            Log.d(TAG, "onOkClick: " + itemAdapterPosition);
+//            accountViewModel.deleteIncome(itemAdapterPosition);
+//        }
+//        inflateDashBoardList();
+//        dashBoardRecyclerAdapter.updateData(newDashBoardList);
+//        dialogFragment.dismiss();
 
     }
 
@@ -168,28 +169,6 @@ public class DetailActivity extends AppCompatActivity
     private void inflateDashBoardList() {
 
         newDashBoardList = new ArrayList<>();
-        if (hasExpense) {
-            expenseList = new ArrayList<>();
-            expenseList = accountViewModel.getExpenseByType(intentType);
-            for(Expense expense: expenseList) {
-                DashBoardObject dashBoardObject = new DashBoardObject();
-                dashBoardObject.setTypeObject(expense.getExpenseType());
-                dashBoardObject.setDateObject(expense.getExpenseDate());
-                dashBoardObject.setAmountObject(expense.getExpenseAmount());
-                dashBoardObject.setDescObject(expense.getExpenseDesc());
-                dashBoardObject.setIsExpense(true);
-                newDashBoardList.add(dashBoardObject);
-            }
-        }else {
-            incomeList = accountViewModel.getIncomeByType(intentType);
-            for(Income income: incomeList) {
-                DashBoardObject dashBoardObject = new DashBoardObject();
-                dashBoardObject.setTypeObject(income.getIncomeType());
-                dashBoardObject.setDateObject(income.getIncomeDate());
-                dashBoardObject.setAmountObject(income.getIncomeAmount());
-                dashBoardObject.setDescObject(income.getIncomeDesc());
-                newDashBoardList.add(dashBoardObject);
-            }
-        }
+
     }
 }

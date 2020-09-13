@@ -1,7 +1,10 @@
 package info.devram.dainikhatabook.Values;
 
-public class AccountSyncStatus {
+import java.io.Serializable;
 
+public class AccountSyncStatus implements Serializable
+{
+    private static final long serialVersionUID = 20200912L;
     private boolean isSynced = false;
 
     public AccountSyncStatus() {}

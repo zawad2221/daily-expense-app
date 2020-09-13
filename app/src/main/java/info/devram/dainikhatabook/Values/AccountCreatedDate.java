@@ -1,7 +1,10 @@
 package info.devram.dainikhatabook.Values;
 
-public class AccountCreatedDate
+import java.io.Serializable;
+
+public class AccountCreatedDate implements Serializable
 {
+    private static final long serialVersionUID = 20200912L;
     private long createdAt;
 
     public AccountCreatedDate(long createdAt) {
@@ -10,5 +13,12 @@ public class AccountCreatedDate
 
     public long getCreatedAt() {
         return createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountCreatedDate{" +
+                "createdAt=" + createdAt +
+                '}';
     }
 }

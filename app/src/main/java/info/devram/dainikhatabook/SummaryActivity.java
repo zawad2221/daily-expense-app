@@ -2,6 +2,7 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 public class SummaryActivity extends AppCompatActivity
         implements RecyclerOnClick {
 
-    //private static final String TAG = "SummaryActivity";
+    private static final String TAG = "SummaryActivity";
 
     private AccountViewModel accountViewModel;
     private TextView totalSumTextView;
@@ -79,7 +80,7 @@ public class SummaryActivity extends AppCompatActivity
                     expenseList,
                     this);
             detailRecyclerView.setAdapter(expRecyclerAdapter);
-            totalSumTextView.setText(totalSum.get(0));
+//            totalSumTextView.setText(totalSum.get(0));
         } else {
             setTitle("Income Details");
             IncomeRecyclerAdapter incRecyclerAdapter = new IncomeRecyclerAdapter(
@@ -100,7 +101,7 @@ public class SummaryActivity extends AppCompatActivity
         List<String> expTypes = new LinkedList<>(Arrays.asList(
                 getResources().getStringArray(R.array.expense_type)));
         expenseList = accountViewModel.getAccountByTypes(expTypes);
-
+        Log.d(TAG, "getSumTotal: " + expenseList);
         List<String> incTypes = new LinkedList<>(Arrays.asList(
                 getResources().getStringArray(R.array.income_type)));
         incomeList = accountViewModel.getAccountByTypes(incTypes);
@@ -125,13 +126,13 @@ public class SummaryActivity extends AppCompatActivity
             AccountEntity accountEntity = expenseList.get(position);
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
             intent.putExtra("type", accountEntity.accountType.getType());
-            intent.putExtra(Expense.class.getSimpleName(), "expense");
+            intent.putExtra(Config.EXPENSE_TABLE_NAME, "expense");
             startActivity(intent);
         } else {
             AccountEntity accountEntity = incomeList.get(position);
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
             intent.putExtra("type", accountEntity.accountType.getType());
-            intent.putExtra(Income.class.getSimpleName(), "income");
+            intent.putExtra(Config.INCOME_TABLE_NAME, "income");
             startActivity(intent);
         }
     }

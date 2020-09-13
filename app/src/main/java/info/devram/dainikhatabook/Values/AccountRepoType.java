@@ -1,9 +1,12 @@
 package info.devram.dainikhatabook.Values;
 
+import java.io.Serializable;
+
 import info.devram.dainikhatabook.Helpers.Config;
 
-public class AccountRepoType {
-
+public class AccountRepoType implements Serializable
+{
+    private static final long serialVersionUID = 20200912L;
     private String repoType;
 
     public AccountRepoType(String repoType) {

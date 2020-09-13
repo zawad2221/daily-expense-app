@@ -2,6 +2,7 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,7 +24,7 @@ import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class AddActivity extends BaseAddActivity {
 
-    //private static final String TAG = "ExpenseActivity";
+    private static final String TAG = "ExpenseActivity";
 
     private boolean hasExpense = false;
 
@@ -96,6 +97,7 @@ public class AddActivity extends BaseAddActivity {
                 accountDescription,
                 accountSyncStatus
         );
+        Log.d(TAG, "addData: " + accountEntity);
         if (hasExpense) {
             resultIntent.putExtra(Config.EXPENSE_TABLE_NAME,accountEntity);
         }else {

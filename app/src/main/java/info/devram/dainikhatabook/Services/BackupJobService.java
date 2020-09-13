@@ -72,7 +72,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
             }
         }
 
-        syncObjectList = accountViewModel.getDataForSyncing();
+        //syncObjectList = accountViewModel.getDataForSyncing();
         if (syncObjectList.size() > 0) {
             Converter converter = new Converter();
             converter.setRequestData(syncObjectList);
@@ -165,7 +165,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
                     dashBoardObjects.add(syncObjectList.get(i));
                 }
             }
-            accountViewModel.updateSyncListWithDb(dashBoardObjects);
+            //accountViewModel.updateSyncListWithDb(dashBoardObjects);
         }
 
     }
@@ -179,7 +179,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
                     dashBoardObjects.add(syncObjectList.get(i));
                 }
             }
-            accountViewModel.updateSyncListWithDb(dashBoardObjects);
+            //accountViewModel.updateSyncListWithDb(dashBoardObjects);
         }
     }
 

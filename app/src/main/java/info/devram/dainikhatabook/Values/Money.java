@@ -1,7 +1,10 @@
 package info.devram.dainikhatabook.Values;
 
-public class Money {
+import java.io.Serializable;
 
+public class Money implements Serializable
+{
+    private static final long serialVersionUID = 20200912L;
     private int amount;
 
     public Money(int amount) {
@@ -10,5 +13,12 @@ public class Money {
 
     public int getAmount() {
         return amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Money{" +
+                "amount=" + amount +
+                '}';
     }
 }

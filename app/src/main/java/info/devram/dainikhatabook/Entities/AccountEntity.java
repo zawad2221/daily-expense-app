@@ -42,4 +42,17 @@ public class AccountEntity implements Serializable
     public void setAccountRepoType(AccountRepoType accountRepoType) {
         this.accountRepoType = accountRepoType;
     }
+
+    @Override
+    public String toString() {
+        return "AccountEntity{" +
+                "accountID=" + accountID +
+                ", accountType=" + accountType +
+                ", accountCreatedDate=" + accountCreatedDate +
+                ", accountMoney=" + accountMoney +
+                ", accountDescription=" + accountDescription +
+                ", syncStatus=" + syncStatus +
+                ", accountRepoType=" + accountRepoType +
+                '}';
+    }
 }

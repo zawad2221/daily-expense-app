@@ -1,6 +1,7 @@
 package info.devram.dainikhatabook.ViewModel;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import info.devram.dainikhatabook.Mappers.IncomeMapper;
 
 public class AccountViewModel {
 
-    //private static final String TAG = "MainActivityViewModel";
+    private static final String TAG = "MainActivityViewModel";
 
     private AccountMapper accountMapper;
     private Context mContext;
@@ -34,6 +35,7 @@ public class AccountViewModel {
 
         this.accountEntities = new ArrayList<>();
         this.accountEntities = this.accountMapper.getAll(null);
+        Log.d(TAG, "init: " + this.accountEntities);
     }
 
     public List<AccountEntity> getAccounts(String type)
@@ -50,6 +52,18 @@ public class AccountViewModel {
     {
         return this.accountEntities.stream()
                 .filter(accountEntity -> types.contains(accountEntity.accountType.getType()))
+                .collect(Collectors.toList());
+    }
+
+    public void editAccount(AccountEntity account, int position)
+    {
+        this.accountEntities.set(position, account);
+    }
+
+    public List<AccountEntity> getAccountByType(String type)
+    {
+        return this.accountEntities.stream()
+                .filter(accountEntity -> accountEntity.accountType.getType().equalsIgnoreCase(type))
                 .collect(Collectors.toList());
     }
 
