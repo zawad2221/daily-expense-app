@@ -1,69 +1,127 @@
 package info.devram.dainikhatabook.ViewModel;
 
-import android.content.Context;
+import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Mappers.AccountMapper;
-import info.devram.dainikhatabook.Models.DashBoardObject;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
-import info.devram.dainikhatabook.Mappers.ExpenseMapper;
-import info.devram.dainikhatabook.Mappers.IncomeMapper;
+import info.devram.dainikhatabook.Values.AccountType;
+import info.devram.dainikhatabook.Values.Money;
 
 public class AccountViewModel {
-
     private static final String TAG = "MainActivityViewModel";
 
     private AccountMapper accountMapper;
-    private Context mContext;
+    private Application application;
     private List<AccountEntity> accountEntities;
+    private static AccountViewModel mInstance;
 
-    public AccountViewModel(Context context) {
-        this.mContext = context;
+    private AccountViewModel(@NonNull Application application) {
+        this.application = application;
     }
 
+    public static AccountViewModel getInstance(Application application) {
+        if (mInstance == null) {
+            return new AccountViewModel(application);
+        }
+        return mInstance;
+    }
 
-    public void init()
-    {
-        accountMapper = AccountMapper.getInstance(this.mContext);
+    public void init() {
+        accountMapper = AccountMapper.getInstance(this.application.getApplicationContext());
 
         this.accountEntities = new ArrayList<>();
         this.accountEntities = this.accountMapper.getAll(null);
-        Log.d(TAG, "init: " + this.accountEntities);
     }
 
-    public List<AccountEntity> getAccounts(String type)
-    {
+    public List<AccountEntity> getAccounts(String type) {
+
         return this.accountEntities;
     }
 
-    public void addAccount(AccountEntity accountEntity)
-    {
-        this.accountEntities.add(accountEntity);
+    public void addAccount(AccountEntity accountEntity) {
+        try {
+            if (accountEntity.accountRepoType.
+                    getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
+                this.accountMapper.addData(accountEntity, Config.EXPENSE_TABLE_NAME);
+            } else {
+                this.accountMapper.addData(accountEntity, Config.INCOME_TABLE_NAME);
+            }
+            this.accountEntities.add(accountEntity);
+        } catch (ApplicationError error) {
+            Log.e(TAG, "addAccount: " + error);
+        }
+
     }
 
-    public List<AccountEntity> getAccountByTypes(List<String> types)
-    {
-        return this.accountEntities.stream()
-                .filter(accountEntity -> types.contains(accountEntity.accountType.getType()))
-                .collect(Collectors.toList());
+    public List<AccountEntity> getAccountByTypes(List<String> types) {
+
+        HashMap<String, List<AccountEntity>> hashMap = this.accountMapper.getTypesAsMaps(types);
+
+        int sum = 0;
+
+        List<AccountEntity> accountEntities = new ArrayList<>();
+
+        for (Map.Entry<String, List<AccountEntity>> entry : hashMap.entrySet()) {
+            AccountType accountType = new AccountType(entry.getKey());
+            for (AccountEntity accountEntity: entry.getValue()) {
+                sum += accountEntity.accountMoney.getAmount();
+            }
+            Money accountMoney = new Money(sum);
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setAccountType(accountType);
+            accountEntity.setAccountMoney(accountMoney);
+            accountEntities.add(accountEntity);
+            sum = 0;
+        }
+
+        Log.d(TAG, "getAccountByTypes: " + accountEntities);
+
+        return accountEntities;
+
+//        return this.accountEntities.stream()
+//                .filter(accountEntity -> types.contains(accountEntity.accountType.getType()))
+//                .collect(Collectors.toList());
     }
 
-    public void editAccount(AccountEntity account, int position)
-    {
+    public void editAccount(AccountEntity account, int position) {
         this.accountEntities.set(position, account);
     }
 
-    public List<AccountEntity> getAccountByType(String type)
-    {
+    public List<AccountEntity> getAccountByType(String type) {
         return this.accountEntities.stream()
                 .filter(accountEntity -> accountEntity.accountType.getType().equalsIgnoreCase(type))
+                .collect(Collectors.toList());
+    }
+
+    public List<AccountEntity> getAccountByRepo(String repoName) {
+        if (repoName.equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
+            return this.accountEntities.stream()
+                    .filter(accountEntity -> accountEntity
+                            .accountRepoType.getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME))
+                    .collect(Collectors.toList());
+        }
+        return this.accountEntities.stream()
+                .filter(accountEntity -> accountEntity
+                        .accountRepoType.getRepoType().equalsIgnoreCase(Config.INCOME_TABLE_NAME))
                 .collect(Collectors.toList());
     }
 

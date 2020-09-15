@@ -1,5 +1,8 @@
 package info.devram.dainikhatabook.Helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Config {
     public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expense_manager.db";

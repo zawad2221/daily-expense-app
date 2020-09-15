@@ -25,6 +25,9 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        accountViewModel = new AccountViewModel(getApplicationContext());
+        accountViewModel = AccountViewModel.getInstance(getApplication());
 
         accountViewModel.init();
 
@@ -176,6 +180,19 @@ public class MainActivity extends AppCompatActivity
 
     private void populateList() {
         accountEntities = new ArrayList<>();
+        accountEntities = accountViewModel.getAccounts(null);
+
+        assert accountEntities != null;
+        List<String> sumList = Util.getSum(accountEntities);
+
+        String expSum = String.format(getResources().
+                        getString(R.string.total_dashboard_amount),sumList.get(0));
+        String incSum = String.format(getResources().
+                        getString(R.string.total_dashboard_amount),sumList.get(1));
+
+        expenseSumTextView.setText(expSum);
+        incomeSumTextView.setText(incSum);
+
     }
 
     @Override
@@ -314,6 +331,7 @@ public class MainActivity extends AppCompatActivity
         reportSelectedItem = selectedItem;
         selectModal.dismiss();
         accountEntities = accountViewModel.getAccounts(null);
+        assert accountEntities != null;
         if (accountEntities.size() > 0) {
             createFile();
         }

@@ -27,6 +27,7 @@ import info.devram.dainikhatabook.Controllers.Converter;
 import info.devram.dainikhatabook.Controllers.PostExpenseData;
 import info.devram.dainikhatabook.Controllers.PostIncomeData;
 import info.devram.dainikhatabook.Controllers.TokenRequest;
+import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
@@ -39,7 +40,7 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
 
     private static final String TAG = "BackupJobService";
 
-    private AccountViewModel accountViewModel = new AccountViewModel(getBaseContext());
+    private AccountViewModel accountViewModel = AccountViewModel.getInstance(getApplication());
     private ExecutorService executorService;
     private JSONArray expArr;
     private JSONArray incArr;

@@ -19,6 +19,7 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
+import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Models.DashBoardObject;
@@ -63,7 +64,7 @@ public class DetailActivity extends AppCompatActivity
         }
 
         hasExpense = getIntent().hasExtra(Config.EXPENSE_TABLE_NAME);
-        accountViewModel = new AccountViewModel(getApplicationContext());
+        accountViewModel = AccountViewModel.getInstance(getApplication());
 
         accountViewModel.init();
 
@@ -169,6 +170,11 @@ public class DetailActivity extends AppCompatActivity
     private void inflateDashBoardList() {
 
         newDashBoardList = new ArrayList<>();
+        if (hasExpense) {
+            newDashBoardList = accountViewModel.getAccountByRepo(Config.EXPENSE_TABLE_NAME);
+        } else {
+            newDashBoardList = accountViewModel.getAccountByRepo(Config.INCOME_TABLE_NAME);
+        }
 
     }
 }

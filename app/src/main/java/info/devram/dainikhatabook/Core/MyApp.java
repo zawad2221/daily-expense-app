@@ -1,7 +1,7 @@
 package info.devram.dainikhatabook.Core;
 
 import android.app.Application;
-
+import android.content.Context;
 
 
 public class MyApp extends Application {
@@ -23,8 +23,5 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-
-
     }
-
 }

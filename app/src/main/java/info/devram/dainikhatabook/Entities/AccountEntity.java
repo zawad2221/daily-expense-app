@@ -1,6 +1,7 @@
 package info.devram.dainikhatabook.Entities;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 import info.devram.dainikhatabook.Values.AccountCreatedDate;
 import info.devram.dainikhatabook.Values.AccountDescription;
@@ -41,6 +42,30 @@ public class AccountEntity implements Serializable
 
     public void setAccountRepoType(AccountRepoType accountRepoType) {
         this.accountRepoType = accountRepoType;
+    }
+
+    public void setAccountID(AccountID accountID) {
+        this.accountID = accountID;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
+    public void setAccountCreatedDate(AccountCreatedDate accountCreatedDate) {
+        this.accountCreatedDate = accountCreatedDate;
+    }
+
+    public void setAccountMoney(Money accountMoney) {
+        this.accountMoney = accountMoney;
+    }
+
+    public void setAccountDescription(AccountDescription accountDescription) {
+        this.accountDescription = accountDescription;
+    }
+
+    public void setSyncStatus(AccountSyncStatus syncStatus) {
+        this.syncStatus = syncStatus;
     }
 
     @Override

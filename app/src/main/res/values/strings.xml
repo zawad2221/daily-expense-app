@@ -5,25 +5,6 @@
     <string name="desc_hint">Enter Description</string>
     <string name="expense_btn_save">SAVE</string>
     <string name="date_hint">Enter Date</string>
-    <string-array name="expense_type">
-        <item>Select Type</item>
-        <item>Clothing</item>
-        <item>Entertainment</item>
-        <item>Food</item>
-        <item>Transport</item>
-        <item>Medical</item>
-        <item>Shopping</item>
-        <item>Education</item>
-        <item>Grocery</item>
-        <item>Personal</item>
-        <item>Fuel</item>
-    </string-array>
-    <string-array name="income_type">
-        <item>Select Type</item>
-        <item>Cash</item>
-        <item>Salary</item>
-        <item>Loan</item>
-    </string-array>
     <string name="img_view_cd">Icon</string>
     <string name="total_income">Incomes</string>
     <string name="total_dashboard_amount">Total: %1$s/-</string>

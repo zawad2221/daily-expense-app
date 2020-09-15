@@ -21,4 +21,11 @@ public class AccountRepoType implements Serializable
     public String getRepoType() {
         return repoType;
     }
+
+    @Override
+    public String toString() {
+        return "AccountRepoType{" +
+                "repoType='" + repoType + '\'' +
+                '}';
+    }
 }

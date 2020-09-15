@@ -23,8 +23,6 @@ import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
 public class SummaryActivity extends AppCompatActivity
@@ -63,7 +61,7 @@ public class SummaryActivity extends AppCompatActivity
         detailRecyclerView = findViewById(R.id.summary_recycler_view);
         totalSumTextView = findViewById(R.id.detailSumTxtView);
 
-        accountViewModel = new AccountViewModel(getApplicationContext());
+        accountViewModel = AccountViewModel.getInstance(getApplication());
 
         accountViewModel.init();
 
@@ -75,12 +73,13 @@ public class SummaryActivity extends AppCompatActivity
         super.onResume();
         getSumTotal();
         if (hasClass) {
+            Log.d(TAG, "onResume: " + expenseList);
             setTitle("Expense Details");
             ExpenseRecyclerAdapter expRecyclerAdapter = new ExpenseRecyclerAdapter(
                     expenseList,
                     this);
             detailRecyclerView.setAdapter(expRecyclerAdapter);
-//            totalSumTextView.setText(totalSum.get(0));
+            totalSumTextView.setText(totalSum.get(0));
         } else {
             setTitle("Income Details");
             IncomeRecyclerAdapter incRecyclerAdapter = new IncomeRecyclerAdapter(
@@ -97,16 +96,14 @@ public class SummaryActivity extends AppCompatActivity
     }
 
     private void getSumTotal() {
+        Log.d(TAG, "getSumTotal: " + accountViewModel.getAccounts(null));
+        
+        expenseList = accountViewModel.getAccountByTypes(Util.getExpenseTypes());
+//        List<String> incTypes = new LinkedList<>(Arrays.asList(
+//                getResources().getStringArray(R.array.income_type)));
+//        incomeList = accountViewModel.getAccountByTypes(incTypes);
 
-        List<String> expTypes = new LinkedList<>(Arrays.asList(
-                getResources().getStringArray(R.array.expense_type)));
-        expenseList = accountViewModel.getAccountByTypes(expTypes);
-        Log.d(TAG, "getSumTotal: " + expenseList);
-        List<String> incTypes = new LinkedList<>(Arrays.asList(
-                getResources().getStringArray(R.array.income_type)));
-        incomeList = accountViewModel.getAccountByTypes(incTypes);
-
-        //totalSum = Util.getSum(expenseList, incomeList);
+        totalSum = Util.getSum(accountViewModel.getAccounts(null));
     }
 
     @Override
@@ -124,6 +121,7 @@ public class SummaryActivity extends AppCompatActivity
 
         if (hasClass) {
             AccountEntity accountEntity = expenseList.get(position);
+            Log.d(TAG, "onItemClicked: " + accountEntity);
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
             intent.putExtra("type", accountEntity.accountType.getType());
             intent.putExtra(Config.EXPENSE_TABLE_NAME, "expense");

@@ -10,6 +10,9 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
+import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
@@ -30,24 +33,32 @@ public class EditActivity extends BaseAddActivity {
         activateToolbar(true);
 
         hasExpense = getIntent().hasExtra(Expense.class.getSimpleName());
+
+        List<String> items;
+
         if (hasExpense) {
-            setTitle("Edit Expense");
-            adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.expense_type, android.R.layout.simple_spinner_item);
-            setupSpinner(adapter);
-            expense = (Expense) getIntent()
-                    .getSerializableExtra(Expense.class.getSimpleName());
+            setTitle("Add Expense");
 
+            items = Util.getExpenseTypes();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item,items);
+
+
+            items.add(0, "Select Type");
+
+            setupSpinner(adapter);
         }else {
-            setTitle("Edit Income");
-            adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.income_type, android.R.layout.simple_spinner_item);
-            setupSpinner(adapter);
-            income = (Income) getIntent()
-                    .getSerializableExtra(Income.class.getSimpleName());
+            setTitle("Add Income");
 
+            items = Util.getIncomeTypes();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item,items);
+
+            items.add(0, "Select Type");
+
+            setupSpinner(adapter);
         }
 
 

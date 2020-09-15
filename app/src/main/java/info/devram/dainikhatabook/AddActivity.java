@@ -8,10 +8,14 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
+import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Values.AccountCreatedDate;
@@ -36,17 +40,30 @@ public class AddActivity extends BaseAddActivity {
 
         hasExpense = getIntent().hasExtra(Config.EXPENSE_TABLE_NAME);
 
+        List<String> items;
+
         if (hasExpense) {
             setTitle("Add Expense");
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.expense_type, android.R.layout.simple_spinner_item);
+
+            items = Util.getExpenseTypes();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item,items);
+
+
+            items.add(0, "Select Type");
+
             setupSpinner(adapter);
         }else {
             setTitle("Add Income");
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                    .createFromResource(this,
-                            R.array.income_type, android.R.layout.simple_spinner_item);
+
+            items = Util.getIncomeTypes();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item,items);
+
+            items.add(0, "Select Type");
+
             setupSpinner(adapter);
         }
 

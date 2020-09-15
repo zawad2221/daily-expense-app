@@ -52,7 +52,7 @@ public class BaseAddActivity extends AppCompatActivity {
         }
     }
 
-    protected void setupSpinner(ArrayAdapter<CharSequence> arrayAdapter) {
+    protected void setupSpinner(ArrayAdapter<String> arrayAdapter) {
         spinner = findViewById(R.id.addNew_spinner);
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

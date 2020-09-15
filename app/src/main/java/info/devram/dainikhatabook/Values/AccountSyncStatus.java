@@ -17,4 +17,11 @@ public class AccountSyncStatus implements Serializable
     {
         this.isSynced = status;
     }
+
+    @Override
+    public String toString() {
+        return "AccountSyncStatus{" +
+                "isSynced=" + isSynced +
+                '}';
+    }
 }
