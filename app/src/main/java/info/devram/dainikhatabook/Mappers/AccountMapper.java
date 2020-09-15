@@ -104,13 +104,39 @@ public class AccountMapper implements MapperInterface {
     }
 
     @Override
-    public Boolean onUpdate(AccountID id, String table) {
-        return null;
+    public Boolean onUpdate(AccountEntity accountEntity, String table)
+    {
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Config.ACCOUNT_KEY_TYPE,accountEntity.accountType.getType());
+            contentValues.put(Config.ACCOUNT_KEY_AMOUNT,accountEntity.accountMoney.getAmount());
+            contentValues.put(Config.ACCOUNT_KEY_DATE,accountEntity.accountCreatedDate.getCreatedAt());
+            contentValues.put(Config.ACCOUNT_KEY_DESC,accountEntity.accountDescription.getDesc());
+
+            db.getWritableDatabase().update(table,contentValues,
+                    Config.ACCOUNT_KEY_ID + "=?",
+                    new String[]{String.valueOf(accountEntity.accountID.getId())});
+
+            return true;
+        }catch (SQLException e) {
+            Log.e(TAG, "onUpdate: error " + e.getMessage());
+            return false;
+        }
+
     }
 
     @Override
-    public Boolean onDelete(AccountID id, String table) {
-        return null;
+    public Boolean onDelete(AccountID id, String table)
+    {
+        try {
+            db.getWritableDatabase().delete(table,
+                    Config.EXPENSE_KEY_ID + "=?",
+                    new String[]{id.getId()});
+            return true;
+        }catch (SQLException e) {
+            Log.e(TAG, "onDelete: error " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -172,13 +198,13 @@ public class AccountMapper implements MapperInterface {
         return accountEntities;
     }
 
-    public HashMap<String, List<AccountEntity>> getTypesAsMaps(List<String> types)
+    public HashMap<String, List<AccountEntity>> getTypesAsMaps(String tableName, List<String> types)
     {
         HashMap<String, List<AccountEntity>> hashMap = new HashMap<>();
         for (String type: types) {
 
             Cursor cursor = db.getReadableDatabase().query(
-                    Config.EXPENSE_TABLE_NAME,new String[]{
+                    tableName,new String[]{
                             Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE, Config.EXPENSE_KEY_DATE,
                             Config.EXPENSE_KEY_AMOUNT, Config.EXPENSE_KEY_DESC, Config.ACCOUNT_KEY_SYNC
                     }, Config.EXPENSE_KEY_TYPE + "=?", new String[]{type},

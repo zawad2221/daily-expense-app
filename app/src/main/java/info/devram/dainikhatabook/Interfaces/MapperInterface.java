@@ -14,7 +14,7 @@ public interface MapperInterface {
 
     public AccountEntity getOne(AccountID id, String table);
 
-    public Boolean onUpdate(AccountID id, String table);
+    public Boolean onUpdate(AccountEntity accountEntity, String table);
 
     public Boolean onDelete(AccountID id, String table);
 

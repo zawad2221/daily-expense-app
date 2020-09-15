@@ -15,6 +15,10 @@ public class AccountCreatedDate implements Serializable
         return createdAt;
     }
 
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "AccountCreatedDate{" +

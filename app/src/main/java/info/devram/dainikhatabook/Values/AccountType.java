@@ -15,6 +15,10 @@ public class AccountType implements Serializable
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "AccountType{" +

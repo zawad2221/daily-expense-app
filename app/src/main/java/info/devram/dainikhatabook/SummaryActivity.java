@@ -13,8 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.ExpenseRecyclerAdapter;
@@ -96,12 +94,12 @@ public class SummaryActivity extends AppCompatActivity
     }
 
     private void getSumTotal() {
-        Log.d(TAG, "getSumTotal: " + accountViewModel.getAccounts(null));
-        
-        expenseList = accountViewModel.getAccountByTypes(Util.getExpenseTypes());
-//        List<String> incTypes = new LinkedList<>(Arrays.asList(
-//                getResources().getStringArray(R.array.income_type)));
-//        incomeList = accountViewModel.getAccountByTypes(incTypes);
+
+        expenseList = accountViewModel
+                .getAccountByTypes(Util.getExpenseTypes(), Config.EXPENSE_TABLE_NAME);
+
+        incomeList = accountViewModel
+                .getAccountByTypes(Util.getIncomeTypes(), Config.INCOME_TABLE_NAME);
 
         totalSum = Util.getSum(accountViewModel.getAccounts(null));
     }

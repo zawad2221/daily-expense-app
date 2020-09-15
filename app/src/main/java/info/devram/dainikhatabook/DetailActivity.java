@@ -19,12 +19,9 @@ import java.util.List;
 
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
-import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
 import info.devram.dainikhatabook.Helpers.Config;
-import info.devram.dainikhatabook.Models.DashBoardObject;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 
@@ -37,7 +34,6 @@ public class DetailActivity extends AppCompatActivity
     public static final int EDIT_INC_REQUEST_CODE = 2;
     
     private AccountViewModel accountViewModel;
-    private List<AccountEntity> newDashBoardList;
     private RecyclerView recyclerView;
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
     private List<AccountEntity> accountList;
@@ -91,9 +87,13 @@ public class DetailActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
         intentType = getIntent().getStringExtra("type");
+
         inflateDashBoardList();
-        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(newDashBoardList,this);
+
+        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(accountList,this);
+
         recyclerView.setAdapter(dashBoardRecyclerAdapter);
     }
 
@@ -102,8 +102,11 @@ public class DetailActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.detailEditBtn:
                 Intent intent = new Intent(DetailActivity.this,EditActivity.class);
+
                 itemAdapterPosition = position;
+
                 AccountEntity accountEntity = accountList.get(position);
+
                 if (hasExpense) {
 
                     intent.putExtra(Config.EXPENSE_TABLE_NAME,accountEntity);
@@ -117,7 +120,8 @@ public class DetailActivity extends AppCompatActivity
                 break;
             case R.id.detailDeleteBtn:
                 itemAdapterPosition = position;
-                ConfirmModal confirmModal = new ConfirmModal("Are You Sure You Want To Delete This",
+                ConfirmModal confirmModal = new
+                        ConfirmModal("Are You Sure You Want To Delete This",
                         "Alert!" + "\n\n",true,this);
                 confirmModal.show(getSupportFragmentManager(),TAG);
                 break;
@@ -127,39 +131,50 @@ public class DetailActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == EDIT_EXP_REQUEST_CODE) {
-//            if (resultCode == 1) {
-//                if (data != null) {
-//                    Expense expense = (Expense) data.getSerializableExtra(Expense.class.getSimpleName());
-//                    accountViewModel.editAccount(itemAdapterPosition,expense);
-//                } else {
-//                    Log.e(TAG, "onActivityResult: intent data is null ");
-//                }
-//            }
-//        }
-//        if (requestCode == EDIT_INC_REQUEST_CODE) {
-//            if (resultCode == 1) {
-//                if (data != null) {
-//                    Income income = (Income) data.getSerializableExtra(Income.class.getSimpleName());
-//                    accountViewModel.editIncome(itemAdapterPosition,income);
-//                }
-//            }
-//        }
+        if (requestCode == EDIT_EXP_REQUEST_CODE) {
+            if (resultCode == 1) {
+                if (data != null) {
+                    AccountEntity accountEntity = (AccountEntity) data
+                            .getSerializableExtra(Config.EXPENSE_TABLE_NAME);
+                    Log.d(TAG, "onActivityResult: " + itemAdapterPosition);
+                    try {
+                        accountViewModel.editAccount(accountEntity);
+                    } catch (ApplicationError error) {
+                        error.printStackTrace();
+                    }
+                }
+            }
+        }
+        if (requestCode == EDIT_INC_REQUEST_CODE) {
+            if (resultCode == 1) {
+                if (data != null) {
+                    AccountEntity accountEntity = (AccountEntity) data
+                            .getSerializableExtra(Config.INCOME_TABLE_NAME);
+                    Log.d(TAG, "onActivityResult: " + itemAdapterPosition);
+                    try {
+                        accountViewModel.editAccount(accountEntity);
+                    } catch (ApplicationError error) {
+                        error.printStackTrace();
+                    }
+                }
+            }
+        }
 
     }
 
     @Override
     public void onOkClick(DialogFragment dialogFragment) {
-//        if (hasExpense) {
-//            accountViewModel.deleteExpense(itemAdapterPosition);
-//        }else {
-//            Log.d(TAG, "onOkClick: " + itemAdapterPosition);
-//            accountViewModel.deleteIncome(itemAdapterPosition);
-//        }
-//        inflateDashBoardList();
-//        dashBoardRecyclerAdapter.updateData(newDashBoardList);
-//        dialogFragment.dismiss();
+        AccountEntity accountEntity = accountList.get(itemAdapterPosition);
 
+        try {
+            accountViewModel.deleteAccount(accountEntity);
+            inflateDashBoardList();
+            dashBoardRecyclerAdapter.updateData(accountList);
+        } catch (ApplicationError error) {
+            error.printStackTrace();
+        }
+
+        dialogFragment.dismiss();
     }
 
     @Override
@@ -169,12 +184,9 @@ public class DetailActivity extends AppCompatActivity
 
     private void inflateDashBoardList() {
 
-        newDashBoardList = new ArrayList<>();
-        if (hasExpense) {
-            newDashBoardList = accountViewModel.getAccountByRepo(Config.EXPENSE_TABLE_NAME);
-        } else {
-            newDashBoardList = accountViewModel.getAccountByRepo(Config.INCOME_TABLE_NAME);
-        }
+        accountList = new ArrayList<>();
+
+        accountList = accountViewModel.getAccountByType(intentType);
 
     }
 }

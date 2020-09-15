@@ -12,9 +12,12 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
+import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class EditActivity extends BaseAddActivity {
@@ -22,9 +25,8 @@ public class EditActivity extends BaseAddActivity {
     private static final String TAG = "EditActivity";
 
     private boolean hasExpense = false;
-    private Expense expense;
-    private Income income;
-    private ArrayAdapter<CharSequence> adapter;
+    private ArrayAdapter<String> adapter;
+    private AccountEntity accountEntity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +34,7 @@ public class EditActivity extends BaseAddActivity {
         setContentView(R.layout.add_activity);
         activateToolbar(true);
 
-        hasExpense = getIntent().hasExtra(Expense.class.getSimpleName());
+        hasExpense = getIntent().hasExtra(Config.EXPENSE_TABLE_NAME);
 
         List<String> items;
 
@@ -41,20 +43,20 @@ public class EditActivity extends BaseAddActivity {
 
             items = Util.getExpenseTypes();
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_dropdown_item,items);
+            adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item, items);
 
 
             items.add(0, "Select Type");
 
             setupSpinner(adapter);
-        }else {
+        } else {
             setTitle("Add Income");
 
             items = Util.getIncomeTypes();
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_dropdown_item,items);
+            adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item, items);
 
             items.add(0, "Select Type");
 
@@ -79,31 +81,31 @@ public class EditActivity extends BaseAddActivity {
     }
 
     private void setupUIForEdit() {
+
         if (hasExpense) {
-            int spinnerPosition = adapter.getPosition(expense.getExpenseType());
-            spinner.setSelection(spinnerPosition);
-            try {
-                String selectedDate = sdf.format(expense.getExpenseDate());
-                datePicker.setText(selectedDate);
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
-            }
-            amountEditText.setText(String.valueOf(expense.getExpenseAmount()));
-            descEditText.setText(expense.getExpenseDesc());
-        }else {
-            int spinnerPosition = adapter.getPosition(income.getIncomeType());
-            spinner.setSelection(spinnerPosition);
-            try {
-                String selectedDate = sdf.format(income.getIncomeDate());
-                datePicker.setText(selectedDate);
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
-            }
-            amountEditText.setText(String.valueOf(income.getIncomeAmount()));
-            descEditText.setText(income.getIncomeDesc());
+            accountEntity = (AccountEntity) getIntent()
+                    .getSerializableExtra(Config.EXPENSE_TABLE_NAME);
+
+        } else {
+
+            accountEntity = (AccountEntity) getIntent()
+                    .getSerializableExtra(Config.INCOME_TABLE_NAME);
+
         }
 
+        if (accountEntity != null) {
+            int spinnerPosition = adapter.getPosition(accountEntity.accountType.getType());
+            spinner.setSelection(spinnerPosition);
+            try {
+                String selectedDate = sdf.format(accountEntity.accountCreatedDate.getCreatedAt());
+                datePicker.setText(selectedDate);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+            }
 
+            amountEditText.setText(String.valueOf(accountEntity.accountMoney.getAmount()));
+            descEditText.setText(accountEntity.accountDescription.getDesc());
+        }
     }
 
     @Override
@@ -123,19 +125,19 @@ public class EditActivity extends BaseAddActivity {
 
     private void editData() {
         Intent resultIntent = getIntent();
-        if (hasExpense) {
-            expense.setExpenseType(selectedType);
-            expense.setExpenseAmount(selectedAmount);
-            expense.setExpenseDate(parsedDate);
-            expense.setExpenseDesc(selectedDesc);
-            resultIntent.putExtra(Expense.class.getSimpleName(),expense);
-        }else {
-            income.setIncomeType(selectedType);
-            income.setIncomeAmount(selectedAmount);
-            income.setIncomeDate(parsedDate);
-            income.setIncomeDesc(selectedDesc);
-            resultIntent.putExtra(Income.class.getSimpleName(),income);
+
+        if (accountEntity != null) {
+            accountEntity.accountType.setType(selectedType);
+            accountEntity.accountMoney.setAmount(selectedAmount);
+            accountEntity.accountCreatedDate.setCreatedAt(parsedDate);
+            accountEntity.accountDescription.setDesc(selectedDesc);
         }
-        setResult(1,resultIntent);
+
+        if (hasExpense) {
+            resultIntent.putExtra(Config.EXPENSE_TABLE_NAME, accountEntity);
+        } else {
+            resultIntent.putExtra(Config.INCOME_TABLE_NAME, accountEntity);
+        }
+        setResult(1, resultIntent);
     }
 }

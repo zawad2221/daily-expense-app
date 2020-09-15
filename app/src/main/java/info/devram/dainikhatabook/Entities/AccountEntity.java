@@ -1,7 +1,10 @@
 package info.devram.dainikhatabook.Entities;
 
+import android.view.DragAndDropPermissions;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Random;
 
 import info.devram.dainikhatabook.Values.AccountCreatedDate;
 import info.devram.dainikhatabook.Values.AccountDescription;
@@ -21,6 +24,7 @@ public class AccountEntity implements Serializable
     public AccountDescription accountDescription;
     public AccountSyncStatus syncStatus;
     public AccountRepoType accountRepoType;
+    private int entityID;
 
     public AccountEntity() {}
 
@@ -66,6 +70,18 @@ public class AccountEntity implements Serializable
 
     public void setSyncStatus(AccountSyncStatus syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+
+    public void generateID()
+    {
+        Random random = new Random();
+        this.entityID = random.nextInt(1000);
+    }
+
+
+    public int getEntityID() {
+        return entityID;
     }
 
     @Override
