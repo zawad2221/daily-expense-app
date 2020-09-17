@@ -2,7 +2,6 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,19 +14,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import info.devram.dainikhatabook.Entities.AccountEntity;
-import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
 import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
-import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class EditActivity extends BaseAddActivity implements FileErrorLoggerListener {
 
-    private static final String TAG = "EditActivity";
+    //private static final String TAG = "EditActivity";
 
     private boolean hasExpense = false;
     private ArrayAdapter<String> adapter;
@@ -142,8 +137,7 @@ public class EditActivity extends BaseAddActivity implements FileErrorLoggerList
     }
 
     @Override
-    public void statusListener(String status) {
-        Log.d(TAG, "statusListener: " + status);
+    public void fileStatusListener(String status) {
         executorService.shutdown();
     }
 }

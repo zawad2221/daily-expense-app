@@ -12,8 +12,8 @@ public class SyncService {
     //private static final String TAG = "SyncService";
     private Context context;
     public static final int JOB_ID = 1;
-    //public static final long JOB_24HOUR_INTERVAL = 24 * 60 * 60 * 1000;
-    public static final long JOB_15MINUTE_INTERVAL = 15 * 60 * 1000;
+    public static final long JOB_24HOUR_INTERVAL = 24 * 60 * 60 * 1000;
+    //public static final long JOB_15MINUTE_INTERVAL = 15 * 60 * 1000;
     private JobScheduler jobScheduler;
 
     public SyncService(Context context) {
@@ -29,7 +29,7 @@ public class SyncService {
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
         builder.setPersisted(true);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
-        builder.setPeriodic(JOB_15MINUTE_INTERVAL);
+        builder.setPeriodic(JOB_24HOUR_INTERVAL);
         JobInfo jobInfo = builder.build();
         jobScheduler.schedule(jobInfo);
 

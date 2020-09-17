@@ -1,7 +1,6 @@
 package info.devram.dainikhatabook.ErrorHandlers;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -23,7 +21,7 @@ import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 
 public class LogError implements Runnable {
 
-    private static final String TAG = "LogError";
+    //private static final String TAG = "LogError";
 
     private String fileName;
     private Exception error;
@@ -40,12 +38,12 @@ public class LogError implements Runnable {
     }
 
     private Boolean logError() {
-        Log.d(TAG, "logError: starts");
+
         try {
             file = new File(mContext.getFilesDir(), fileName);
 
             fos = new FileOutputStream(file);
-            Log.d(TAG, "logError: " + file.exists());
+
             if (file.exists()) {
 
                 JSONObject jsonObject = this.appendToFile();
@@ -61,7 +59,7 @@ public class LogError implements Runnable {
                     js.put(jsonObject);
                 }
                 fos.write(js.toString().getBytes());
-                Log.d(TAG, "logError: file append ends");
+
                 return true;
 
 
@@ -81,13 +79,12 @@ public class LogError implements Runnable {
             jsonArray.put(jsonObject);
 
             fos.write(jsonArray.toString().getBytes());
-            Log.d(TAG, "logError: ends");
+
             return true;
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             return false;
         } finally {
-            Log.d(TAG, "logError: finally starts");
             try {
                 fos.flush();
                 fos.close();
@@ -95,7 +92,6 @@ public class LogError implements Runnable {
                 e.printStackTrace();
             }
             mContext = null;
-            Log.d(TAG, "logError: " + mContext);
         }
 
     }
@@ -161,17 +157,17 @@ public class LogError implements Runnable {
 
     @Override
     public void run() {
-        Log.d(TAG, "run: starts");
+
 
         boolean result = this.logError();
 
         if (result) {
-            mListener.statusListener("File Created");
+            mListener.fileStatusListener("File Created");
         } else {
-            mListener.statusListener("Error Creating File");
+            mListener.fileStatusListener("Error Creating File");
         }
 
 
-        Log.d(TAG, "run: ends");
+
     }
 }

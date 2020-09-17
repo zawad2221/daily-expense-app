@@ -2,7 +2,6 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -26,7 +25,7 @@ import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 public class SummaryActivity extends AppCompatActivity
         implements RecyclerOnClick {
 
-    private static final String TAG = "SummaryActivity";
+    //private static final String TAG = "SummaryActivity";
 
     private AccountViewModel accountViewModel;
     private TextView totalSumTextView;

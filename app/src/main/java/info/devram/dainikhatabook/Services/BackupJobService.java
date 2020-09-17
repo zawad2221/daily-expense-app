@@ -2,7 +2,11 @@ package info.devram.dainikhatabook.Services;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,17 +29,19 @@ import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
+import static android.Manifest.permission.READ_CONTACTS;
+
 //import android.util.Log;
 
 public class BackupJobService extends JobService
         implements ResponseAvailableListener, FileErrorLoggerListener {
 
-    private static final String TAG = "BackupJobService";
+
 
     private AccountViewModel accountViewModel;
     private ExecutorService executorService;
     private JSONArray accountArr;
-    private JSONObject responseObject;
+    //private JSONObject responseObject;
     private List<AccountEntity> syncObjectList;
 
 
@@ -53,21 +59,31 @@ public class BackupJobService extends JobService
     }
 
     private void parseData() {
-//        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
-//                getApplicationContext(), READ_CONTACTS);
-//        String account = null;
-//        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
-//            SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
-//            account = preferences.getString("account",null);
-//            if (account == null) {
-//                NotifyService.createNotification("Backup Notification",
-//                        "No account Found", getApplicationContext());
-//                return;
-//            }
-//        }
+        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
+                getApplicationContext(), READ_CONTACTS);
+        String account = null;
+        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
+            account = preferences.getString("account",null);
+            if (account == null) {
+                NotifyService.createNotification("Backup Notification",
+                        "No account Found", getApplicationContext());
+                return;
+            }
+        }
 
-        String account = "kanika.malik82@gmail.com";
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
 
+
+        String apiPassword = sharedPreferences.getString("api_password", "");
+
+        if (apiPassword == null || apiPassword.equals("")) {
+            NotifyService.createNotification("Backup Notification",
+                    "Password Not set. Kindly Do so in App Settings",
+                    getApplicationContext());
+            return;
+        }
 
         syncObjectList = accountViewModel.getAccountForSyncing();
         if (syncObjectList.size() > 0) {
@@ -83,7 +99,7 @@ public class BackupJobService extends JobService
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("url", Config.LOGIN_URL);
             hashMap.put("email", account);
-            hashMap.put("password", "devesh");
+            hashMap.put("password", apiPassword);
             TokenRequest tokenRequest = new TokenRequest(hashMap, this);
 
             if (syncObjectList.size() > 0) {
@@ -97,7 +113,6 @@ public class BackupJobService extends JobService
 
     @Override
     public void onTokenResponse(JSONObject jsonObject, int statusCode) {
-        Log.d(TAG, "onTokenResponse: " + statusCode);
         if (statusCode != 200) {
             shutdownExecutor();
             NotifyService.createNotification("Backup",
@@ -139,8 +154,6 @@ public class BackupJobService extends JobService
                 executorService.execute(logError);
             }
         }
-
-
     }
 
 
@@ -159,7 +172,7 @@ public class BackupJobService extends JobService
 
     @Override
     public void fileStatusListener(String status) {
-        Log.d(TAG, "statusListener: " + status);
+        executorService.shutdown();
     }
 }
 

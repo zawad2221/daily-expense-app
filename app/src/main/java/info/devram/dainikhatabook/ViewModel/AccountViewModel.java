@@ -1,12 +1,10 @@
 package info.devram.dainikhatabook.ViewModel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.Values.Money;
 
 public class AccountViewModel {
-    private static final String TAG = "MainActivityViewModel";
+    //private static final String TAG = "MainActivityViewModel";
     private static AccountViewModel mInstance;
     private AccountMapper accountMapper;
     private Application application;
@@ -93,7 +91,7 @@ public class AccountViewModel {
     }
 
     public void editAccount(AccountEntity account) throws ApplicationError {
-        Log.d(TAG, "editAccount: starts");
+
         boolean result;
         for (AccountEntity accountEntity : this.accountEntities) {
             if (account.accountID.getId().equalsIgnoreCase(accountEntity.accountID.getId())) {

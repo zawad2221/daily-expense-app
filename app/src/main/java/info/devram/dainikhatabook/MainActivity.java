@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,9 +24,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -35,7 +31,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
 import info.devram.dainikhatabook.ErrorHandlers.LogError;
@@ -43,9 +38,6 @@ import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
-import info.devram.dainikhatabook.Models.DashBoardObject;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Services.ExcelCreate;
 import info.devram.dainikhatabook.Services.PdfCreate;
 import info.devram.dainikhatabook.Services.SyncService;
@@ -60,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
         GenerateReportListener, SelectModal.OnSelectListener, FileErrorLoggerListener {
 
-    public static final String TAG = "MainActivity";
+    //public static final String TAG = "MainActivity";
 
     public static final int ADD_EXP_REQUEST_CODE = 1;
     public static final int ADD_INC_REQUEST_CODE = 2;
@@ -314,8 +306,7 @@ public class MainActivity extends AppCompatActivity
             Account[] accounts = am.getAccountsByType("com.google");
 
             if (accounts.length > 0) {
-                Log.d(TAG, "getUserAccount: " + accounts.length);
-                Log.d(TAG, "getUserAccount: " + accounts[0].name);
+
                 SharedPreferences sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("account", accounts[0].name);
@@ -364,7 +355,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void fileStatusListener(String status) {
-        Log.d(TAG, "statusListener: " + status);
         executorService.shutdown();
     }
 }

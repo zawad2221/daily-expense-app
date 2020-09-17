@@ -1,9 +1,6 @@
 package info.devram.dainikhatabook.Entities;
 
-import android.view.DragAndDropPermissions;
-
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Random;
 
 import info.devram.dainikhatabook.Values.AccountCreatedDate;
@@ -14,8 +11,7 @@ import info.devram.dainikhatabook.Values.AccountSyncStatus;
 import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.Values.Money;
 
-public class AccountEntity implements Serializable
-{
+public class AccountEntity implements Serializable {
     private static final long serialVersionUID = 20200911L;
     public AccountID accountID;
     public AccountType accountType;
@@ -26,7 +22,8 @@ public class AccountEntity implements Serializable
     public AccountRepoType accountRepoType;
     private int entityID;
 
-    public AccountEntity() {}
+    public AccountEntity() {
+    }
 
     public AccountEntity(
             AccountID accountID,
@@ -73,8 +70,7 @@ public class AccountEntity implements Serializable
     }
 
 
-    public void generateID()
-    {
+    public void generateID() {
         Random random = new Random();
         this.entityID = random.nextInt(1000);
     }

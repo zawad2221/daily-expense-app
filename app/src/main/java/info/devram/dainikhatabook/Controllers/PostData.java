@@ -1,7 +1,5 @@
 package info.devram.dainikhatabook.Controllers;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,12 +11,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
-import info.devram.dainikhatabook.ErrorHandlers.LogError;
-
 public class PostData {
 
-    private static final String TAG = "PostData";
+    //private static final String TAG = "PostData";
 
     private int responseStatus;
     private HashMap<String, String> setupRequest;
@@ -70,14 +65,11 @@ public class PostData {
             responseStatus = response;
             return okResult;
 
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | SecurityException e) {
             responseStatus = 503;
             return e.getMessage();
         } catch (IOException e) {
             e.printStackTrace();
-            responseStatus = 503;
-            return e.getMessage();
-        } catch (SecurityException e) {
             responseStatus = 503;
             return e.getMessage();
         } finally {

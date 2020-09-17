@@ -1,30 +1,30 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        app:title= "@string/sync_header">
+    <PreferenceCategory app:title="@string/sync_header">
 
         <SwitchPreferenceCompat
             app:enableCopying="false"
             app:key="backup"
-            app:summary="@string/backup_summary"/>
+            app:summary="@string/backup_summary" />
 
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/sync_service_password">
 
         <EditTextPreference
+            android:inputType="textPassword"
             android:summary="@string/sync_password_summary"
-            app:key="api_password"
-            android:title="@string/password"/>
+            android:title="@string/password"
+            app:key="api_password" />
 
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Backup Service Password Change">
 
         <Preference
-            app:key="api_password_change"
-            android:title="Change Password">
+            android:title="Change Password"
+            app:key="api_password_change">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="http://exptracker.devram.info/change" />

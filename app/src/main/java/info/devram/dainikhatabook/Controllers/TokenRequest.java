@@ -1,7 +1,8 @@
 package info.devram.dainikhatabook.Controllers;
 
 import android.util.Base64;
-import android.util.Log;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,12 +17,12 @@ import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 
 public class TokenRequest implements Runnable {
 
-    private static final String TAG = "TokenRequest";
+    //private static final String TAG = "TokenRequest";
 
-    private HashMap<String,String> setupRequest;
+    private HashMap<String, String> setupRequest;
     private ResponseAvailableListener mListener;
 
-    public TokenRequest(HashMap<String,String> request,ResponseAvailableListener listener) {
+    public TokenRequest(HashMap<String, String> request, ResponseAvailableListener listener) {
         this.setupRequest = request;
         this.mListener = listener;
     }
@@ -40,7 +41,7 @@ public class TokenRequest implements Runnable {
         try {
             String userCredentials = setupRequest.get("email") + ":" + setupRequest.get("password");
 
-            byte[] encodedCredentials = Base64.encode(userCredentials.getBytes(),Base64.DEFAULT);
+            byte[] encodedCredentials = Base64.encode(userCredentials.getBytes(), Base64.DEFAULT);
             String basicAuth = "Basic " + new String(encodedCredentials);
             URL url = new URL(setupRequest.get("url"));
 
@@ -66,17 +67,14 @@ public class TokenRequest implements Runnable {
             String okResult = stringBuilder(reader);
             converter.setStringData(okResult);
             converter.run();
-            this.mListener.onTokenResponse(converter.getJsonObject(), response);
-            converter = null;
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "run Invalid URL: " + e.getMessage());
-        } catch (SocketTimeoutException e) {
-            converter.setStringData("{'msg':'error connecting to server'}");
-            converter.run();
+            JSONObject jsonObject = converter.getJsonObject();
+            this.mListener.onTokenResponse(jsonObject, response);
+
+        } catch (MalformedURLException | SocketTimeoutException | SecurityException e) {
+            this.sendErrorResponse(e);
         } catch (IOException e) {
-            this.mListener.onErrorResponse(e.getMessage(), 503);
-        } catch (SecurityException e) {
-            Log.e(TAG, "run Security Error: " + e.getMessage());
+            e.printStackTrace();
+            this.sendErrorResponse(e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -94,5 +92,9 @@ public class TokenRequest implements Runnable {
             e.printStackTrace();
         }
         return result.toString();
+    }
+
+    private void sendErrorResponse(Exception error) {
+        this.mListener.onErrorResponse(error.getMessage(), 503);
     }
 }

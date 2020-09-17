@@ -8,7 +8,7 @@ import info.devram.dainikhatabook.Entities.AccountEntity;
 
 public class Util {
 
-    private static final String TAG = "Util";
+    //private static final String TAG = "Util";
 
     public static List<String> getSum(List<AccountEntity> accountEntities) {
 
@@ -59,12 +59,5 @@ public class Util {
         incomeTypes.add("Loan");
 
         return incomeTypes;
-    }
-
-    public enum syncStatus
-    {
-        ALL_OK,
-        EXPENSE_OK,
-        INCOME_OK
     }
 }

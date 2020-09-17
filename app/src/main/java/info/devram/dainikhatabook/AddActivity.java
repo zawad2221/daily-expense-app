@@ -23,7 +23,7 @@ import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class AddActivity extends BaseAddActivity {
 
-    private static final String TAG = "ExpenseActivity";
+    //private static final String TAG = "ExpenseActivity";
 
     private boolean hasExpense = false;
 

@@ -7,8 +7,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.LayoutInflater;
+import android.text.InputType;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -16,21 +17,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import info.devram.dainikhatabook.ui.ConfirmModal;
-import info.devram.dainikhatabook.ui.PasswordModal;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-import android.util.Log;
-import android.view.View;
-
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final String TAG = "SettingsActivity";
+    //private static final String TAG = "SettingsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +71,21 @@ public class SettingsActivity extends AppCompatActivity {
             context = getContext();
             activity = getActivity();
             backupSwitch = findPreference("backup");
+            EditTextPreference passwordEditText = findPreference("api_password");
 
             if (backupSwitch != null) {
                 backupSwitch.setOnPreferenceChangeListener(this);
+            }
+
+            if (passwordEditText != null) {
+                passwordEditText.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
+                    @Override
+                    public void onBindEditText(@NonNull EditText editText) {
+                        editText.setInputType(InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD);
+                    }
+                });
+                passwordEditText.setOnPreferenceChangeListener(this);
             }
         }
 
@@ -152,6 +162,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+            if (preference.getKey().equalsIgnoreCase("api_password")) {
+                return newValue != "";
+            }
 
             boolean isBackEnabled = (Boolean) newValue;
 

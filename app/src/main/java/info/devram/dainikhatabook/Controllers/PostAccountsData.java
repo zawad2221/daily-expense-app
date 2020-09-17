@@ -4,9 +4,7 @@ package info.devram.dainikhatabook.Controllers;
 
 import java.util.HashMap;
 
-import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
-import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
 
 public class PostAccountsData implements Runnable {
@@ -30,6 +28,11 @@ public class PostAccountsData implements Runnable {
         String response = postData.postRequest();
 
         int statusCode = postData.getResponseStatus();
+
+        if (statusCode == 503) {
+            this.mListener.onErrorResponse(response, statusCode);
+            return;
+        }
 
         converter.setStringData(response);
         converter.run();

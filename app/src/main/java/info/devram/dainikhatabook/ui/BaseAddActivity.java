@@ -22,7 +22,7 @@ import info.devram.dainikhatabook.R;
 
 public class BaseAddActivity extends AppCompatActivity {
 
-    private static final String TAG = "AddActivity";
+    //private static final String TAG = "AddActivity";
 
     protected EditText datePicker;
     protected EditText amountEditText;
@@ -107,10 +107,8 @@ public class BaseAddActivity extends AppCompatActivity {
             if (dateOBJ != null) {
                 parsedDate = dateOBJ.getTime();
             }
-        }catch (NumberFormatException e) {
-            Log.e(TAG, "onClick parsing string to int " + e.getMessage());
-        }catch (ParseException e) {
-            Log.e(TAG, "date parsing error " + e.getMessage());
+        }catch (NumberFormatException | ParseException e) {
+
         }
         selectedDesc = descEditText.getText().toString();
     }
