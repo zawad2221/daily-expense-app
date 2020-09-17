@@ -71,7 +71,7 @@ public class SummaryActivity extends AppCompatActivity
         super.onResume();
         getSumTotal();
         if (hasClass) {
-            Log.d(TAG, "onResume: " + expenseList);
+
             setTitle("Expense Details");
             ExpenseRecyclerAdapter expRecyclerAdapter = new ExpenseRecyclerAdapter(
                     expenseList,
@@ -119,7 +119,7 @@ public class SummaryActivity extends AppCompatActivity
 
         if (hasClass) {
             AccountEntity accountEntity = expenseList.get(position);
-            Log.d(TAG, "onItemClicked: " + accountEntity);
+
             Intent intent = new Intent(SummaryActivity.this, DetailActivity.class);
             intent.putExtra("type", accountEntity.accountType.getType());
             intent.putExtra(Config.EXPENSE_TABLE_NAME, "expense");

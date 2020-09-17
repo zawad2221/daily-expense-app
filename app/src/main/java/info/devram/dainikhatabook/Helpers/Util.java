@@ -60,4 +60,11 @@ public class Util {
 
         return incomeTypes;
     }
+
+    public enum syncStatus
+    {
+        ALL_OK,
+        EXPENSE_OK,
+        INCOME_OK
+    }
 }

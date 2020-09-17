@@ -2,22 +2,17 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
-import info.devram.dainikhatabook.Models.Expense;
-import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Values.AccountCreatedDate;
 import info.devram.dainikhatabook.Values.AccountDescription;
 import info.devram.dainikhatabook.Values.AccountID;
@@ -114,7 +109,7 @@ public class AddActivity extends BaseAddActivity {
                 accountDescription,
                 accountSyncStatus
         );
-        Log.d(TAG, "addData: " + accountEntity);
+
         if (hasExpense) {
             resultIntent.putExtra(Config.EXPENSE_TABLE_NAME,accountEntity);
         }else {

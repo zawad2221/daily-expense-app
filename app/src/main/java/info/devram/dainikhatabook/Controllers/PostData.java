@@ -13,6 +13,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.ErrorHandlers.LogError;
+
 public class PostData {
 
     private static final String TAG = "PostData";
@@ -40,6 +43,7 @@ public class PostData {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Authorization", "Bearer " + setupRequest.get("token"));
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
 
             bufferedWriter = new BufferedWriter(new
@@ -67,18 +71,20 @@ public class PostData {
             return okResult;
 
         } catch (MalformedURLException e) {
-            Log.e(TAG, "doInBackground: Invalid URL " + e.getMessage());
+            responseStatus = 503;
+            return e.getMessage();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG, "doInBackground: Error Reading Data " + e.getMessage());
+            responseStatus = 503;
+            return e.getMessage();
         } catch (SecurityException e) {
-            Log.e(TAG, "doInBackground: Security Error " + e.getMessage());
+            responseStatus = 503;
+            return e.getMessage();
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
-        return null;
     }
 
     public int getResponseStatus() {

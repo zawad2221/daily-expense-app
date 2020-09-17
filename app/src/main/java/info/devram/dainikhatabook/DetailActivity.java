@@ -16,17 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import info.devram.dainikhatabook.Adapters.DashBoardRecyclerAdapter;
 import info.devram.dainikhatabook.Adapters.RecyclerOnClick;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
+import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
+import info.devram.dainikhatabook.Services.NotifyService;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 
 public class DetailActivity extends AppCompatActivity
-        implements RecyclerOnClick,ConfirmModal.ConfirmModalListener {
+        implements RecyclerOnClick,ConfirmModal.ConfirmModalListener, FileErrorLoggerListener {
 
     private static final String TAG = "DetailActivity";
 
@@ -40,6 +45,7 @@ public class DetailActivity extends AppCompatActivity
     private int itemAdapterPosition;
     private String intentType;
     private boolean hasExpense = false;
+    private ExecutorService executorService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +105,7 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void onItemClicked(View view, int position) {
+
         switch (view.getId()) {
             case R.id.detailEditBtn:
                 Intent intent = new Intent(DetailActivity.this,EditActivity.class);
@@ -136,11 +143,13 @@ public class DetailActivity extends AppCompatActivity
                 if (data != null) {
                     AccountEntity accountEntity = (AccountEntity) data
                             .getSerializableExtra(Config.EXPENSE_TABLE_NAME);
-                    Log.d(TAG, "onActivityResult: " + itemAdapterPosition);
+
                     try {
                         accountViewModel.editAccount(accountEntity);
                     } catch (ApplicationError error) {
-                        error.printStackTrace();
+                        this.logErrorToFile(error);
+                        NotifyService.createNotification("Inserting Data",
+                                "Error Inserting Data...Try Again", this);
                     }
                 }
             }
@@ -150,11 +159,13 @@ public class DetailActivity extends AppCompatActivity
                 if (data != null) {
                     AccountEntity accountEntity = (AccountEntity) data
                             .getSerializableExtra(Config.INCOME_TABLE_NAME);
-                    Log.d(TAG, "onActivityResult: " + itemAdapterPosition);
+
                     try {
                         accountViewModel.editAccount(accountEntity);
                     } catch (ApplicationError error) {
-                        error.printStackTrace();
+                        this.logErrorToFile(error);
+                        NotifyService.createNotification("Inserting Data",
+                                "Error Inserting Data...Try Again", this);
                     }
                 }
             }
@@ -168,12 +179,14 @@ public class DetailActivity extends AppCompatActivity
 
         try {
             accountViewModel.deleteAccount(accountEntity);
-            inflateDashBoardList();
-            dashBoardRecyclerAdapter.updateData(accountList);
+
         } catch (ApplicationError error) {
-            error.printStackTrace();
+            NotifyService.createNotification("Deleting Data",
+                    "Error Deleting Data...Try Again", this);
         }
 
+        inflateDashBoardList();
+        dashBoardRecyclerAdapter.updateData(accountList);
         dialogFragment.dismiss();
     }
 
@@ -188,5 +201,18 @@ public class DetailActivity extends AppCompatActivity
 
         accountList = accountViewModel.getAccountByType(intentType);
 
+    }
+
+    private void logErrorToFile(ApplicationError error)
+    {
+        executorService = Executors.newCachedThreadPool();
+        LogError logError = new LogError(error, this, this);
+        executorService.execute(logError);
+    }
+
+    @Override
+    public void fileStatusListener(String status) {
+        Log.d(TAG, "statusListener: " + status);
+        executorService.shutdown();
     }
 }

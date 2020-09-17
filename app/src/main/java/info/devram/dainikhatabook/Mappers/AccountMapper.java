@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -42,9 +44,9 @@ public class AccountMapper implements MapperInterface {
     }
 
     @Override
-    public void addData(AccountEntity entity, String table) throws ApplicationError {
+    public Boolean addData(AccountEntity entity, String table) {
         if (table == null) {
-            return;
+            return false;
         }
 
         try {
@@ -61,9 +63,9 @@ public class AccountMapper implements MapperInterface {
                 db.getWritableDatabase().insert(Config.INCOME_TABLE_NAME,
                         null, contentValues);
             }
-
+            return true;
         } catch (SQLException e) {
-            throw new ApplicationError("Error Inserting Data");
+            return false;
         }
 
 
@@ -104,36 +106,59 @@ public class AccountMapper implements MapperInterface {
     }
 
     @Override
-    public Boolean onUpdate(AccountEntity accountEntity, String table)
-    {
+    public Boolean onUpdate(AccountEntity accountEntity, String table) {
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Config.ACCOUNT_KEY_TYPE,accountEntity.accountType.getType());
-            contentValues.put(Config.ACCOUNT_KEY_AMOUNT,accountEntity.accountMoney.getAmount());
-            contentValues.put(Config.ACCOUNT_KEY_DATE,accountEntity.accountCreatedDate.getCreatedAt());
-            contentValues.put(Config.ACCOUNT_KEY_DESC,accountEntity.accountDescription.getDesc());
+            contentValues.put(Config.ACCOUNT_KEY_TYPE, accountEntity.accountType.getType());
+            contentValues.put(Config.ACCOUNT_KEY_AMOUNT, accountEntity.accountMoney.getAmount());
+            contentValues.put(Config.ACCOUNT_KEY_DATE, accountEntity.accountCreatedDate.getCreatedAt());
+            contentValues.put(Config.ACCOUNT_KEY_DESC, accountEntity.accountDescription.getDesc());
 
-            db.getWritableDatabase().update(table,contentValues,
+            db.getWritableDatabase().update(table, contentValues,
                     Config.ACCOUNT_KEY_ID + "=?",
                     new String[]{String.valueOf(accountEntity.accountID.getId())});
 
             return true;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             Log.e(TAG, "onUpdate: error " + e.getMessage());
             return false;
         }
 
     }
 
+    public void batchUpdateSyncStatus(List<AccountID> accountIDS, List<String> tables) {
+        SQLiteDatabase updateDB = db.getWritableDatabase();
+        updateDB.beginTransaction();
+        try {
+            ContentValues contentValues = new ContentValues();
+            for (AccountID accountID : accountIDS) {
+
+                contentValues.put(Config.ACCOUNT_KEY_SYNC, Config.SYNC_STATUS_TRUE);
+                if (tables.get(0).equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
+                    updateDB.update(Config.EXPENSE_TABLE_NAME,
+                            contentValues,
+                            Config.ACCOUNT_KEY_ID + "=?",
+                            new String[]{accountID.getId()});
+                }
+
+            }
+
+            updateDB.setTransactionSuccessful();
+
+        } catch (SQLiteException exception) {
+            exception.printStackTrace();
+        }
+
+    }
+
     @Override
-    public Boolean onDelete(AccountID id, String table)
-    {
+    public Boolean onDelete(AccountID id, String table) {
         try {
             db.getWritableDatabase().delete(table,
                     Config.EXPENSE_KEY_ID + "=?",
                     new String[]{id.getId()});
             return true;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             Log.e(TAG, "onDelete: error " + e.getMessage());
             return false;
         }
@@ -198,17 +223,16 @@ public class AccountMapper implements MapperInterface {
         return accountEntities;
     }
 
-    public HashMap<String, List<AccountEntity>> getTypesAsMaps(String tableName, List<String> types)
-    {
+    public HashMap<String, List<AccountEntity>> getTypesAsMaps(String tableName, List<String> types) {
         HashMap<String, List<AccountEntity>> hashMap = new HashMap<>();
-        for (String type: types) {
+        for (String type : types) {
 
             Cursor cursor = db.getReadableDatabase().query(
-                    tableName,new String[]{
+                    tableName, new String[]{
                             Config.EXPENSE_KEY_ID, Config.EXPENSE_KEY_TYPE, Config.EXPENSE_KEY_DATE,
                             Config.EXPENSE_KEY_AMOUNT, Config.EXPENSE_KEY_DESC, Config.ACCOUNT_KEY_SYNC
                     }, Config.EXPENSE_KEY_TYPE + "=?", new String[]{type},
-                    null,null,null
+                    null, null, null
             );
             Log.d(TAG, "getAccount: " + cursor.getCount());
 

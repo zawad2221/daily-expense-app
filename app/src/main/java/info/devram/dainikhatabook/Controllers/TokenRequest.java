@@ -29,7 +29,7 @@ public class TokenRequest implements Runnable {
     @Override
     public void run() {
         HttpURLConnection connection = null;
-        BufferedReader reader = null;
+        BufferedReader reader;
         Converter converter = new Converter();
         converter.setFromString(true);
 
@@ -38,16 +38,17 @@ public class TokenRequest implements Runnable {
         }
 
         try {
-            String userCredentials = setupRequest.get("email") + ":" + setupRequest.get("ipAddress");
+            String userCredentials = setupRequest.get("email") + ":" + setupRequest.get("password");
+
             byte[] encodedCredentials = Base64.encode(userCredentials.getBytes(),Base64.DEFAULT);
             String basicAuth = "Basic " + new String(encodedCredentials);
             URL url = new URL(setupRequest.get("url"));
 
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod("POST");
             connection.setRequestProperty("Authorization", basicAuth);
             connection.setConnectTimeout(8000);
-            connection.connect();
+            connection.setDoOutput(true);
 
             int response = connection.getResponseCode();
             if (response != 200) {
@@ -58,14 +59,14 @@ public class TokenRequest implements Runnable {
                 converter.setStringData(errorResult);
                 converter.run();
 
-                this.mListener.onTokenResponse(converter.getJsonArray(), response);
+                this.mListener.onTokenResponse(converter.getJsonObject(), response);
             }
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             String okResult = stringBuilder(reader);
             converter.setStringData(okResult);
             converter.run();
-            this.mListener.onTokenResponse(converter.getJsonArray(), response);
+            this.mListener.onTokenResponse(converter.getJsonObject(), response);
             converter = null;
         } catch (MalformedURLException e) {
             Log.e(TAG, "run Invalid URL: " + e.getMessage());
@@ -73,19 +74,12 @@ public class TokenRequest implements Runnable {
             converter.setStringData("{'msg':'error connecting to server'}");
             converter.run();
         } catch (IOException e) {
-            Log.e(TAG, "run Error Reading Data: " + e.getMessage());
+            this.mListener.onErrorResponse(e.getMessage(), 503);
         } catch (SecurityException e) {
             Log.e(TAG, "run Security Error: " + e.getMessage());
         } finally {
             if (connection != null) {
                 connection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "run: " + e.getMessage());
-                }
             }
         }
     }

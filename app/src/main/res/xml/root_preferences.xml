@@ -23,7 +23,7 @@
     <PreferenceCategory app:title="Backup Service Password Change">
 
         <Preference
-            app:key="api_password"
+            app:key="api_password_change"
             android:title="Change Password">
             <intent
                 android:action="android.intent.action.VIEW"

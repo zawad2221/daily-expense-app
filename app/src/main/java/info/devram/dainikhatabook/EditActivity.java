@@ -11,22 +11,28 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
+import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Models.Expense;
 import info.devram.dainikhatabook.Models.Income;
 import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
-public class EditActivity extends BaseAddActivity {
+public class EditActivity extends BaseAddActivity implements FileErrorLoggerListener {
 
     private static final String TAG = "EditActivity";
 
     private boolean hasExpense = false;
     private ArrayAdapter<String> adapter;
     private AccountEntity accountEntity;
+    private ExecutorService executorService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,25 +49,17 @@ public class EditActivity extends BaseAddActivity {
 
             items = Util.getExpenseTypes();
 
-            adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_dropdown_item, items);
 
-
-            items.add(0, "Select Type");
-
-            setupSpinner(adapter);
         } else {
             setTitle("Add Income");
 
             items = Util.getIncomeTypes();
 
-            adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_dropdown_item, items);
-
-            items.add(0, "Select Type");
-
-            setupSpinner(adapter);
         }
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, items);
+        items.add(0, "Select Type");
+        setupSpinner(adapter);
 
 
         setupBase();
@@ -100,7 +98,9 @@ public class EditActivity extends BaseAddActivity {
                 String selectedDate = sdf.format(accountEntity.accountCreatedDate.getCreatedAt());
                 datePicker.setText(selectedDate);
             } catch (NumberFormatException e) {
-                Log.e(TAG, "onClick parsing string to int " + e.getMessage());
+                executorService = Executors.newCachedThreadPool();
+                LogError error = new LogError(e , this ,this);
+                executorService.execute(error);
             }
 
             amountEditText.setText(String.valueOf(accountEntity.accountMoney.getAmount()));
@@ -139,5 +139,11 @@ public class EditActivity extends BaseAddActivity {
             resultIntent.putExtra(Config.INCOME_TABLE_NAME, accountEntity);
         }
         setResult(1, resultIntent);
+    }
+
+    @Override
+    public void statusListener(String status) {
+        Log.d(TAG, "statusListener: " + status);
+        executorService.shutdown();
     }
 }

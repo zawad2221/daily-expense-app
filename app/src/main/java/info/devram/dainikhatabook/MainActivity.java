@@ -37,8 +37,11 @@ import java.util.concurrent.Executors;
 
 import info.devram.dainikhatabook.Core.MyApp;
 import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
+import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
 import info.devram.dainikhatabook.Models.DashBoardObject;
 import info.devram.dainikhatabook.Models.Expense;
@@ -55,7 +58,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
-        GenerateReportListener, SelectModal.OnSelectListener {
+        GenerateReportListener, SelectModal.OnSelectListener, FileErrorLoggerListener {
 
     public static final String TAG = "MainActivity";
 
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     private String reportSelectedItem;
     private SelectModal selectModal;
     private List<AccountEntity> accountEntities;
+    private ExecutorService executorService;
 
 
     @Override
@@ -125,6 +129,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        accountEntities = null;
     }
 
     private void setupWidgets() {
@@ -244,7 +249,11 @@ public class MainActivity extends AppCompatActivity
             if (accountEntity != null) {
                 AccountRepoType accountRepoType = new AccountRepoType(null);
                 accountEntity.setAccountRepoType(accountRepoType);
-                accountViewModel.addAccount(accountEntity);
+                try {
+                    accountViewModel.addAccount(accountEntity);
+                } catch (ApplicationError error) {
+                    this.logErrorToFile(error);
+                }
             }
 
         }
@@ -253,7 +262,11 @@ public class MainActivity extends AppCompatActivity
             if (accountEntity != null) {
                 AccountRepoType accountRepoType = new AccountRepoType(Config.INCOME_TABLE_NAME);
                 accountEntity.setAccountRepoType(accountRepoType);
-                accountViewModel.addAccount(accountEntity);
+                try {
+                    accountViewModel.addAccount(accountEntity);
+                } catch (ApplicationError error) {
+                    this.logErrorToFile(error);
+                }
             }
 
         }
@@ -274,7 +287,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     assert file != null;
                     OutputStream outputStream = getContentResolver().openOutputStream(file.getUri());
-                    ExecutorService executorService = Executors.newCachedThreadPool();
+                    executorService = Executors.newCachedThreadPool();
                     ExcelCreate excelCreate;
                     PdfCreate pdfCreate;
                     if (reportSelectedItem.equalsIgnoreCase("excel")) {
@@ -324,6 +337,7 @@ public class MainActivity extends AppCompatActivity
         if (code == STATUS_CODE.OK) {
             Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
         }
+        executorService.shutdown();
     }
 
     @Override
@@ -339,5 +353,18 @@ public class MainActivity extends AppCompatActivity
 
             selectModal = null;
         }
+    }
+
+    private void logErrorToFile(ApplicationError error)
+    {
+        executorService = Executors.newCachedThreadPool();
+        LogError logError = new LogError(error, this, this);
+        executorService.execute(logError);
+    }
+
+    @Override
+    public void fileStatusListener(String status) {
+        Log.d(TAG, "statusListener: " + status);
+        executorService.shutdown();
     }
 }

@@ -6,24 +6,24 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.JsonParser;
-import info.devram.dainikhatabook.Models.DashBoardObject;
 
 
-public class Converter implements JsonParser<DashBoardObject> {
+public class Converter implements JsonParser<AccountEntity> {
 
     //private static final String TAG = "Converter";
 
-    private List<DashBoardObject> requestData;
+    private List<AccountEntity> requestData;
     private String stringData;
-    private JSONArray expenseArray;
-    private JSONArray incomeArray;
     private JSONArray jsonArray;
+    private JSONObject jsonObject;
     private boolean isFromObject = false;
     private boolean isFromString = false;
     //private boolean isToObject = false;
 
-    public void setRequestData(List<DashBoardObject> requestData) {
+    public void setRequestData(List<AccountEntity> requestData) {
         this.requestData = requestData;
     }
 
@@ -40,23 +40,23 @@ public class Converter implements JsonParser<DashBoardObject> {
     }
 
     @Override
-    public void parseFromObject(List<DashBoardObject> object) {
+    public void parseFromObject(List<AccountEntity> object) {
         JSONObject jsonObject;
-        expenseArray = new JSONArray();
-        incomeArray = new JSONArray();
+        jsonArray = new JSONArray();
         try {
             for (int i = 0; i < object.size(); i++) {
                 jsonObject = new JSONObject();
-                jsonObject.put("id", object.get(i).getIdObject());
-                jsonObject.put("type", object.get(i).getTypeObject());
-                jsonObject.put("amount", object.get(i).getAmountObject());
-                jsonObject.put("date", object.get(i).getDateObject());
-                jsonObject.put("description", object.get(i).getDescObject());
-                if (object.get(i).getIsExpense()) {
-                    expenseArray.put(jsonObject);
+                jsonObject.put("id", object.get(i).accountID.getId());
+                jsonObject.put("type", object.get(i).accountType.getType());
+                jsonObject.put("amount", object.get(i).accountMoney.getAmount());
+                jsonObject.put("date", object.get(i).accountCreatedDate.getCreatedAt());
+                jsonObject.put("description", object.get(i).accountDescription.getDesc());
+                if (object.get(i).accountRepoType.getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
+                    jsonObject.put("repo", "expenses");
                 }else {
-                    incomeArray.put(jsonObject);
+                    jsonObject.put("repo", "incomes");
                 }
+                jsonArray.put(jsonObject);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -64,21 +64,21 @@ public class Converter implements JsonParser<DashBoardObject> {
     }
 
     @Override
-    public JSONArray parseFromString(String data) {
+    public JSONObject parseFromString(String data) {
         JSONObject jsonObject;
-        JSONArray jsonArray = new JSONArray();
         try {
             jsonObject = new JSONObject(data);
-            jsonArray.put(jsonObject);
+            return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return jsonArray;
+        return null;
     }
 
     @Override
-    public List<DashBoardObject> parseToObject(Object data) {
+    public List<AccountEntity> parseToObject(JSONArray jsonArray)
+    {
         return null;
     }
 
@@ -88,19 +88,16 @@ public class Converter implements JsonParser<DashBoardObject> {
             parseFromObject(this.requestData);
         }
         if (isFromString) {
-            jsonArray = parseFromString(this.stringData);
+            jsonObject = parseFromString(this.stringData);
         }
-    }
-
-    public JSONArray getExpenseArray() {
-        return expenseArray;
-    }
-
-    public JSONArray getIncomeArray() {
-        return incomeArray;
     }
 
     public JSONArray getJsonArray() {
         return jsonArray;
+    }
+
+    public JSONObject getJsonObject()
+    {
+        return jsonObject;
     }
 }

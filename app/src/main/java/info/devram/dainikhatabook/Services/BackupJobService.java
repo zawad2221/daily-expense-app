@@ -1,22 +1,13 @@
 package info.devram.dainikhatabook.Services;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.util.Log;
-//import android.util.Log;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -24,31 +15,33 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import info.devram.dainikhatabook.Controllers.Converter;
-import info.devram.dainikhatabook.Controllers.PostExpenseData;
-import info.devram.dainikhatabook.Controllers.PostIncomeData;
+import info.devram.dainikhatabook.Controllers.PostAccountsData;
 import info.devram.dainikhatabook.Controllers.TokenRequest;
-import info.devram.dainikhatabook.Core.MyApp;
+import info.devram.dainikhatabook.Entities.AccountEntity;
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
+import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
-import info.devram.dainikhatabook.Models.DashBoardObject;
-import info.devram.dainikhatabook.R;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
-import static android.Manifest.permission.READ_CONTACTS;
+//import android.util.Log;
 
-public class BackupJobService extends JobService implements ResponseAvailableListener {
+public class BackupJobService extends JobService
+        implements ResponseAvailableListener, FileErrorLoggerListener {
 
     private static final String TAG = "BackupJobService";
 
-    private AccountViewModel accountViewModel = AccountViewModel.getInstance(getApplication());
+    private AccountViewModel accountViewModel;
     private ExecutorService executorService;
-    private JSONArray expArr;
-    private JSONArray incArr;
-    private List<DashBoardObject> syncObjectList;
-    public static final String PRIMARY_CHANNEL_ID = "account_channel";
+    private JSONArray accountArr;
+    private JSONObject responseObject;
+    private List<AccountEntity> syncObjectList;
+
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        accountViewModel = AccountViewModel.getInstance(getApplication());
         accountViewModel.init();
         parseData();
         return true;
@@ -60,129 +53,96 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
     }
 
     private void parseData() {
-        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
-                getApplicationContext(), READ_CONTACTS);
-        String account = null;
-        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
-            SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
-            account = preferences.getString("account",null);
-            Log.d(TAG, "parseData: " + account);
-            if (account == null) {
-                createNotification("Backup Notification","No account Found");
-                return;
-            }
-        }
+//        int hasGetAccountPermission = ContextCompat.checkSelfPermission(
+//                getApplicationContext(), READ_CONTACTS);
+//        String account = null;
+//        if (hasGetAccountPermission == PackageManager.PERMISSION_GRANTED) {
+//            SharedPreferences preferences = getSharedPreferences("account",MODE_PRIVATE);
+//            account = preferences.getString("account",null);
+//            if (account == null) {
+//                NotifyService.createNotification("Backup Notification",
+//                        "No account Found", getApplicationContext());
+//                return;
+//            }
+//        }
 
-        //syncObjectList = accountViewModel.getDataForSyncing();
+        String account = "kanika.malik82@gmail.com";
+
+
+        syncObjectList = accountViewModel.getAccountForSyncing();
         if (syncObjectList.size() > 0) {
+
             Converter converter = new Converter();
             converter.setRequestData(syncObjectList);
             converter.setFromObject(true);
             converter.run();
-            expArr = converter.getExpenseArray();
-            incArr = converter.getIncomeArray();
+
+            accountArr = converter.getJsonArray();
+
+            executorService = Executors.newCachedThreadPool();
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("url", Config.LOGIN_URL);
+            hashMap.put("email", account);
+            hashMap.put("password", "devesh");
+            TokenRequest tokenRequest = new TokenRequest(hashMap, this);
 
             if (syncObjectList.size() > 0) {
-                executorService = Executors.newCachedThreadPool();
-                HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put("url", Config.LOGIN_URL);
-                hashMap.put("email", account);
-                TokenRequest tokenRequest = new TokenRequest(hashMap, this);
+
                 executorService.execute(tokenRequest);
             }
         }
     }
 
-    private void createNotification(String title,String message) {
-        NotificationManager mNotifyManager;
-        mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new
-                NotificationCompat.Builder(getApplicationContext(),PRIMARY_CHANNEL_ID);
-        builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-        builder.setColor(getApplicationContext().getColor(R.color.accentSecondary));
-        builder.setContentTitle(title);
-        builder.setContentText(message);
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        if (android.os.Build.VERSION.SDK_INT >=
-                android.os.Build.VERSION_CODES.O) {
 
-            NotificationChannel notificationChannel = new NotificationChannel
-                    (PRIMARY_CHANNEL_ID,
-                            title,
-                            NotificationManager.IMPORTANCE_HIGH);
-
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setDescription
-                    (message);
-            mNotifyManager.createNotificationChannel(notificationChannel);
-        }
-        mNotifyManager.notify(0,builder.build());
-    }
 
     @Override
-    public void onTokenResponse(JSONArray jsonArray, int statusCode) {
+    public void onTokenResponse(JSONObject jsonObject, int statusCode) {
+        Log.d(TAG, "onTokenResponse: " + statusCode);
         if (statusCode != 200) {
             shutdownExecutor();
-            createNotification("Backup","Error while syncing data");
+            NotifyService.createNotification("Backup",
+                    "Error while syncing data", getApplicationContext());
         }
         if (!executorService.isShutdown()) {
             HashMap<String, String> hashMap = new HashMap<>();
-            if (expArr.length() > 0) {
-                hashMap.put("url", Config.EXPENSE_URL);
+            if (accountArr.length() > 0) {
+                hashMap.put("url", Config.ACCOUNT_URL);
                 try {
-                    hashMap.put("token", jsonArray.getJSONObject(0).getString("token"));
+
+                    hashMap.put("token", jsonObject.getJSONObject("msg").getString("token"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                hashMap.put("data", expArr.toString());
-                PostExpenseData postExpenseData = new PostExpenseData(hashMap, this);
-                executorService.execute(postExpenseData);
+                hashMap.put("data", accountArr.toString());
+                PostAccountsData postAccountsData = new PostAccountsData(hashMap, this);
+                executorService.execute(postAccountsData);
             }
-            if (incArr.length() > 0) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("url", Config.INCOME_URL);
-                try {
-                    map.put("token", jsonArray.getJSONObject(0).getString("token"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                map.put("data", incArr.toString());
-                PostIncomeData postIncomeData = new PostIncomeData(map, this);
-                executorService.execute(postIncomeData);
-            }
+
         }
     }
 
     @Override
-    public void onExpenseResponse(JSONArray jsonArray, int statusCode) {
-        shutdownExecutor();
+    public void onPostResponse(JSONObject message, int statusCode) {
         if (statusCode == 201) {
-            List<DashBoardObject> dashBoardObjects = new ArrayList<>();
-            for (int i = 0; i < syncObjectList.size(); i++) {
-                if (syncObjectList.get(i).getIsExpense()) {
-                    dashBoardObjects.add(syncObjectList.get(i));
-                }
-            }
-            //accountViewModel.updateSyncListWithDb(dashBoardObjects);
+            this.accountViewModel.updateAccountAfterSynced(syncObjectList);
         }
-
     }
 
     @Override
-    public void onIncomeResponse(JSONArray jsonArray, int statusCode) {
-        if (statusCode == 201) {
-            List<DashBoardObject> dashBoardObjects = new ArrayList<>();
-            for (int i = 0; i < syncObjectList.size(); i++) {
-                if (!syncObjectList.get(i).getIsExpense()) {
-                    dashBoardObjects.add(syncObjectList.get(i));
-                }
+    public void onErrorResponse(String message, int statusCode) {
+        if (statusCode == 503) {
+            try {
+                throw new ApplicationError(message);
+            } catch (ApplicationError error) {
+                LogError logError = new LogError(error, getApplicationContext(), this);
+                executorService.execute(logError);
             }
-            //accountViewModel.updateSyncListWithDb(dashBoardObjects);
         }
+
+
     }
+
 
     private void shutdownExecutor() {
         executorService.shutdown();
@@ -196,4 +156,10 @@ public class BackupJobService extends JobService implements ResponseAvailableLis
             executorService.shutdownNow();
         }
     }
+
+    @Override
+    public void fileStatusListener(String status) {
+        Log.d(TAG, "statusListener: " + status);
+    }
 }
+

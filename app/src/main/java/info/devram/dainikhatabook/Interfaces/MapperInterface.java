@@ -8,7 +8,7 @@ import info.devram.dainikhatabook.Values.AccountID;
 
 public interface MapperInterface {
 
-    public void addData(AccountEntity entity, String table) throws ApplicationError;
+    public Boolean addData(AccountEntity entity, String table) throws ApplicationError;
 
     public List<AccountEntity> getAll(String table);
 
