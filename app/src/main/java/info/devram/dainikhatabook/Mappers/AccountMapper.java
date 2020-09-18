@@ -126,27 +126,37 @@ public class AccountMapper implements MapperInterface {
 
     }
 
-    public void batchUpdateSyncStatus(List<AccountID> accountIDS, List<String> tables) {
+    public void batchUpdateSyncStatus(List<AccountEntity> accounts) {
+        Log.d(TAG, "batchUpdateSyncStatus: starts");
         SQLiteDatabase updateDB = db.getWritableDatabase();
         updateDB.beginTransaction();
+
         try {
             ContentValues contentValues = new ContentValues();
-            for (AccountID accountID : accountIDS) {
+            for (AccountEntity account : accounts) {
 
                 contentValues.put(Config.ACCOUNT_KEY_SYNC, Config.SYNC_STATUS_TRUE);
-                if (tables.get(0).equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
-                    updateDB.update(Config.EXPENSE_TABLE_NAME,
+                if (account.accountRepoType.getRepoType().equals(Config.EXPENSE_TABLE_NAME)) {
+                    int result = updateDB.update(Config.EXPENSE_TABLE_NAME,
                             contentValues,
                             Config.ACCOUNT_KEY_ID + "=?",
-                            new String[]{accountID.getId()});
+                            new String[]{account.accountID.getId()});
+                    Log.d(TAG, "batchUpdateSyncStatus: " + result);
+                } else {
+                    int result = updateDB.update(Config.INCOME_TABLE_NAME,
+                            contentValues,
+                            Config.ACCOUNT_KEY_ID + "=?",
+                            new String[]{account.accountID.getId()});
+                    Log.d(TAG, "batchUpdateSyncStatus: " + result);
                 }
 
             }
 
             updateDB.setTransactionSuccessful();
-
         } catch (SQLiteException exception) {
             exception.printStackTrace();
+        } finally {
+            updateDB.endTransaction();
         }
 
     }

@@ -12,4 +12,6 @@ public interface ResponseAvailableListener {
     public void onPostResponse(JSONObject message, int statusCode);
 
     public void onErrorResponse(String message, int statusCode);
+
+    public void onRegisterResponse(JSONObject message, int statusCode);
 }

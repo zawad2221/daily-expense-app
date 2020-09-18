@@ -1,6 +1,7 @@
 package info.devram.dainikhatabook.ViewModel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -19,7 +20,7 @@ import info.devram.dainikhatabook.Values.AccountType;
 import info.devram.dainikhatabook.Values.Money;
 
 public class AccountViewModel {
-    //private static final String TAG = "MainActivityViewModel";
+    private static final String TAG = "MainActivityViewModel";
     private static AccountViewModel mInstance;
     private AccountMapper accountMapper;
     private Application application;
@@ -166,19 +167,12 @@ public class AccountViewModel {
 
     public void updateAccountAfterSynced(List<AccountEntity> entities)
     {
-        List<AccountID> accountIDS = new ArrayList<>();
-        List<String> tables = new ArrayList<>();
-
+        String table = null;
+        Log.d(TAG, "updateAccountAfterSynced: " + entities);
         for (AccountEntity accountEntity : entities) {
             accountEntity.syncStatus.updateSyncStatus(true);
-            accountIDS.add(accountEntity.accountID);
-            if (accountEntity.accountRepoType.getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
-                tables.add(Config.EXPENSE_TABLE_NAME);
-            } else {
-                tables.add(Config.INCOME_TABLE_NAME);
-            }
         }
 
-        this.accountMapper.batchUpdateSyncStatus(accountIDS, tables);
+        this.accountMapper.batchUpdateSyncStatus(entities);
     }
 }

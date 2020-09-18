@@ -3,7 +3,6 @@ package info.devram.dainikhatabook.Controllers;
 import android.util.Base64;
 import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -17,20 +16,21 @@ import java.util.HashMap;
 
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 
-public class TokenRequest implements Runnable {
-
-    private static final String TAG = "TokenRequest";
+public class RegisterUser implements Runnable
+{
+    private static final String TAG = "RegisterUser";
 
     private HashMap<String, String> setupRequest;
     private ResponseAvailableListener mListener;
 
-    public TokenRequest(HashMap<String, String> request, ResponseAvailableListener listener) {
-        this.setupRequest = request;
-        this.mListener = listener;
+    public RegisterUser(HashMap<String, String> setupRequest, ResponseAvailableListener mListener) {
+        this.setupRequest = setupRequest;
+        this.mListener = mListener;
     }
 
     @Override
     public void run() {
+        Log.d(TAG, "run: starts");
         HttpURLConnection connection = null;
         BufferedReader reader;
         Converter converter = new Converter();
@@ -42,58 +42,50 @@ public class TokenRequest implements Runnable {
 
         try {
             String userCredentials = setupRequest.get("email") + ":" + setupRequest.get("password");
-            Log.d(TAG, "run: " + userCredentials);
+
             byte[] encodedCredentials = Base64.encode(userCredentials.getBytes(), Base64.DEFAULT);
             String basicAuth = "Basic " + new String(encodedCredentials);
             URL url = new URL(setupRequest.get("url"));
-            Log.d(TAG, "run: " + url);
+
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Authorization", basicAuth);
             connection.setConnectTimeout(8000);
             connection.setDoOutput(true);
-            Log.d(TAG, "run: " + connection.getRequestMethod());
-            Log.d(TAG, "run: " + connection.getURL());
-            Log.d(TAG, "run: " + connection.getResponseCode());
 
             int response = connection.getResponseCode();
+            Log.d(TAG, "run: " + response);
             if (response != 200) {
 
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 
-                Log.d(TAG, "run: " + response);
                 String errorResult = stringBuilder(reader);
 
-                Log.d(TAG, "run: " + errorResult);
-
-                converter.setStringData(errorResult);
-                converter.run();
-
-                Log.d(TAG, "run: " + errorResult);
-                JSONObject jsonObject = converter.getJsonObject();
-
-                this.mListener.onTokenResponse(jsonObject, response);
-                this.sendErrorResponse(errorResult);
+                this.mListener.onErrorResponse(errorResult, response);
                 return;
             }
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             String okResult = stringBuilder(reader);
+
+            Log.d(TAG, "run: " + okResult);
+
             converter.setStringData(okResult);
             converter.run();
             JSONObject jsonObject = converter.getJsonObject();
-            this.mListener.onTokenResponse(jsonObject, response);
+            this.mListener.onRegisterResponse(jsonObject, response);
 
         } catch (MalformedURLException | SocketTimeoutException | SecurityException e) {
-            this.sendErrorResponse(e.getMessage());
+            this.mListener.onErrorResponse(e.getMessage(), 503);
         } catch (IOException e) {
             e.printStackTrace();
-            this.sendErrorResponse(e.getMessage());
+            this.mListener.onErrorResponse(e.getMessage(), 503);
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
         }
+        Log.d(TAG, "run: ends");
     }
 
     private String stringBuilder(BufferedReader reader) {
@@ -106,9 +98,5 @@ public class TokenRequest implements Runnable {
             e.printStackTrace();
         }
         return result.toString();
-    }
-
-    private void sendErrorResponse(String errMessage) {
-        this.mListener.onErrorResponse(errMessage, 503);
     }
 }

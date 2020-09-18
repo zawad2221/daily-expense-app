@@ -1,5 +1,7 @@
 package info.devram.dainikhatabook.Controllers;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.util.HashMap;
 
 public class PostData {
 
-    //private static final String TAG = "PostData";
+    private static final String TAG = "PostData";
 
     private int responseStatus;
     private HashMap<String, String> setupRequest;
@@ -23,6 +25,7 @@ public class PostData {
     }
 
     public String postRequest() {
+        Log.d(TAG, "postRequest: starts");
         HttpURLConnection connection = null;
         BufferedWriter bufferedWriter;
         BufferedReader reader;
@@ -50,10 +53,13 @@ public class PostData {
 
             int response = connection.getResponseCode();
             if (response != 201) {
+                Log.d(TAG, "postRequest: " + response);
+                Log.d(TAG, "postRequest: " + connection.getErrorStream());
 
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
 
                 String errorResult = stringBuilder(reader);
+                Log.d(TAG, "postRequest: " + errorResult);
                 responseStatus = response;
                 return errorResult;
             }

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
         GenerateReportListener, SelectModal.OnSelectListener, FileErrorLoggerListener {
 
-    //public static final String TAG = "MainActivity";
+    public static final String TAG = "MainActivity";
 
     public static final int ADD_EXP_REQUEST_CODE = 1;
     public static final int ADD_INC_REQUEST_CODE = 2;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity
     private void populateList() {
         accountEntities = new ArrayList<>();
         accountEntities = accountViewModel.getAccounts(null);
-
+        Log.d(TAG, "populateList: " + accountEntities);
         assert accountEntities != null;
         List<String> sumList = Util.getSum(accountEntities);
 
