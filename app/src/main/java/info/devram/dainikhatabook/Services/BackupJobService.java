@@ -15,7 +15,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -98,6 +100,14 @@ public class BackupJobService extends JobService {
                 new BackupServiceHelper(getApplicationContext(), accountViewModel, loginData);
 
         helper.startBackup();
+
+        SharedPreferences sp = getSharedPreferences("update", MODE_PRIVATE);
+
+        Set<String> accountIDs = sp.getStringSet("accountIDs", new HashSet<>());
+
+        assert accountIDs != null;
+        helper.startUpdateBackup(accountIDs);
+
     }
 }
 

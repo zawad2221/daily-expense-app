@@ -7,8 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +25,7 @@ import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.Services.NotifyService;
+import info.devram.dainikhatabook.Values.AccountID;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
 
@@ -67,6 +70,27 @@ public class BackupServiceHelper implements ResponseAvailableListener, FileError
             }
         }
 
+    }
+
+    public void startUpdateBackup(Set<String> strings)
+    {
+        if (strings.size() == 0) {
+            return;
+        }
+
+        List<AccountID> accountIDS = new ArrayList<>();
+        for (String id : strings) {
+            AccountID accountID = new AccountID(id);
+            accountIDS.add(accountID);
+        }
+
+        if (accountIDS.size() > 0) {
+            List<AccountEntity> accounts = this.accountViewModel.backupAccountAfterUpdate(accountIDS);
+        }
+
+//        UpdateAccount updateAccount = new UpdateAccount();
+//
+//        executorService.submit()
     }
 
     @Override

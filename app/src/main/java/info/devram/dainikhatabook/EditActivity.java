@@ -1,7 +1,9 @@
 package info.devram.dainikhatabook;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -9,7 +11,9 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,11 +22,12 @@ import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
+import info.devram.dainikhatabook.Values.AccountID;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class EditActivity extends BaseAddActivity implements FileErrorLoggerListener {
 
-    //private static final String TAG = "EditActivity";
+    private static final String TAG = "EditActivity";
 
     private boolean hasExpense = false;
     private ArrayAdapter<String> adapter;
@@ -133,6 +138,20 @@ public class EditActivity extends BaseAddActivity implements FileErrorLoggerList
         } else {
             resultIntent.putExtra(Config.INCOME_TABLE_NAME, accountEntity);
         }
+
+        SharedPreferences sharedPreferences = getSharedPreferences("update", MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> accountIDs = sharedPreferences.getStringSet("accountIDs", new HashSet<>());
+
+        assert accountIDs != null;
+        accountIDs.add(accountEntity.accountID.getId());
+
+        editor.putStringSet("accountIDs", accountIDs);
+
+        editor.apply();
+
         setResult(1, resultIntent);
     }
 

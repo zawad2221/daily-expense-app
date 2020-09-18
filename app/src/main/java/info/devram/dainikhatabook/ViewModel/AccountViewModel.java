@@ -167,12 +167,27 @@ public class AccountViewModel {
 
     public void updateAccountAfterSynced(List<AccountEntity> entities)
     {
-        String table = null;
         Log.d(TAG, "updateAccountAfterSynced: " + entities);
         for (AccountEntity accountEntity : entities) {
             accountEntity.syncStatus.updateSyncStatus(true);
         }
 
         this.accountMapper.batchUpdateSyncStatus(entities);
+    }
+
+    public List<AccountEntity> backupAccountAfterUpdate(List<AccountID> accountIDS)
+    {
+        List<AccountEntity> accounts = new ArrayList<>();
+
+        for (AccountID accountID : accountIDS) {
+            for (AccountEntity accountEntity : this.accountEntities) {
+                if (accountID.equals(accountEntity.accountID)) {
+                    accounts.add(accountEntity);
+                }
+            }
+
+        }
+
+        return accounts;
     }
 }
