@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -25,14 +24,12 @@ import info.devram.dainikhatabook.enums.RequestURI;
 public class PostData {
 
     private static final String TAG = "PostData";
-
-    private int responseCode;
     private final RequestType requestType;
     private final ResponseListener mListener;
+    private int responseCode;
     private HashMap<String, String> setupRequest;
 
-    public PostData(RequestType request, ResponseListener listener)
-    {
+    public PostData(RequestType request, ResponseListener listener) {
         this.requestType = request;
         this.mListener = listener;
     }
