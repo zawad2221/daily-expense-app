@@ -2,6 +2,8 @@ package info.devram.dainikhatabook.Controllers;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,82 +13,138 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
+
+import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
+import info.devram.dainikhatabook.Interfaces.ResponseListener;
+import info.devram.dainikhatabook.enums.RequestType;
+import info.devram.dainikhatabook.enums.RequestURI;
 
 public class PostData {
 
     private static final String TAG = "PostData";
 
-    private int responseStatus;
+    private int responseCode;
+    private final RequestType requestType;
+    private final ResponseListener mListener;
     private HashMap<String, String> setupRequest;
 
-    public PostData(HashMap<String, String> request) {
-        this.setupRequest = request;
+    public PostData(RequestType request, ResponseListener listener)
+    {
+        this.requestType = request;
+        this.mListener = listener;
     }
 
-    public String postRequest() {
+    public String postRequest(RequestURI requestURI) throws ApplicationError {
         Log.d(TAG, "postRequest: starts");
         HttpURLConnection connection = null;
         BufferedWriter bufferedWriter;
         BufferedReader reader;
+        Converter converter = new Converter();
+        converter.setFromString(true);
 
         if (setupRequest == null) {
-            return null;
+            throw new ApplicationError("request data not sent", getClass().getName());
         }
 
         try {
             URL url = new URL(setupRequest.get("url"));
 
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer " + setupRequest.get("token"));
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setDoOutput(true);
 
-            bufferedWriter = new BufferedWriter(new
-                    OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
-
-            bufferedWriter.write(setupRequest.get("data"));
-            bufferedWriter.flush();
-            bufferedWriter.close();
-
-            int response = connection.getResponseCode();
-            if (response != 201) {
-                Log.d(TAG, "postRequest: " + response);
-                Log.d(TAG, "postRequest: " + connection.getErrorStream());
-
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-
-                String errorResult = stringBuilder(reader);
-                Log.d(TAG, "postRequest: " + errorResult);
-                responseStatus = response;
-                return errorResult;
+            if (requestType == RequestType.POST) {
+                connection.setRequestMethod("POST");
+            } else {
+                connection.setRequestMethod("PUT");
             }
 
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            if (requestURI == RequestURI.ACCOUNTS) {
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Authorization", "Bearer " + setupRequest.get("token"));
+                connection.setRequestProperty("Accept", "application/json");
+            } else {
+                String userCredentials =
+                        setupRequest.get("email") + ":" + setupRequest.get("password");
 
-            String okResult = stringBuilder(reader);
+                String encodedCredentials =
+                        Base64.getEncoder().encodeToString(userCredentials.getBytes());
+                String basicAuth = "Basic " + encodedCredentials;
+                connection.setRequestProperty("Authorization", basicAuth);
+            }
 
-            responseStatus = response;
-            return okResult;
+            connection.setDoOutput(true);
 
-        } catch (MalformedURLException | SecurityException e) {
-            responseStatus = 503;
-            return e.getMessage();
-        } catch (IOException e) {
-            e.printStackTrace();
-            responseStatus = 503;
-            return e.getMessage();
+            if (setupRequest.containsKey("data")) {
+                bufferedWriter = new BufferedWriter(new
+                        OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
+
+                bufferedWriter.write(setupRequest.get("data"));
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            }
+
+            responseCode = connection.getResponseCode();
+            if (responseCode == 200 || responseCode == 201) {
+                Log.d(TAG, "postRequest: " + responseCode);
+                Log.d(TAG, "postRequest: " + connection.getInputStream());
+
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                String okResult = stringBuilder(reader);
+                Log.d(TAG, "postRequest: " + okResult);
+
+                converter.setStringData(okResult);
+                converter.run();
+
+                JSONObject jsonObject = converter.getJsonObject();
+
+                if (requestURI == RequestURI.ACCOUNTS) {
+                    this.mListener.onPostResponse(jsonObject, responseCode);
+
+                    return null;
+                } else {
+                    okResult = this.mListener.onTokenResponse(jsonObject, responseCode);
+
+                    return okResult;
+                }
+
+            }
+
+            reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+
+            String errorResult = stringBuilder(reader);
+
+            converter.setStringData(errorResult);
+            converter.run();
+
+            JSONObject jsonObject = converter.getJsonObject();
+
+            if (requestURI != RequestURI.ACCOUNTS) {
+                errorResult = this.mListener.onTokenResponse(jsonObject, responseCode);
+
+                if (responseCode == 404) {
+                    this.mListener.onLoginFailure(jsonObject, responseCode);
+                }
+            } else {
+                this.mListener.onPostResponse(jsonObject, responseCode);
+            }
+
+            throw new ApplicationError(errorResult, getClass().getName());
+
+        } catch (SecurityException | IOException e) {
+            throw new ApplicationError(e.getMessage(), Arrays.toString(e.getStackTrace()));
         } finally {
             if (connection != null) {
                 connection.disconnect();
             }
+            converter = null;
         }
     }
 
     public int getResponseStatus() {
-        return responseStatus;
+        return responseCode;
     }
 
     private String stringBuilder(BufferedReader reader) {
@@ -100,5 +158,9 @@ public class PostData {
             e.printStackTrace();
         }
         return result.toString();
+    }
+
+    public void setSetupRequest(HashMap<String, String> setupRequest) {
+        this.setupRequest = setupRequest;
     }
 }

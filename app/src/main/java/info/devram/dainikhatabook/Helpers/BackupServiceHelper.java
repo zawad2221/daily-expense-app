@@ -16,21 +16,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import info.devram.dainikhatabook.Controllers.Converter;
-import info.devram.dainikhatabook.Controllers.PostAccountsData;
-import info.devram.dainikhatabook.Controllers.RegisterUser;
-import info.devram.dainikhatabook.Controllers.TokenRequest;
+import info.devram.dainikhatabook.Controllers.APIRequest;
 import info.devram.dainikhatabook.Entities.AccountEntity;
-import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
 import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
-import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
+import info.devram.dainikhatabook.Interfaces.ResponseListener;
 import info.devram.dainikhatabook.Services.NotifyService;
 import info.devram.dainikhatabook.Values.AccountID;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 
 
-public class BackupServiceHelper implements ResponseAvailableListener, FileErrorLoggerListener
-{
+public class BackupServiceHelper implements ResponseListener, FileErrorLoggerListener {
     private static final String TAG = "BackupServiceHelper";
     private Context mContext;
     private ExecutorService executorService;
@@ -47,8 +43,7 @@ public class BackupServiceHelper implements ResponseAvailableListener, FileError
     }
 
 
-    public void startBackup()
-    {
+    public void startBackup() {
         this.accountEntityList = this.accountViewModel.getAccountForSyncing();
         if (accountEntityList.size() > 0) {
             Converter converter = new Converter();
@@ -63,17 +58,16 @@ public class BackupServiceHelper implements ResponseAvailableListener, FileError
             hashMap.put("url", Config.LOGIN_URL);
             hashMap.put("email", mLoginData.get(0));
             hashMap.put("password", mLoginData.get(1));
-            TokenRequest tokenRequest = new TokenRequest(hashMap, this);
+            APIRequest APIRequest = new APIRequest(hashMap, this);
 
             if (accountEntityList.size() > 0) {
-                executorService.execute(tokenRequest);
+                executorService.execute(APIRequest);
             }
         }
 
     }
 
-    public void startUpdateBackup(Set<String> strings)
-    {
+    public void startUpdateBackup(Set<String> strings) {
         if (strings.size() == 0) {
             return;
         }
@@ -94,59 +88,42 @@ public class BackupServiceHelper implements ResponseAvailableListener, FileError
     }
 
     @Override
-    public void onTokenResponse(JSONObject jsonObject, int statusCode) {
+    public String onTokenResponse(JSONObject jsonObject, int statusCode) {
         Log.d(TAG, "onTokenResponse: starts");
-        try {
-            Log.d(TAG, "run: " + jsonObject.getJSONObject("msg"));
-            Log.d(TAG, "run: " + statusCode);
-            if (statusCode == 404) {
-                if (jsonObject.getJSONObject("msg").has("Create New")) {
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("url", Config.REGISTER_URL);
-                    hashMap.put("email", mLoginData.get(0));
-                    hashMap.put("password", mLoginData.get(1));
-                    RegisterUser registerUser = new RegisterUser(hashMap, this);
-                    executorService.execute(registerUser);
-                    Log.d(TAG, "onTokenResponse: register");
-                    return;
-                }
+
+        Log.d(TAG, "run: " + jsonObject);
+        Log.d(TAG, "run: " + statusCode);
+
+        if (statusCode == 200) {
+            try {
+                return jsonObject.getJSONObject("msg").getString("token");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-        Log.d(TAG, "onTokenResponse: debug register");
-        if (statusCode != 200) {
-            shutdownExecutor();
-            NotifyService.createNotification("Backup",
-                    "Error while syncing data", mContext);
+        if (statusCode == 404) {
+            try {
+                if (jsonObject.getJSONObject("msg").has("Create New")) {
+                    return jsonObject.getJSONObject("msg").getString("Create New");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+//            shutdownExecutor();
+//            NotifyService.createNotification("Backup",
+//                    "Error while syncing data", mContext);
         }
 
-        this.sendDataSync(jsonObject);
+        return null;
     }
 
-    private void sendDataSync(JSONObject jsonObject)
-    {
-        Log.d(TAG, "sendDataSync: starts");
-        Log.d(TAG, "sendDataSync: " + executorService.isShutdown());
-        if (!executorService.isShutdown()) {
-            HashMap<String, String> hashMap = new HashMap<>();
-            if (accountArr.length() > 0) {
-                hashMap.put("url", Config.ACCOUNT_URL);
-                try {
-
-                    hashMap.put("token", jsonObject.getJSONObject("msg").getString("token"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                hashMap.put("data", accountArr.toString());
-                PostAccountsData postAccountsData = new PostAccountsData(hashMap, this);
-                executorService.execute(postAccountsData);
-            }
-
+    @Override
+    public JSONArray getRequestData() {
+        if (this.accountArr != null) {
+            return accountArr;
         }
+        return null;
     }
 
     @Override
@@ -161,26 +138,32 @@ public class BackupServiceHelper implements ResponseAvailableListener, FileError
     @Override
     public void onErrorResponse(String message, int statusCode) {
         if (statusCode == 503) {
-            try {
-                throw new ApplicationError(message);
-            } catch (ApplicationError error) {
-                LogError logError = new LogError(error, mContext, this);
-                if (executorService.isShutdown()) {
-                    executorService = Executors.newCachedThreadPool();
-                    executorService.execute(logError);
-                }
+            shutdownExecutor();
+            NotifyService.createNotification("Backup",
+                    "Error while syncing data", mContext);
 
+            HashMap<String, String> hashMap = new HashMap<>();
+
+            hashMap.put("error", message);
+            hashMap.put("trace", getClass().getName());
+
+            LogError logError = new LogError(hashMap, mContext, this);
+            if (executorService.isShutdown()) {
+                executorService = Executors.newCachedThreadPool();
+                executorService.execute(logError);
             }
+
         }
     }
 
     @Override
-    public void onRegisterResponse(JSONObject message, int statusCode) {
+    public void onLoginFailure(JSONObject message, int statusCode) {
+
         Log.d(TAG, "onRegisterResponse: " + message);
         Log.d(TAG, "onRegisterResponse: " + statusCode);
-        if (statusCode == 200) {
-            this.sendDataSync(message);
-        }
+        shutdownExecutor();
+        NotifyService.createNotification("Backup",
+                "Error while syncing data", mContext);
     }
 
 

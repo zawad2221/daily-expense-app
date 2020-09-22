@@ -14,16 +14,16 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 
-import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
+import info.devram.dainikhatabook.Interfaces.ResponseListener;
 
 public class RegisterUser implements Runnable
 {
     private static final String TAG = "RegisterUser";
 
     private HashMap<String, String> setupRequest;
-    private ResponseAvailableListener mListener;
+    private ResponseListener mListener;
 
-    public RegisterUser(HashMap<String, String> setupRequest, ResponseAvailableListener mListener) {
+    public RegisterUser(HashMap<String, String> setupRequest, ResponseListener mListener) {
         this.setupRequest = setupRequest;
         this.mListener = mListener;
     }

@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
 
@@ -24,15 +25,15 @@ public class LogError implements Runnable {
     //private static final String TAG = "LogError";
 
     private String fileName;
-    private Exception error;
+    private HashMap<String, String> error;
     private Context mContext;
     private FileOutputStream fos;
     private FileErrorLoggerListener mListener;
     private File file;
 
-    public LogError(Exception error, Context context, FileErrorLoggerListener listener) {
+    public LogError(HashMap<String,String> message, Context context, FileErrorLoggerListener listener) {
         this.fileName = "app-error.json";
-        this.error = error;
+        this.error = message;
         this.mContext = context;
         this.mListener = listener;
     }
@@ -67,14 +68,8 @@ public class LogError implements Runnable {
 
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Error", error.getMessage());
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-
-            error.printStackTrace(pw);
-
-            jsonObject.put("Stack", sw.toString());
+            jsonObject.put("Error", error.get("error"));
+            jsonObject.put("Stack", error.get("trace"));
 
             jsonArray.put(jsonObject);
 
@@ -139,14 +134,8 @@ public class LogError implements Runnable {
 
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Error", error.getMessage());
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-
-            error.printStackTrace(pw);
-
-            jsonObject.put("Stack", sw.toString());
+            jsonObject.put("Error", error.get("error"));
+            jsonObject.put("Stack", error.get("trace"));
 
             return jsonObject;
         } catch (JSONException e) {

@@ -3,39 +3,20 @@ package info.devram.dainikhatabook.Services;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.util.Log;
 
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import info.devram.dainikhatabook.Controllers.Converter;
-import info.devram.dainikhatabook.Controllers.PostAccountsData;
-import info.devram.dainikhatabook.Controllers.RegisterUser;
-import info.devram.dainikhatabook.Controllers.TokenRequest;
 import info.devram.dainikhatabook.Entities.AccountEntity;
-import info.devram.dainikhatabook.ErrorHandlers.ApplicationError;
-import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.BackupServiceHelper;
-import info.devram.dainikhatabook.Helpers.Config;
-import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
-import info.devram.dainikhatabook.Interfaces.ResponseAvailableListener;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 //import android.util.Log;
 
