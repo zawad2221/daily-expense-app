@@ -3,6 +3,7 @@ package info.devram.dainikhatabook.Services;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -64,7 +65,7 @@ public class BackupJobService extends JobService {
 
 
         apiPassword = sharedPreferences.getString("api_password", "");
-
+        Log.d(TAG, "parseData: " + apiPassword);
         if (apiPassword == null || apiPassword.equals("")) {
             NotifyService.createNotification("Backup Notification",
                     "Password Not set. Kindly Do so in App Settings",

@@ -44,9 +44,9 @@ public class AccountViewModel {
         this.accountEntities = this.accountMapper.getAll(null);
     }
 
-    public List<AccountEntity> getAccounts(String type) {
+    public List<AccountEntity> getAccounts() {
 
-        return this.accountEntities;
+        return this.accountMapper.getAll(null);
     }
 
     public void addAccount(AccountEntity accountEntity) throws ApplicationError {
@@ -60,7 +60,7 @@ public class AccountViewModel {
         }
 
         if (!result) {
-            throw new ApplicationError("Error Adding Data");
+            throw new ApplicationError("Error Adding Data", getClass().getName());
         } else {
             this.accountEntities.add(accountEntity);
         }
@@ -107,7 +107,7 @@ public class AccountViewModel {
                 if (result) {
                     this.accountEntities.set(this.accountEntities.indexOf(accountEntity), account);
                 } else {
-                    throw new ApplicationError("Error Inserting Data");
+                    throw new ApplicationError("Error Inserting Data", getClass().getName());
                 }
 
             }
@@ -145,7 +145,7 @@ public class AccountViewModel {
         if (result) {
             this.accountEntities.remove(accountEntitiesPosition);
         } else {
-            throw new ApplicationError("Error Deleting Data");
+            throw new ApplicationError("Error Deleting Data", getClass().getName());
         }
 
     }

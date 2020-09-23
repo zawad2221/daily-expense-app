@@ -129,16 +129,18 @@ public class BackupServiceHelper implements ResponseListener, FileErrorLoggerLis
     @Override
     public void onPostResponse(JSONObject message, int statusCode) {
         Log.d(TAG, "onPostResponse: starts");
-        if (statusCode == 201) {
-            this.accountViewModel.updateAccountAfterSynced(accountEntityList);
-        }
+//        if (statusCode == 201) {
+//            this.accountViewModel.updateAccountAfterSynced(accountEntityList);
+//        }
+        executorService.shutdownNow();
         Log.d(TAG, "onPostResponse: ends");
     }
 
     @Override
     public void onErrorResponse(String message, int statusCode) {
+        executorService.shutdownNow();
         if (statusCode == 503) {
-            shutdownExecutor();
+
             NotifyService.createNotification("Backup",
                     "Error while syncing data", mContext);
 
@@ -159,24 +161,18 @@ public class BackupServiceHelper implements ResponseListener, FileErrorLoggerLis
     @Override
     public void onLoginFailure(JSONObject message, int statusCode) {
 
-        Log.d(TAG, "onRegisterResponse: " + message);
-        Log.d(TAG, "onRegisterResponse: " + statusCode);
-        shutdownExecutor();
-        NotifyService.createNotification("Backup",
-                "Error while syncing data", mContext);
-    }
+        Log.d(TAG, "onLoginFailure: " + message);
+        Log.d(TAG, "onLoginFailure: " + statusCode);
+        executorService.shutdownNow();
+        if (executorService.isShutdown()) {
+            executorService = Executors.newCachedThreadPool();
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("url", Config.REGISTER_URL);
+            hashMap.put("email", mLoginData.get(0));
+            hashMap.put("password", mLoginData.get(1));
+            APIRequest tokenRequest = new APIRequest(hashMap, this);
 
-
-    private void shutdownExecutor() {
-        executorService.shutdown();
-        try {
-            if (!executorService.awaitTermination(2, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            executorService.shutdownNow();
+            executorService.execute(tokenRequest);
         }
     }
 

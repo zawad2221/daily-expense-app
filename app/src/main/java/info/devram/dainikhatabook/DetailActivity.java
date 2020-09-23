@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -206,7 +207,13 @@ public class DetailActivity extends AppCompatActivity
     private void logErrorToFile(ApplicationError error)
     {
         executorService = Executors.newCachedThreadPool();
-        LogError logError = new LogError(error, this, this);
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("error", error.getMessage());
+        hashMap.put("trace", error.getStackTrace().toString());
+
+        LogError logError = new LogError(hashMap, this, this);
+
         executorService.execute(logError);
     }
 

@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,7 +100,10 @@ public class EditActivity extends BaseAddActivity implements FileErrorLoggerList
                 datePicker.setText(selectedDate);
             } catch (NumberFormatException e) {
                 executorService = Executors.newCachedThreadPool();
-                LogError error = new LogError(e , this ,this);
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("error", e.getMessage());
+                hashMap.put("trace", e.getStackTrace().toString());
+                LogError error = new LogError(hashMap , this ,this);
                 executorService.execute(error);
             }
 

@@ -100,7 +100,7 @@ public class SummaryActivity extends AppCompatActivity
         incomeList = accountViewModel
                 .getAccountByTypes(Util.getIncomeTypes(), Config.INCOME_TABLE_NAME);
 
-        totalSum = Util.getSum(accountViewModel.getAccounts(null));
+        totalSum = Util.getSum(accountViewModel.getAccounts());
     }
 
     @Override

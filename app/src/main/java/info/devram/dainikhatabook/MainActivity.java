@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity
 
     private void populateList() {
         accountEntities = new ArrayList<>();
-        accountEntities = accountViewModel.getAccounts(null);
+        accountEntities = accountViewModel.getAccounts();
         Log.d(TAG, "populateList: " + accountEntities);
         assert accountEntities != null;
         List<String> sumList = Util.getSum(accountEntities);
@@ -336,8 +337,6 @@ public class MainActivity extends AppCompatActivity
     public void onItemSelected(String selectedItem) {
         reportSelectedItem = selectedItem;
         selectModal.dismiss();
-        accountEntities = accountViewModel.getAccounts(null);
-        assert accountEntities != null;
         if (accountEntities.size() > 0) {
             createFile();
         }
@@ -350,7 +349,10 @@ public class MainActivity extends AppCompatActivity
     private void logErrorToFile(ApplicationError error)
     {
         executorService = Executors.newCachedThreadPool();
-        LogError logError = new LogError(error, this, this);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("error", error.getMessage());
+        hashMap.put("trace", error.getStackTrace().toString());
+        LogError logError = new LogError(hashMap, this, this);
         executorService.execute(logError);
     }
 

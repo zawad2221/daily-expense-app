@@ -118,17 +118,20 @@ public class PostData {
 
             JSONObject jsonObject = converter.getJsonObject();
 
-            if (requestURI != RequestURI.ACCOUNTS) {
-                errorResult = this.mListener.onTokenResponse(jsonObject, responseCode);
-
-                if (responseCode == 404) {
-                    this.mListener.onLoginFailure(jsonObject, responseCode);
-                }
-            } else {
-                this.mListener.onPostResponse(jsonObject, responseCode);
+            if (requestURI == RequestURI.ACCOUNTS) {
+                this.mListener.onErrorResponse(errorResult, responseCode);
+                Log.d(TAG, "postRequest: error response " + jsonObject);
+                return null;
             }
 
-            throw new ApplicationError(errorResult, getClass().getName());
+            if (responseCode == 404) {
+                errorResult = this.mListener.onTokenResponse(jsonObject, responseCode);
+                this.mListener.onLoginFailure(jsonObject, responseCode);
+                Log.d(TAG, "postRequest: " + errorResult);
+                throw new ApplicationError(errorResult, getClass().getName());
+            }
+            Log.d(TAG, "postRequest: ends");
+            return null;
 
         } catch (SecurityException | IOException e) {
             throw new ApplicationError(e.getMessage(), Arrays.toString(e.getStackTrace()));
