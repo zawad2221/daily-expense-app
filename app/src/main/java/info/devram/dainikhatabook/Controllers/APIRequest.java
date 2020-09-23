@@ -1,7 +1,5 @@
 package info.devram.dainikhatabook.Controllers;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 
 import java.util.HashMap;
@@ -14,7 +12,7 @@ import info.devram.dainikhatabook.enums.RequestURI;
 
 public class APIRequest implements Runnable {
 
-    private static final String TAG = "APIRequest";
+    //private static final String TAG = "APIRequest";
 
     private HashMap<String, String> setupRequest;
     private ResponseListener mListener;
@@ -25,9 +23,8 @@ public class APIRequest implements Runnable {
     }
 
     @Override
-    public void run()
-    {
-        Log.d(TAG, "run: starts");
+    public void run() {
+
         PostData postData =
                 new PostData(RequestType.POST, mListener);
 
@@ -58,6 +55,6 @@ public class APIRequest implements Runnable {
         } catch (ApplicationError error) {
             this.mListener.onErrorResponse(error.getMessage(), 503);
         }
-        Log.d(TAG, "run: ends");
+
     }
 }

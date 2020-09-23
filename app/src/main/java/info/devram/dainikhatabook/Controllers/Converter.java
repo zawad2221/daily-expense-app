@@ -53,7 +53,7 @@ public class Converter implements JsonParser<AccountEntity> {
                 jsonObject.put("description", object.get(i).accountDescription.getDesc());
                 if (object.get(i).accountRepoType.getRepoType().equalsIgnoreCase(Config.EXPENSE_TABLE_NAME)) {
                     jsonObject.put("repo", "expenses");
-                }else {
+                } else {
                     jsonObject.put("repo", "incomes");
                 }
                 jsonArray.put(jsonObject);
@@ -77,8 +77,7 @@ public class Converter implements JsonParser<AccountEntity> {
     }
 
     @Override
-    public List<AccountEntity> parseToObject(JSONArray jsonArray)
-    {
+    public List<AccountEntity> parseToObject(JSONArray jsonArray) {
         return null;
     }
 
@@ -96,8 +95,7 @@ public class Converter implements JsonParser<AccountEntity> {
         return jsonArray;
     }
 
-    public JSONObject getJsonObject()
-    {
+    public JSONObject getJsonObject() {
         return jsonObject;
     }
 }

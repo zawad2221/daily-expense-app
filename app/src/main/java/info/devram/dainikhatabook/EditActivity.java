@@ -3,7 +3,6 @@ package info.devram.dainikhatabook;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,12 +22,11 @@ import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Helpers.Util;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
-import info.devram.dainikhatabook.Values.AccountID;
 import info.devram.dainikhatabook.ui.BaseAddActivity;
 
 public class EditActivity extends BaseAddActivity implements FileErrorLoggerListener {
 
-    private static final String TAG = "EditActivity";
+    //private static final String TAG = "EditActivity";
 
     private boolean hasExpense = false;
     private ArrayAdapter<String> adapter;

@@ -1,7 +1,5 @@
 package info.devram.dainikhatabook.Controllers;
 
-import android.util.Log;
-
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -23,7 +21,7 @@ import info.devram.dainikhatabook.enums.RequestURI;
 
 public class PostData {
 
-    private static final String TAG = "PostData";
+    //private static final String TAG = "PostData";
     private final RequestType requestType;
     private final ResponseListener mListener;
     private int responseCode;
@@ -35,7 +33,6 @@ public class PostData {
     }
 
     public String postRequest(RequestURI requestURI) throws ApplicationError {
-        Log.d(TAG, "postRequest: starts");
         HttpURLConnection connection = null;
         BufferedWriter bufferedWriter;
         BufferedReader reader;
@@ -84,13 +81,11 @@ public class PostData {
 
             responseCode = connection.getResponseCode();
             if (responseCode == 200 || responseCode == 201) {
-                Log.d(TAG, "postRequest: " + responseCode);
-                Log.d(TAG, "postRequest: " + connection.getInputStream());
 
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
                 String okResult = stringBuilder(reader);
-                Log.d(TAG, "postRequest: " + okResult);
+
 
                 converter.setStringData(okResult);
                 converter.run();
@@ -120,17 +115,17 @@ public class PostData {
 
             if (requestURI == RequestURI.ACCOUNTS) {
                 this.mListener.onErrorResponse(errorResult, responseCode);
-                Log.d(TAG, "postRequest: error response " + jsonObject);
+
                 return null;
             }
 
             if (responseCode == 404) {
                 errorResult = this.mListener.onTokenResponse(jsonObject, responseCode);
                 this.mListener.onLoginFailure(jsonObject, responseCode);
-                Log.d(TAG, "postRequest: " + errorResult);
+
                 throw new ApplicationError(errorResult, getClass().getName());
             }
-            Log.d(TAG, "postRequest: ends");
+
             return null;
 
         } catch (SecurityException | IOException e) {

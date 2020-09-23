@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
         GenerateReportListener, SelectModal.OnSelectListener, FileErrorLoggerListener {
 
-    public static final String TAG = "MainActivity";
+    //public static final String TAG = "MainActivity";
 
     public static final int ADD_EXP_REQUEST_CODE = 1;
     public static final int ADD_INC_REQUEST_CODE = 2;
@@ -180,14 +179,14 @@ public class MainActivity extends AppCompatActivity
     private void populateList() {
         accountEntities = new ArrayList<>();
         accountEntities = accountViewModel.getAccounts();
-        Log.d(TAG, "populateList: " + accountEntities);
+
         assert accountEntities != null;
         List<String> sumList = Util.getSum(accountEntities);
 
         String expSum = String.format(getResources().
-                        getString(R.string.total_dashboard_amount),sumList.get(0));
+                getString(R.string.total_dashboard_amount), sumList.get(0));
         String incSum = String.format(getResources().
-                        getString(R.string.total_dashboard_amount),sumList.get(1));
+                getString(R.string.total_dashboard_amount), sumList.get(1));
 
         expenseSumTextView.setText(expSum);
         incomeSumTextView.setText(incSum);
@@ -346,8 +345,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void logErrorToFile(ApplicationError error)
-    {
+    private void logErrorToFile(ApplicationError error) {
         executorService = Executors.newCachedThreadPool();
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("error", error.getMessage());

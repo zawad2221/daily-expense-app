@@ -1,7 +1,6 @@
 package info.devram.dainikhatabook.Helpers;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,10 +12,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import info.devram.dainikhatabook.Controllers.Converter;
 import info.devram.dainikhatabook.Controllers.APIRequest;
+import info.devram.dainikhatabook.Controllers.Converter;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.ErrorHandlers.LogError;
 import info.devram.dainikhatabook.Interfaces.FileErrorLoggerListener;
@@ -89,10 +87,6 @@ public class BackupServiceHelper implements ResponseListener, FileErrorLoggerLis
 
     @Override
     public String onTokenResponse(JSONObject jsonObject, int statusCode) {
-        Log.d(TAG, "onTokenResponse: starts");
-
-        Log.d(TAG, "run: " + jsonObject);
-        Log.d(TAG, "run: " + statusCode);
 
         if (statusCode == 200) {
             try {
@@ -128,12 +122,12 @@ public class BackupServiceHelper implements ResponseListener, FileErrorLoggerLis
 
     @Override
     public void onPostResponse(JSONObject message, int statusCode) {
-        Log.d(TAG, "onPostResponse: starts");
-//        if (statusCode == 201) {
-//            this.accountViewModel.updateAccountAfterSynced(accountEntityList);
-//        }
+
+        if (statusCode == 201) {
+            this.accountViewModel.updateAccountAfterSynced(accountEntityList);
+        }
         executorService.shutdownNow();
-        Log.d(TAG, "onPostResponse: ends");
+
     }
 
     @Override
@@ -160,9 +154,6 @@ public class BackupServiceHelper implements ResponseListener, FileErrorLoggerLis
 
     @Override
     public void onLoginFailure(JSONObject message, int statusCode) {
-
-        Log.d(TAG, "onLoginFailure: " + message);
-        Log.d(TAG, "onLoginFailure: " + statusCode);
         executorService.shutdownNow();
         if (executorService.isShutdown()) {
             executorService = Executors.newCachedThreadPool();

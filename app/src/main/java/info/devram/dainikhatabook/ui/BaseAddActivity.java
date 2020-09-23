@@ -1,7 +1,6 @@
 package info.devram.dainikhatabook.ui;
 
 import android.app.DatePickerDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -84,7 +83,7 @@ public class BaseAddActivity extends AppCompatActivity {
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(v.getContext(),R.style.datePicker ,date, myCalendar
+                new DatePickerDialog(v.getContext(), R.style.datePicker, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -107,7 +106,7 @@ public class BaseAddActivity extends AppCompatActivity {
             if (dateOBJ != null) {
                 parsedDate = dateOBJ.getTime();
             }
-        }catch (NumberFormatException | ParseException e) {
+        } catch (NumberFormatException | ParseException e) {
 
         }
         selectedDesc = descEditText.getText().toString();

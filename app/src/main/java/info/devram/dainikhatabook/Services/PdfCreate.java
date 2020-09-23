@@ -16,7 +16,6 @@ import java.util.Locale;
 import info.devram.dainikhatabook.Entities.AccountEntity;
 import info.devram.dainikhatabook.Helpers.Config;
 import info.devram.dainikhatabook.Interfaces.GenerateReportListener;
-import info.devram.dainikhatabook.Models.DashBoardObject;
 
 public class PdfCreate implements Runnable {
 

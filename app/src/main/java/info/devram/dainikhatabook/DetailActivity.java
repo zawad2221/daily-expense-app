@@ -2,7 +2,6 @@ package info.devram.dainikhatabook;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -32,13 +31,13 @@ import info.devram.dainikhatabook.ViewModel.AccountViewModel;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 
 public class DetailActivity extends AppCompatActivity
-        implements RecyclerOnClick,ConfirmModal.ConfirmModalListener, FileErrorLoggerListener {
+        implements RecyclerOnClick, ConfirmModal.ConfirmModalListener, FileErrorLoggerListener {
 
-    private static final String TAG = "DetailActivity";
+    //private static final String TAG = "DetailActivity";
 
     public static final int EDIT_EXP_REQUEST_CODE = 1;
     public static final int EDIT_INC_REQUEST_CODE = 2;
-    
+
     private AccountViewModel accountViewModel;
     private RecyclerView recyclerView;
     private DashBoardRecyclerAdapter dashBoardRecyclerAdapter;
@@ -99,7 +98,7 @@ public class DetailActivity extends AppCompatActivity
 
         inflateDashBoardList();
 
-        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(accountList,this);
+        dashBoardRecyclerAdapter = new DashBoardRecyclerAdapter(accountList, this);
 
         recyclerView.setAdapter(dashBoardRecyclerAdapter);
     }
@@ -109,7 +108,7 @@ public class DetailActivity extends AppCompatActivity
 
         switch (view.getId()) {
             case R.id.detailEditBtn:
-                Intent intent = new Intent(DetailActivity.this,EditActivity.class);
+                Intent intent = new Intent(DetailActivity.this, EditActivity.class);
 
                 itemAdapterPosition = position;
 
@@ -117,12 +116,12 @@ public class DetailActivity extends AppCompatActivity
 
                 if (hasExpense) {
 
-                    intent.putExtra(Config.EXPENSE_TABLE_NAME,accountEntity);
-                    startActivityForResult(intent,EDIT_EXP_REQUEST_CODE);
-                }else {
+                    intent.putExtra(Config.EXPENSE_TABLE_NAME, accountEntity);
+                    startActivityForResult(intent, EDIT_EXP_REQUEST_CODE);
+                } else {
 
-                    intent.putExtra(Config.INCOME_TABLE_NAME,accountEntity);
-                    startActivityForResult(intent,EDIT_INC_REQUEST_CODE);
+                    intent.putExtra(Config.INCOME_TABLE_NAME, accountEntity);
+                    startActivityForResult(intent, EDIT_INC_REQUEST_CODE);
                 }
 
                 break;
@@ -130,8 +129,8 @@ public class DetailActivity extends AppCompatActivity
                 itemAdapterPosition = position;
                 ConfirmModal confirmModal = new
                         ConfirmModal("Are You Sure You Want To Delete This",
-                        "Alert!" + "\n\n",true,this);
-                confirmModal.show(getSupportFragmentManager(),TAG);
+                        "Alert!" + "\n\n", true, this);
+                confirmModal.show(getSupportFragmentManager(), null);
                 break;
         }
     }
@@ -204,8 +203,7 @@ public class DetailActivity extends AppCompatActivity
 
     }
 
-    private void logErrorToFile(ApplicationError error)
-    {
+    private void logErrorToFile(ApplicationError error) {
         executorService = Executors.newCachedThreadPool();
 
         HashMap<String, String> hashMap = new HashMap<>();
@@ -219,7 +217,6 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void fileStatusListener(String status) {
-        Log.d(TAG, "statusListener: " + status);
         executorService.shutdown();
     }
 }
