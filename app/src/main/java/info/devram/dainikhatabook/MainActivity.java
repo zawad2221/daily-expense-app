@@ -44,6 +44,7 @@ import info.devram.dainikhatabook.Services.PdfCreate;
 import info.devram.dainikhatabook.Services.SyncService;
 import info.devram.dainikhatabook.Values.AccountRepoType;
 import info.devram.dainikhatabook.ViewModel.AccountViewModel;
+import info.devram.dainikhatabook.databinding.ActivityMainBinding;
 import info.devram.dainikhatabook.ui.ConfirmModal;
 import info.devram.dainikhatabook.ui.SelectModal;
 
@@ -52,6 +53,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, ConfirmModal.ConfirmModalListener,
         GenerateReportListener, SelectModal.OnSelectListener, FileErrorLoggerListener {
+
+    private ActivityMainBinding binding = null;
 
     //public static final String TAG = "MainActivity";
 
@@ -77,7 +80,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupWidgets() {
 
+
         populateList();
         settingsButton.setOnClickListener(this);
         addExpenseButton.setOnClickListener(this);
@@ -134,6 +139,8 @@ public class MainActivity extends AppCompatActivity
         generateReportButton.setOnClickListener(this);
         helpButton.setOnClickListener(this);
         aboutButton.setOnClickListener(this);
+        binding.include3.cardView3.setOnClickListener(this);
+        binding.include3.expCardView.setOnClickListener(this);
 
     }
 
@@ -142,10 +149,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         switch (v.getId()) {
 
-            case R.id.dashSettingBtn:
-                intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                break;
             case R.id.dashNewExpBtn:
                 intent = new Intent(MainActivity.this, AddActivity.class);
                 intent.putExtra(Config.EXPENSE_TABLE_NAME, "add");
@@ -156,21 +159,15 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(Config.INCOME_TABLE_NAME, "add");
                 startActivityForResult(intent, ADD_INC_REQUEST_CODE);
                 break;
-            case R.id.dashReportBtn:
-                String[] array = getResources().getStringArray(R.array.report_generate);
-                selectModal = new SelectModal(array, this);
-                selectModal.show(getSupportFragmentManager(), null);
+            case R.id.exp_cardView:
+                Intent expDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
+                expDetailIntent.putExtra(Config.EXPENSE_TABLE_NAME, "expense");
+                startActivity(expDetailIntent);
                 break;
-            case R.id.dashHelpBtn:
-                intent = new Intent(MainActivity.this, HelpActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.dashAboutBtn:
-                String aboutSummary = String.format(getResources().getString(R.string.about_summary),
-                        BuildConfig.VERSION_NAME);
-                ConfirmModal confirmModal = new ConfirmModal(aboutSummary, "About This App\n",
-                        false, MainActivity.this);
-                confirmModal.show(getSupportFragmentManager(), null);
+            case R.id.cardView3:
+                Intent incDetailIntent = new Intent(MainActivity.this, SummaryActivity.class);
+                incDetailIntent.putExtra(Config.INCOME_TABLE_NAME, "income");
+                startActivity(incDetailIntent);
                 break;
 
         }

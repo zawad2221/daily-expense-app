@@ -23,7 +23,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <include layout="@layout/add_edit_content" />
+    <include android:id="@+id/include_add_form" layout="@layout/add_edit_content" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

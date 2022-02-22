@@ -10,7 +10,7 @@
     <string name="total_dashboard_amount">Total: %1$s/-</string>
     <string name="total_sum">Till Today</string>
     <string name="total_expense">Till Today</string>
-    <string name="rs_symbol">\u20B9</string>
+    <string name="rs_symbol">৳</string>
     <string name="title_activity_income">Add Income</string>
     <string name="balance">balance</string>
     <string name="edit">Edit</string>
@@ -56,4 +56,6 @@
     <string name="sync_password_summary">Password Required For Backup Service.
         Once Set this password is used to access Sync Server Resources.\n\n
     </string>
+    <string name="select_type">Select Type</string>
+    <string name="select_type_error">Select one</string>
 </resources>
